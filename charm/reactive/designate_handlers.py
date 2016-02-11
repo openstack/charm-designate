@@ -1,4 +1,4 @@
-from charmhelpers.core.hookenv import config, unit_private_ip
+from charmhelpers.core.hookenv import unit_private_ip
 from charms.reactive import (
     hook,
     when,
