@@ -17,11 +17,5 @@ provides:
   nova-designate:
     interface: nova-designate
 requires:
-  shared-db:
-    interface: mysql-shared
-  amqp:
-    interface: rabbitmq
-  identity-service:
-    interface: keystone
   dns-backend:
     interface: bind-rndc
