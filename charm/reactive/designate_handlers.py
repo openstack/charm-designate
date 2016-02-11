@@ -3,7 +3,7 @@ from charms.reactive import (
     hook,
     when,
 )
-from designate import DesignateCharmFactory
+from charm.openstack.designate import DesignateCharmFactory
 
 
 @hook('install')
@@ -15,13 +15,13 @@ def install_packages():
 
 @when('amqp.connected')
 def setup_amqp_req(amqp):
-    amqp.request_access(username=config('rabbit-user'),
-                        vhost=config('rabbit-vhost'))
+    amqp.request_access(username='designate',
+                        vhost='openstack')
 
 
 @when('shared-db.connected')
 def setup_database(database):
-    database.configure(config('database'), config('database-user'),
+    database.configure('designate', 'designate',
                        unit_private_ip(), prefix='designate')
     database.configure('dpm', 'dpm',
                        unit_private_ip(), prefix='dpm')

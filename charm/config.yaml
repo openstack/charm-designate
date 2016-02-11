@@ -1,24 +1,4 @@
 options:
-  rabbit-user:
-    default: designate
-    type: string
-    description: Username used to access rabbitmq queue
-  rabbit-vhost:
-    default: openstack
-    type: string
-    description: Rabbitmq vhost
-  database-user:
-    default: designate
-    type: string
-    description: Username for Neutron database access (if enabled)
-  database:
-    default: designate
-    type: string
-    description: Database name for Neutron (if enabled)
-  region:
-    default: RegionOne
-    type: string
-    description: OpenStack Region
   dns-backend:
     default:
     type: string
