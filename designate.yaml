@@ -1,0 +1,10 @@
+# vim: set ts=2 et:
+# deployer bundle for development ('next') charms
+# UOSCI relies on this for OS-on-OS deployment testing
+openstack-services:
+  series: trusty
+  services:
+    designate:
+      charm: designate
+      options:
+        openstack-origin: cloud:trusty-liberty

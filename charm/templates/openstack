@@ -1,0 +1,1 @@
+DAEMON_ARGS="{{ options.nova_conf_args }} {{ options.neutron_conf_args }}"

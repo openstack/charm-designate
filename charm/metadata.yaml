@@ -1,0 +1,27 @@
+name: designate
+summary: Designate provides DNSaaS services for OpenStack
+maintainer: OpenStack Charmers <openstack-charmers@lists.ubuntu.com>
+description: |
+ Designate provides DNSaaS services for OpenStack:
+ * REST API for domain/record management
+ * Multi-tenant
+ * Integrated with Keystone for authentication
+ * Framework in place to integrate with Nova and Neutron notifications
+ * Support for PowerDNS and Bind9 out of the box
+categories:
+  - openstack
+subordinate: false
+provides:
+  dnsaas:
+    interface: designate
+  nova-designate:
+    interface: nova-designate
+requires:
+  shared-db:
+    interface: mysql-shared
+  amqp:
+    interface: rabbitmq
+  identity-service:
+    interface: keystone
+  dns-backend:
+    interface: bind-rndc

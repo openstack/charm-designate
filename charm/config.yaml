@@ -1,0 +1,45 @@
+options:
+  rabbit-user:
+    default: designate
+    type: string
+    description: Username used to access rabbitmq queue
+  rabbit-vhost:
+    default: openstack
+    type: string
+    description: Rabbitmq vhost
+  database-user:
+    default: designate
+    type: string
+    description: Username for Neutron database access (if enabled)
+  database:
+    default: designate
+    type: string
+    description: Database name for Neutron (if enabled)
+  region:
+    default: RegionOne
+    type: string
+    description: OpenStack Region
+  dns-backend:
+    default:
+    type: string
+    description: IP Address of dns backend
+  nova-domain:
+    default: 'www.example.com.'
+    type: string
+    description: Domain to add records for new instances to
+  nova-domain-email:
+    default: 'email@example.com'
+    type: string
+    description: Email address of the person responsible for the domain.
+  dns-server-record:
+    default: 'ns1.www.example.com.'
+    type: string
+    description: DNS server record
+  neutron-domain:
+    default: 'www.bob.com.'
+    type: string
+    description: Domain to add  floating ip recirds to
+  neutron-domain-email:
+    default: 'email@example.com'
+    type: string
+    description: Email address of the person responsible for the domain.
