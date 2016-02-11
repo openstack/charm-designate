@@ -1,2 +1,3 @@
 charm-tools
 flake8
+ruamel.yaml==0.10.12
