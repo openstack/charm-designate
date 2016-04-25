@@ -21,3 +21,6 @@ provides:
 requires:
   dns-backend:
     interface: bind-rndc
+  ha:
+    interface: hacluster
+    scope: container

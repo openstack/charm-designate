@@ -1,10 +1,14 @@
-from charmhelpers.core.hookenv import unit_private_ip
+from charmhelpers.core.hookenv import unit_private_ip, config
 from charms.reactive import (
     hook,
     when,
 )
 from charm.openstack.designate import DesignateCharmFactory
+import ipaddress
 
+from relations.hacluster.common import CRM
+from relations.hacluster.common import ResourceDescriptor
+from charm.openstack.charm import VirtualIP
 
 @hook('install')
 def install_packages():
@@ -51,3 +55,12 @@ def render_stuff(amqp_interface, identity_interface, db_interface,
     charm.db_sync()
     charm.create_domains()
     charm.render_full_config()
+
+@when('ha.connected')
+def cluster_connected(hacluster):
+    user_config = config()
+    resources = CRM()
+    resources.add(VirtualIP(user_config['vip']))
+
+    hacluster.bind_on(iface=user_config['vip_iface'], mcastport=4440)
+    hacluster.manage_resources(resources)
