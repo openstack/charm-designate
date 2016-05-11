@@ -1,21 +1,23 @@
 from charmhelpers.core.hookenv import unit_private_ip, config
 from charms.reactive import (
     hook,
+    set_state,
     when,
+    when_not,
 )
 from charm.openstack.designate import DesignateCharmFactory
 import ipaddress
 
 from relations.hacluster.common import CRM
 from relations.hacluster.common import ResourceDescriptor
-from charm.openstack.charm import VirtualIP
+from charm.openstack.ha import VirtualIP
 
-@hook('install')
+@when_not('installed')
 def install_packages():
     charm = DesignateCharmFactory.charm()
     charm.configure_source()
     charm.install()
-
+    set_state('installed')
 
 @when('amqp.connected')
 def setup_amqp_req(amqp):
@@ -55,6 +57,7 @@ def render_stuff(amqp_interface, identity_interface, db_interface,
     charm.db_sync()
     charm.create_domains()
     charm.render_full_config()
+
 
 @when('ha.connected')
 def cluster_connected(hacluster):
