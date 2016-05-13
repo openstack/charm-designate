@@ -49,9 +49,9 @@ class DesignateAdapters(OpenStackRelationAdapters):
 
 class DesignateCharm(OpenStackCharm):
 
-    packages = ['designate-agent', 'designate-api', 'designate-central',
-                'designate-common', 'designate-mdns', 'designate-pool-manager',
-                'designate-sink', 'designate-zone-manager', 'bind9utils']
+    base_packages = ['designate-agent', 'designate-api', 'designate-central',
+                     'designate-common', 'designate-mdns', 'designate-pool-manager',
+                     'designate-sink', 'designate-zone-manager', 'bind9utils']
 
     services = ['designate-mdns', 'designate-zone-manager',
                 'designate-agent', 'designate-pool-manager',
@@ -66,7 +66,7 @@ class DesignateCharm(OpenStackCharm):
         }
     }
 
-    restart_map = {
+    base_restart_map = {
         '/etc/default/openstack': services,
         '/etc/designate/designate.conf': services,
         '/etc/designate/rndc.key': services,
@@ -78,13 +78,15 @@ class DesignateCharm(OpenStackCharm):
     sync_cmd = ['designate-manage', 'database', 'sync']
     adapters_class = DesignateAdapters
 
+    ha_resources = ['vips', 'haproxy']
+
     def render_base_config(self):
         self.render_configs([RC_FILE, DESIGNATE_CONF, RNDC_KEY_CONF,
                              DESIGNATE_DEFAULT])
 
     def render_full_config(self):
         self.render_configs([NOVA_SINK_FILE, NEUTRON_SINK_FILE,
-                             DESIGNATE_DEFAULT])
+                             DESIGNATE_DEFAULT, self.HAPROXY_CONF])
 
     @classmethod
     def get_domain_id(cls, domain):
