@@ -10,7 +10,8 @@ import ipaddress
 
 from relations.hacluster.common import CRM
 from relations.hacluster.common import ResourceDescriptor
-from charm.openstack.ha import VirtualIP
+#from charm.openstack.ha import VirtualIP
+import charm.openstack.ha as ha
 
 @when_not('installed')
 def install_packages():
@@ -61,9 +62,5 @@ def render_stuff(amqp_interface, identity_interface, db_interface,
 
 @when('ha.connected')
 def cluster_connected(hacluster):
-    user_config = config()
-    resources = CRM()
-    resources.add(VirtualIP(user_config['vip']))
-
-    hacluster.bind_on(iface=user_config['vip_iface'], mcastport=4440)
-    hacluster.manage_resources(resources)
+    charm = DesignateCharmFactory.charm()
+    charm.configure_ha_resources(hacluster)
