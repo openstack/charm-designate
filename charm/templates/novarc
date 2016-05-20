@@ -3,4 +3,5 @@ export OS_TENANT_NAME={{ identity_service.service_tenant }}
 export OS_USERNAME={{ identity_service.service_username }}
 export OS_PASSWORD={{ identity_service.service_password }}
 export OS_REGION_NAME={{ options.region }}
+export OS_DNS_ENDPOINT={{ options.service_listen_info.designate_api.url }}
 

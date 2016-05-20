@@ -43,16 +43,16 @@ def setup_endpoint(keystone):
                                 charm.internal_url,
                                 charm.admin_url)
 
-
+@when('cluster.available')
 @when('dns-backend.available')
 @when('shared-db.available')
 @when('identity-service.available')
 @when('amqp.available')
 def render_stuff(amqp_interface, identity_interface, db_interface,
-                 dns_interface):
+                 dns_interface, cluster_interface):
     charm = DesignateCharmFactory.charm(
         interfaces=[amqp_interface, identity_interface, db_interface,
-                    dns_interface]
+                    dns_interface, cluster_interface]
     )
     charm.render_base_config()
     charm.db_sync()

@@ -1,6 +1,6 @@
 from charm.openstack.adapters import (
     OpenStackRelationAdapters,
-    ConfigurationAdapter,
+    APIConfigurationAdapter,
     DatabaseRelationAdapter,
 )
 import subprocess
@@ -9,6 +9,7 @@ from charm.openstack.ip import PUBLIC, INTERNAL, ADMIN
 from charmhelpers.core.hookenv import config
 from charmhelpers.core.hookenv import unit_private_ip
 from charm.openstack.charm import OpenStackCharmFactory, OpenStackCharm
+from charmhelpers.contrib.hahelpers.cluster import determine_api_port
 
 DESIGNATE_DIR = '/etc/designate'
 DESIGNATE_DEFAULT = '/etc/default/openstack'
@@ -44,7 +45,8 @@ class DesignateAdapters(OpenStackRelationAdapters):
     def __init__(self, relations):
         super(DesignateAdapters, self).__init__(
             relations,
-            options=DesignateConfigurationAdapter)
+            options=DesignateConfigurationAdapter,
+            port_map=DesignateCharm.api_ports)
 
 
 class DesignateCharm(OpenStackCharm):
@@ -114,18 +116,10 @@ class DesignateCharm(OpenStackCharm):
                           config('neutron-domain-email'))
 
 
-class DesignateConfigurationAdapter(ConfigurationAdapter):
+class DesignateConfigurationAdapter(APIConfigurationAdapter):
 
-    def __init__(self):
-        super(DesignateConfigurationAdapter, self).__init__()
-
-    @property
-    def listen_url(self):
-        return 'http://{}:9001'.format(unit_private_ip())
-
-    @property
-    def listen_ip(self):
-        return unit_private_ip()
+    def __init__(self, port_map=None):
+        super(DesignateConfigurationAdapter, self).__init__(port_map=port_map)
 
     @property
     def nova_domain_id(self):
