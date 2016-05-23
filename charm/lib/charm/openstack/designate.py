@@ -1,15 +1,10 @@
-from charm.openstack.adapters import (
-    OpenStackRelationAdapters,
-    APIConfigurationAdapter,
-    DatabaseRelationAdapter,
-)
-import subprocess
 import os
-from charm.openstack.ip import PUBLIC, INTERNAL, ADMIN
-from charmhelpers.core.hookenv import config
-from charmhelpers.core.hookenv import unit_private_ip
-from charm.openstack.charm import OpenStackCharmFactory, OpenStackCharm
-from charmhelpers.contrib.hahelpers.cluster import determine_api_port
+import subprocess
+
+import charm.openstack.adapters as openstack_adapters
+import charm.openstack.charm as openstack_charm
+import charm.openstack.ip as openstack_ip
+import charmhelpers.core.hookenv as hookenv
 
 DESIGNATE_DIR = '/etc/designate'
 DESIGNATE_DEFAULT = '/etc/default/openstack'
@@ -20,7 +15,18 @@ NEUTRON_SINK_FILE = DESIGNATE_DIR + '/conf.d/neutron_sink.cfg'
 RC_FILE = '/root/novarc'
 
 
-class DesignateDBAdapter(DatabaseRelationAdapter):
+def get_charm():
+    """ Return a new instance of Designate or existing global instance
+    @returns Designate
+    """
+    global designate_charm
+    if designate_charm is None:
+        designate_charm = DesignateCharmFactory.charm()
+    return designate_charm
+
+
+class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
+    """Get database URIs for the two designate databases"""
 
     def __init__(self, relation):
         super(DesignateDBAdapter, self).__init__(relation)
@@ -34,7 +40,7 @@ class DesignateDBAdapter(DatabaseRelationAdapter):
         return self.get_uri(prefix='dpm')
 
 
-class DesignateAdapters(OpenStackRelationAdapters):
+class DesignateAdapters(openstack_adapters.OpenStackRelationAdapters):
     """
     Adapters class for the Designate charm.
     """
@@ -49,11 +55,13 @@ class DesignateAdapters(OpenStackRelationAdapters):
             port_map=DesignateCharm.api_ports)
 
 
-class DesignateCharm(OpenStackCharm):
+class DesignateCharm(openstack_charm.OpenStackCharm):
+    """Designate charm"""
 
     base_packages = ['designate-agent', 'designate-api', 'designate-central',
-                     'designate-common', 'designate-mdns', 'designate-pool-manager',
-                     'designate-sink', 'designate-zone-manager', 'bind9utils']
+                     'designate-common', 'designate-mdns',
+                     'designate-pool-manager', 'designate-sink',
+                     'designate-zone-manager', 'bind9utils']
 
     services = ['designate-mdns', 'designate-zone-manager',
                 'designate-agent', 'designate-pool-manager',
@@ -62,9 +70,9 @@ class DesignateCharm(OpenStackCharm):
 
     api_ports = {
         'designate-api': {
-            PUBLIC: 9001,
-            ADMIN: 9001,
-            INTERNAL: 9001,
+            openstack_ip.PUBLIC: 9001,
+            openstack_ip.ADMIN: 9001,
+            openstack_ip.INTERNAL: 9001,
         }
     }
 
@@ -83,15 +91,29 @@ class DesignateCharm(OpenStackCharm):
     ha_resources = ['vips', 'haproxy']
 
     def render_base_config(self):
+        """Render initial config to bootstrap Designate service
+
+        @returns None
+        """
         self.render_configs([RC_FILE, DESIGNATE_CONF, RNDC_KEY_CONF,
                              DESIGNATE_DEFAULT])
 
     def render_full_config(self):
-        self.render_configs([NOVA_SINK_FILE, NEUTRON_SINK_FILE,
-                             DESIGNATE_DEFAULT, self.HAPROXY_CONF])
+        """Render all config for Designate service
+
+        @returns None
+        """
+        self.render_configs([RC_FILE, DESIGNATE_CONF, RNDC_KEY_CONF,
+                             DESIGNATE_DEFAULT, NOVA_SINK_FILE,
+                             NEUTRON_SINK_FILE, self.HAPROXY_CONF])
 
     @classmethod
     def get_domain_id(cls, domain):
+        """Return the domain ID for a given domain name
+
+        @param domain: Domain name
+        @returns domain_id
+        """
         get_cmd = ['reactive/designate_utils.py', 'domain-get', domain]
         output = subprocess.check_output(get_cmd)
         if output:
@@ -99,54 +121,95 @@ class DesignateCharm(OpenStackCharm):
 
     @classmethod
     def create_domain(cls, domain, email):
+        """Create a domain
+
+        @param domain: The name of the domain you are creating. The name must
+                       end with a full stop.
+        @param email: An email address of the person responsible for the
+                      domain.
+        @returns None
+        """
         create_cmd = ['reactive/designate_utils.py', 'domain-create', domain,
                       email]
         subprocess.check_call(create_cmd)
 
     @classmethod
-    def create_server(cls, domain):
-        create_cmd = ['reactive/designate_utils.py', 'server-create', domain]
+    def create_server(cls, nsname):
+        """ create a nameserver entry with the supplied name
+
+        @param nsname: Name of NameserverS record
+        @returns None
+        """
+        create_cmd = ['reactive/designate_utils.py', 'server-create', nsname]
         subprocess.check_call(create_cmd)
 
     @classmethod
-    def create_domains(cls):
-        cls.create_server(config('dns-server-record'))
-        cls.create_domain(config('nova-domain'), config('nova-domain-email'))
-        cls.create_domain(config('neutron-domain'),
-                          config('neutron-domain-email'))
+    def create_initial_servers_and_domains(cls):
+        """Create the nameserver entry and domains based on the charm user
+        supplied config
+
+        @returns None
+        """
+        cls.create_server(hookenv.config('dns-server-record'))
+        cls.create_domain(
+            hookenv.config('nova-domain'),
+            hookenv.config('nova-domain-email'))
+        cls.create_domain(hookenv.config('neutron-domain'),
+                          hookenv.config('neutron-domain-email'))
 
 
-class DesignateConfigurationAdapter(APIConfigurationAdapter):
+class DesignateConfigurationAdapter(
+      openstack_adapters.APIConfigurationAdapter):
 
     def __init__(self, port_map=None):
         super(DesignateConfigurationAdapter, self).__init__(port_map=port_map)
 
     @property
     def nova_domain_id(self):
-        domain = config('nova-domain')
+        """Returns the id of the domain corresponding to the user supplied
+        'nova-domain'
+
+        @returns nova domain id
+        """
+        domain = hookenv.config('nova-domain')
+        return DesignateCharm.get_domain_id(domain)
+
+    @property
+    def neutron_domain_id(self):
+        """Returns the id of the domain corresponding to the user supplied
+        'neutron-domain'
+
+        @returns neutron domain id
+        """
+        domain = hookenv.config('neutron-domain')
         return DesignateCharm.get_domain_id(domain)
 
     @property
     def nova_conf_args(self):
+        """Returns config file directive to point daemons at nova config file.
+        These directives are designed to be used in /etc/default/ files
+
+        @returns startup config file option
+        """
         daemon_arg = ''
         if os.path.exists(NOVA_SINK_FILE):
             daemon_arg = '--config-file={}'.format(NOVA_SINK_FILE)
         return daemon_arg
 
     @property
-    def neutron_domain_id(self):
-        domain = config('neutron-domain')
-        return DesignateCharm.get_domain_id(domain)
-
-    @property
     def neutron_conf_args(self):
+        """Returns config file directive to point daemons at neutron config
+        file. These directives are designed to be used in /etc/default/ files
+
+        @returns startup config file option
+        """
         daemon_arg = ''
         if os.path.exists(NEUTRON_SINK_FILE):
             daemon_arg = '--config-file={}'.format(NEUTRON_SINK_FILE)
         return daemon_arg
 
 
-class DesignateCharmFactory(OpenStackCharmFactory):
+class DesignateCharmFactory(openstack_charm.OpenStackCharmFactory):
 
     releases = {
         'liberty': DesignateCharm

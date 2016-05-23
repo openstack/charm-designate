@@ -1,66 +1,57 @@
-from charmhelpers.core.hookenv import unit_private_ip, config
-from charms.reactive import (
-    hook,
-    set_state,
-    when,
-    when_not,
-)
-from charm.openstack.designate import DesignateCharmFactory
-import ipaddress
+import charmhelpers.core.hookenv as hookenv
+import charms.reactive as reactive
+import charm.openstack.designate as designate
 
-from relations.hacluster.common import CRM
-from relations.hacluster.common import ResourceDescriptor
-#from charm.openstack.ha import VirtualIP
-import charm.openstack.ha as ha
 
-@when_not('installed')
+@reactive.when_not('installed')
 def install_packages():
-    charm = DesignateCharmFactory.charm()
+    charm = designate.DesignateCharmFactory.charm()
     charm.configure_source()
     charm.install()
-    set_state('installed')
+    reactive.set_state('installed')
 
-@when('amqp.connected')
+
+@reactive.when('amqp.connected')
 def setup_amqp_req(amqp):
     amqp.request_access(username='designate',
                         vhost='openstack')
 
 
-@when('shared-db.connected')
+@reactive.when('shared-db.connected')
 def setup_database(database):
     database.configure('designate', 'designate',
-                       unit_private_ip(), prefix='designate')
+                       hookenv.unit_private_ip(), prefix='designate')
     database.configure('dpm', 'dpm',
-                       unit_private_ip(), prefix='dpm')
+                       hookenv.unit_private_ip(), prefix='dpm')
 
 
-@when('identity-service.connected')
+@reactive.when('identity-service.connected')
 def setup_endpoint(keystone):
-    charm = DesignateCharmFactory.charm()
+    charm = designate.DesignateCharmFactory.charm()
     keystone.register_endpoints(charm.service_type,
                                 charm.region,
                                 charm.public_url,
                                 charm.internal_url,
                                 charm.admin_url)
 
-@when('cluster.available')
-@when('dns-backend.available')
-@when('shared-db.available')
-@when('identity-service.available')
-@when('amqp.available')
-def render_stuff(amqp_interface, identity_interface, db_interface,
-                 dns_interface, cluster_interface):
-    charm = DesignateCharmFactory.charm(
+
+@reactive.when('dns-backend.available')
+@reactive.when('shared-db.available')
+@reactive.when('identity-service.available')
+@reactive.when('amqp.available')
+def configure_designate(amqp_interface, identity_interface, db_interface,
+                        dns_interface):
+    charm = designate.DesignateCharmFactory.charm(
         interfaces=[amqp_interface, identity_interface, db_interface,
-                    dns_interface, cluster_interface]
+                    dns_interface]
     )
     charm.render_base_config()
     charm.db_sync()
-    charm.create_domains()
+    charm.create_initial_servers_and_domains()
     charm.render_full_config()
 
 
-@when('ha.connected')
+@reactive.when('ha.connected')
 def cluster_connected(hacluster):
-    charm = DesignateCharmFactory.charm()
+    charm = designate.DesignateCharmFactory.charm()
     charm.configure_ha_resources(hacluster)
