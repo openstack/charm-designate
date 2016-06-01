@@ -29,10 +29,10 @@ def db_sync():
     DesignateCharm.singleton.db_sync()
 
 
-def render_base_config():
+def render_base_config(interfaces_list):
     """Use the singleton from the DesignateCharm to run render_base_config
     """
-    DesignateCharm.singleton.render_base_config()
+    DesignateCharm.singleton.render_base_config(interfaces_list)
 
 
 def create_initial_servers_and_domains():
@@ -41,18 +41,13 @@ def create_initial_servers_and_domains():
     DesignateCharm.singleton.create_initial_servers_and_domains()
 
 
-def render_full_config():
+def render_full_config(interfaces_list):
     """Use the singleton from the DesignateCharm to run render_base_config
     """
-    DesignateCharm.singleton.render_full_config()
+    DesignateCharm.singleton.render_full_config(interfaces_list)
 
 
-def configure_ha_resources(hacluster):
-    """Use the singleton from the DesignateCharm to run render_base_config
-    """
-    DesignateCharm.singleton.configure_ha_resources(hacluster)
-
-
+                                                                                
 def register_endpoints(keystone):
     """When the keystone interface connects, register this unit in the keystone
     catalogue.
@@ -63,6 +58,11 @@ def register_endpoints(keystone):
                                 charm.public_url,
                                 charm.internal_url,
                                 charm.admin_url)
+
+def configure_ha_resources(hacluster):
+    """Use the singleton from the DesignateCharm to run render_base_config
+    """
+    DesignateCharm.singleton.configure_ha_resources(hacluster)
 
 
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
@@ -86,9 +86,11 @@ class DesignateAdapters(openstack_adapters.OpenStackRelationAdapters):
     """
     relation_adapters = {
         'shared_db': DesignateDBAdapter,
+        'cluster': openstack_adapters.PeerHARelationAdapter,
     }
 
     def __init__(self, relations):
+        print(relations)
         super(DesignateAdapters, self).__init__(
             relations,
             options=DesignateConfigurationAdapter,
@@ -102,7 +104,7 @@ class DesignateCharm(openstack_charm.OpenStackCharm):
     packages = ['designate-agent', 'designate-api', 'designate-central',
                 'designate-common', 'designate-mdns',
                 'designate-pool-manager', 'designate-sink',
-                'designate-zone-manager', 'bind9utils', 'python-apt']
+                'designate-zone-manager', 'bind9utils']
 
     services = ['designate-mdns', 'designate-zone-manager',
                 'designate-agent', 'designate-pool-manager',
@@ -123,6 +125,7 @@ class DesignateCharm(openstack_charm.OpenStackCharm):
         '/etc/designate/rndc.key': services,
         '/etc/designate/conf.d/nova_sink.cfg': services,
         '/etc/designate/conf.d/neutron_sink.cfg': services,
+        RC_FILE: [''],
     }
     service_type = 'designate'
     default_service = 'designate-api'
@@ -150,22 +153,22 @@ class DesignateCharm(openstack_charm.OpenStackCharm):
         super(DesignateCharm, self).install()
 
 
-    def render_base_config(self):
+    def render_base_config(self, interfaces_list):
         """Render initial config to bootstrap Designate service
 
         @returns None
         """
-        self.render_configs([RC_FILE, DESIGNATE_CONF, RNDC_KEY_CONF,
-                             DESIGNATE_DEFAULT])
+        configs = [RC_FILE, DESIGNATE_CONF, RNDC_KEY_CONF, DESIGNATE_DEFAULT]
+        DesignateCharm.singleton.render_with_interfaces(
+            interfaces_list,
+            configs=configs)
 
-    def render_full_config(self):
+    def render_full_config(self, interfaces_list):
         """Render all config for Designate service
 
         @returns None
         """
-        self.render_configs([RC_FILE, DESIGNATE_CONF, RNDC_KEY_CONF,
-                             DESIGNATE_DEFAULT, NOVA_SINK_FILE,
-                             NEUTRON_SINK_FILE, self.HAPROXY_CONF])
+        DesignateCharm.singleton.render_with_interfaces(interfaces_list)
 
     @classmethod
     def get_domain_id(cls, domain):
