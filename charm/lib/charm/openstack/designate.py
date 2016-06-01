@@ -1,9 +1,10 @@
 import os
 import subprocess
 
-import charm.openstack.adapters as openstack_adapters
-import charm.openstack.charm as openstack_charm
-import charm.openstack.ip as openstack_ip
+import charmhelpers.contrib.openstack.utils as ch_utils
+import charms_openstack.adapters as openstack_adapters
+import charms_openstack.charm as openstack_charm
+import charms_openstack.ip as openstack_ip
 import charmhelpers.core.hookenv as hookenv
 
 DESIGNATE_DIR = '/etc/designate'
@@ -15,14 +16,41 @@ NEUTRON_SINK_FILE = DESIGNATE_DIR + '/conf.d/neutron_sink.cfg'
 RC_FILE = '/root/novarc'
 
 
-def get_charm():
-    """ Return a new instance of Designate or existing global instance
-    @returns Designate
+def install():
+    """Use the singleton from the DesignateCharm to install the packages on the
+    unit
     """
-    global designate_charm
-    if designate_charm is None:
-        designate_charm = DesignateCharmFactory.charm()
-    return designate_charm
+    DesignateCharm.singleton.install()
+
+
+def db_sync():
+    """Use the singleton from the DesignateCharm to run db migration
+    """
+    DesignateCharm.singleton.db_sync()
+
+
+def render_base_config():
+    """Use the singleton from the DesignateCharm to run render_base_config
+    """
+    DesignateCharm.singleton.render_base_config()
+
+
+def create_initial_servers_and_domains():
+    """Use the singleton from the DesignateCharm to run render_base_config
+    """
+    DesignateCharm.singleton.create_initial_servers_and_domains()
+
+
+def render_full_config():
+    """Use the singleton from the DesignateCharm to run render_base_config
+    """
+    DesignateCharm.singleton.render_full_config()
+
+
+def configure_ha_resources():
+    """Use the singleton from the DesignateCharm to run render_base_config
+    """
+    DesignateCharm.singleton.configure_ha_resources()
 
 
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
@@ -58,10 +86,10 @@ class DesignateAdapters(openstack_adapters.OpenStackRelationAdapters):
 class DesignateCharm(openstack_charm.OpenStackCharm):
     """Designate charm"""
 
-    base_packages = ['designate-agent', 'designate-api', 'designate-central',
-                     'designate-common', 'designate-mdns',
-                     'designate-pool-manager', 'designate-sink',
-                     'designate-zone-manager', 'bind9utils']
+    packages = ['designate-agent', 'designate-api', 'designate-central',
+                'designate-common', 'designate-mdns',
+                'designate-pool-manager', 'designate-sink',
+                'designate-zone-manager', 'bind9utils']
 
     services = ['designate-mdns', 'designate-zone-manager',
                 'designate-agent', 'designate-pool-manager',
@@ -76,7 +104,7 @@ class DesignateCharm(openstack_charm.OpenStackCharm):
         }
     }
 
-    base_restart_map = {
+    restart_map = {
         '/etc/default/openstack': services,
         '/etc/designate/designate.conf': services,
         '/etc/designate/rndc.key': services,
@@ -89,6 +117,25 @@ class DesignateCharm(openstack_charm.OpenStackCharm):
     adapters_class = DesignateAdapters
 
     ha_resources = ['vips', 'haproxy']
+    release = 'liberty'
+
+    def __init__(self, release=None, **kwargs):
+        """Custom initialiser for class
+        If no release is passed, then the charm determines the release from the
+        ch_utils.os_release() function.
+        """
+        if release is None:
+            release = ch_utils.os_release('python-keystonemiddleware')
+        super(DesignateCharm, self).__init__(release=release, **kwargs)
+
+
+    def install(self):
+        """Customise the installation, configure the source and then call the
+        parent install() method to install the packages
+        """
+        self.configure_source()
+        super(DesignateCharm, self).install()
+
 
     def render_base_config(self):
         """Render initial config to bootstrap Designate service
@@ -209,10 +256,10 @@ class DesignateConfigurationAdapter(
         return daemon_arg
 
 
-class DesignateCharmFactory(openstack_charm.OpenStackCharmFactory):
-
-    releases = {
-        'liberty': DesignateCharm
-    }
-
-    first_release = 'liberty'
+#class DesignateCharmFactory(openstack_charm.OpenStackCharmFactory):
+#
+#    releases = {
+#        'liberty': DesignateCharm
+#    }
+#
+#    first_release = 'liberty'
