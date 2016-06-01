@@ -53,6 +53,18 @@ def configure_ha_resources(hacluster):
     DesignateCharm.singleton.configure_ha_resources(hacluster)
 
 
+def register_endpoints(keystone):
+    """When the keystone interface connects, register this unit in the keystone
+    catalogue.
+    """
+    charm = DesignateCharm.singleton
+    keystone.register_endpoints(charm.service_type,
+                                charm.region,
+                                charm.public_url,
+                                charm.internal_url,
+                                charm.admin_url)
+
+
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
     """Get database URIs for the two designate databases"""
 
@@ -90,7 +102,7 @@ class DesignateCharm(openstack_charm.OpenStackCharm):
     packages = ['designate-agent', 'designate-api', 'designate-central',
                 'designate-common', 'designate-mdns',
                 'designate-pool-manager', 'designate-sink',
-                'designate-zone-manager', 'bind9utils']
+                'designate-zone-manager', 'bind9utils', 'python-apt']
 
     services = ['designate-mdns', 'designate-zone-manager',
                 'designate-agent', 'designate-pool-manager',

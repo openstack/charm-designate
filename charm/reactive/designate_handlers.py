@@ -25,11 +25,7 @@ def setup_database(database):
 
 @reactive.when('identity-service.connected')
 def setup_endpoint(keystone):
-    designate.register_endpoints(charm.service_type,
-                                 charm.region,
-                                 charm.public_url,
-                                 charm.internal_url,
-                                 charm.admin_url)
+    designate.register_endpoints(keystone)
 
 
 @reactive.when('dns-backend.available')
