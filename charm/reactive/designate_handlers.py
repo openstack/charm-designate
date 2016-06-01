@@ -5,9 +5,7 @@ import charm.openstack.designate as designate
 
 @reactive.when_not('installed')
 def install_packages():
-    charm = designate.DesignateCharmFactory.charm()
-    charm.configure_source()
-    charm.install()
+    designate.install()
     reactive.set_state('installed')
 
 
@@ -27,12 +25,11 @@ def setup_database(database):
 
 @reactive.when('identity-service.connected')
 def setup_endpoint(keystone):
-    charm = designate.DesignateCharmFactory.charm()
-    keystone.register_endpoints(charm.service_type,
-                                charm.region,
-                                charm.public_url,
-                                charm.internal_url,
-                                charm.admin_url)
+    designate.register_endpoints(charm.service_type,
+                                 charm.region,
+                                 charm.public_url,
+                                 charm.internal_url,
+                                 charm.admin_url)
 
 
 @reactive.when('dns-backend.available')
@@ -41,17 +38,12 @@ def setup_endpoint(keystone):
 @reactive.when('amqp.available')
 def configure_designate(amqp_interface, identity_interface, db_interface,
                         dns_interface):
-    charm = designate.DesignateCharmFactory.charm(
-        interfaces=[amqp_interface, identity_interface, db_interface,
-                    dns_interface]
-    )
-    charm.render_base_config()
-    charm.db_sync()
-    charm.create_initial_servers_and_domains()
-    charm.render_full_config()
+    designate.render_base_config()
+    designate.db_sync()
+    designate.create_initial_servers_and_domains()
+    designate.render_full_config()
 
 
 @reactive.when('ha.connected')
 def cluster_connected(hacluster):
-    charm = designate.DesignateCharmFactory.charm()
-    charm.configure_ha_resources(hacluster)
+    designate.configure_ha_resources(hacluster)
