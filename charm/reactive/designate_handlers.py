@@ -2,6 +2,12 @@ import charmhelpers.core.hookenv as hookenv
 import charms.reactive as reactive
 import charm.openstack.designate as designate
 
+COMPLETE_INTERFACE_STATES = [
+    'dns-backend.available',
+    'shared-db.available',
+    'identity-service.available',
+    'amqp.available',
+]
 
 @reactive.when_not('installed')
 def install_packages():
@@ -29,49 +35,38 @@ def setup_endpoint(keystone):
 
 
 @reactive.when_not('base-config.rendered')
-@reactive.when('dns-backend.available')
-@reactive.when('shared-db.available')
-@reactive.when('identity-service.available')
-@reactive.when('amqp.available')
+@reactive.when(*COMPLETE_INTERFACE_STATES)
 def configure_designate(*args):
     designate.render_base_config(args)
     reactive.set_state('base-config.rendered')
 
 @reactive.when_not('db.synched')
 @reactive.when('base-config.rendered')
-@reactive.when('dns-backend.available')
-@reactive.when('shared-db.available')
-@reactive.when('identity-service.available')
-@reactive.when('amqp.available')
+@reactive.when(*COMPLETE_INTERFACE_STATES)
 def run_db_migration(*args):
-#    designate.db_sync()
-#    designate.restart_all()
-    reactive.set_state('db.synched')
+    designate.db_sync()
+    if designate.db_sync_done():
+        reactive.set_state('db.synched')
 
 @reactive.when_not('domains.created')
 @reactive.when('base-config.rendered')
-@reactive.when('dns-backend.available')
-@reactive.when('shared-db.available')
-@reactive.when('identity-service.available')
-@reactive.when('amqp.available')
+@reactive.when(*COMPLETE_INTERFACE_STATES)
 def create_servers_and_domains(*args):
     designate.create_initial_servers_and_domains()
-    reactive.set_state('domains.created')
+    if designate.domain_init_done():
+        reactive.set_state('domains.created')
 
+@reactive.when('cluster.available')
 @reactive.when('domains.created')
-@reactive.when('dns-backend.available')
-@reactive.when('shared-db.available')
-@reactive.when('identity-service.available')
-@reactive.when('amqp.available')
-@reactive.when('openstack-ha.available')
+@reactive.when(*COMPLETE_INTERFACE_STATES)
 def render_all_configs(*args):
-    print("Render with ha")
     designate.render_full_config(args)
 
-@reactive.when('openstack-ha.available')
-def bob(*args):
-    print("Testing ha")
-
+@reactive.when_not('cluster.available')
+@reactive.when('domains.created')
+@reactive.when(*COMPLETE_INTERFACE_STATES)
+def render_all_configs(*args):
+    designate.render_full_config(args)
 
 @reactive.when('ha.connected')
 def cluster_connected(hacluster):

@@ -23,10 +23,15 @@ def install():
     DesignateCharm.singleton.install()
 
 
+def db_sync_done():
+    """Use the singleton from the DesignateCharm to run db migration
+    """
+    return DesignateCharm.singleton.db_sync_done()
+
 def db_sync():
     """Use the singleton from the DesignateCharm to run db migration
     """
-    DesignateCharm.singleton.db_sync()
+    return DesignateCharm.singleton.db_sync()
 
 
 def render_base_config(interfaces_list):
@@ -39,6 +44,11 @@ def create_initial_servers_and_domains():
     """Use the singleton from the DesignateCharm to run render_base_config
     """
     DesignateCharm.singleton.create_initial_servers_and_domains()
+
+def domain_init_done():
+    """Use the singleton from the DesignateCharm to run render_base_config
+    """
+    DesignateCharm.singleton.domain_init_done()
 
 
 def render_full_config(interfaces_list):
@@ -63,6 +73,11 @@ def configure_ha_resources(hacluster):
     """Use the singleton from the DesignateCharm to run render_base_config
     """
     DesignateCharm.singleton.configure_ha_resources(hacluster)
+
+def restart_all():
+    """Use the singleton from the DesignateCharm to run render_base_config
+    """
+    DesignateCharm.singleton.restart_all()
 
 
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
@@ -104,7 +119,7 @@ class DesignateCharm(openstack_charm.OpenStackCharm):
     packages = ['designate-agent', 'designate-api', 'designate-central',
                 'designate-common', 'designate-mdns',
                 'designate-pool-manager', 'designate-sink',
-                'designate-zone-manager', 'bind9utils']
+                'designate-zone-manager', 'bind9utils', 'python-apt']
 
     services = ['designate-mdns', 'designate-zone-manager',
                 'designate-agent', 'designate-pool-manager',
@@ -206,6 +221,9 @@ class DesignateCharm(openstack_charm.OpenStackCharm):
         create_cmd = ['reactive/designate_utils.py', 'server-create', nsname]
         subprocess.check_call(create_cmd)
 
+    def domain_init_done(self):
+        return hookenv.leader_get(attribute='domain-init-done')
+
     @classmethod
     def create_initial_servers_and_domains(cls):
         """Create the nameserver entry and domains based on the charm user
@@ -213,13 +231,15 @@ class DesignateCharm(openstack_charm.OpenStackCharm):
 
         @returns None
         """
-        cls.create_server(hookenv.config('dns-server-record'))
-        cls.create_domain(
-            hookenv.config('nova-domain'),
-            hookenv.config('nova-domain-email'))
-        cls.create_domain(hookenv.config('neutron-domain'),
-                          hookenv.config('neutron-domain-email'))
-
+        if hookenv.is_leader():
+            cls.create_server(hookenv.config('dns-server-record'))
+            cls.create_domain(
+                hookenv.config('nova-domain'),
+                hookenv.config('nova-domain-email'))
+            cls.create_domain(
+                hookenv.config('neutron-domain'),
+                hookenv.config('neutron-domain-email'))
+            hookenv.leader_set({'domain-init-done': True})
 
 class DesignateConfigurationAdapter(
       openstack_adapters.APIConfigurationAdapter):
