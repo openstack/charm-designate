@@ -31,7 +31,7 @@ def db_sync_done():
 def db_sync():
     """Use the singleton from the DesignateCharm to run db migration
     """
-    return DesignateCharm.singleton.db_sync()
+    DesignateCharm.singleton.db_sync()
 
 
 def render_base_config(interfaces_list):
@@ -48,7 +48,7 @@ def create_initial_servers_and_domains():
 def domain_init_done():
     """Use the singleton from the DesignateCharm to run render_base_config
     """
-    DesignateCharm.singleton.domain_init_done()
+    return DesignateCharm.singleton.domain_init_done()
 
 
 def render_full_config(interfaces_list):
@@ -108,8 +108,8 @@ class DesignateAdapters(openstack_adapters.OpenStackRelationAdapters):
         print(relations)
         super(DesignateAdapters, self).__init__(
             relations,
-            options=DesignateConfigurationAdapter,
-            port_map=DesignateCharm.api_ports)
+            options_instance=DesignateConfigurationAdapter(
+                port_map=DesignateCharm.api_ports))
 
 
 class DesignateCharm(openstack_charm.OpenStackCharm):

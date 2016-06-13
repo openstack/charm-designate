@@ -65,7 +65,7 @@ def render_all_configs(*args):
 @reactive.when_not('cluster.available')
 @reactive.when('domains.created')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
-def render_all_configs(*args):
+def render_all_configs_single_node(*args):
     designate.render_full_config(args)
 
 @reactive.when('ha.connected')
