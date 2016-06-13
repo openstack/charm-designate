@@ -79,6 +79,16 @@ def restart_all():
     """
     DesignateCharm.singleton.restart_all()
 
+#def configure_ca(keystone=None):
+#    """Use the singleton from the DesignateCharm to run render_base_config
+#    """
+#    DesignateCharm.singleton.configure_apache_ssl(keystone)
+
+def configure_ssl(keystone=None):
+    """Use the singleton from the DesignateCharm to run render_base_config
+    """
+    DesignateCharm.singleton.configure_ssl(keystone)
+
 
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
     """Get database URIs for the two designate databases"""
@@ -111,8 +121,7 @@ class DesignateAdapters(openstack_adapters.OpenStackRelationAdapters):
             options_instance=DesignateConfigurationAdapter(
                 port_map=DesignateCharm.api_ports))
 
-
-class DesignateCharm(openstack_charm.OpenStackCharm):
+class DesignateCharm(openstack_charm.HAOpenStackCharm):
     """Designate charm"""
 
     name = 'designate'
@@ -245,7 +254,9 @@ class DesignateConfigurationAdapter(
       openstack_adapters.APIConfigurationAdapter):
 
     def __init__(self, port_map=None):
-        super(DesignateConfigurationAdapter, self).__init__(port_map=port_map)
+        super(DesignateConfigurationAdapter, self).__init__(
+            port_map=port_map,
+            service_name='designate')
 
     @property
     def nova_domain_id(self):
