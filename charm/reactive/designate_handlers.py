@@ -37,13 +37,12 @@ def setup_endpoint(keystone):
 @reactive.when_not('base-config.rendered')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def configure_designate(*args):
-    designate.configure_ssl()
     designate.render_base_config(args)
     reactive.set_state('base-config.rendered')
 
-#@reactive.when('identity-service.available')
-#def configure_ssl(keystone):
-#    designate.configure_ca(keystone)
+@reactive.when('identity-service.available')
+def configure_ssl(keystone):
+    designate.configure_ssl(keystone)
 
 @reactive.when_not('db.synched')
 @reactive.when('base-config.rendered')
@@ -65,14 +64,12 @@ def create_servers_and_domains(*args):
 @reactive.when('domains.created')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def render_all_configs(*args):
-    designate.configure_ssl()
     designate.render_full_config(args)
 
 @reactive.when_not('cluster.available')
 @reactive.when('domains.created')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def render_all_configs_single_node(*args):
-    designate.configure_ssl()
     designate.render_full_config(args)
 
 @reactive.when('ha.connected')
