@@ -53,6 +53,7 @@ def run_db_migration(*args):
         reactive.set_state('db.synched')
 
 @reactive.when_not('domains.created')
+@reactive.when('db.synched')
 @reactive.when('base-config.rendered')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def create_servers_and_domains(*args):
