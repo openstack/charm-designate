@@ -79,15 +79,13 @@ def restart_all():
     """
     DesignateCharm.singleton.restart_all()
 
-#def configure_ca(keystone=None):
-#    """Use the singleton from the DesignateCharm to run render_base_config
-#    """
-#    DesignateCharm.singleton.configure_apache_ssl(keystone)
-
 def configure_ssl(keystone=None):
     """Use the singleton from the DesignateCharm to run render_base_config
     """
     DesignateCharm.singleton.configure_ssl(keystone)
+
+def update_peers(cluster):
+    DesignateCharm.singleton.update_peers(cluster)
 
 
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
@@ -115,7 +113,6 @@ class DesignateAdapters(openstack_adapters.OpenStackRelationAdapters):
     }
 
     def __init__(self, relations):
-        print(relations)
         super(DesignateAdapters, self).__init__(
             relations,
             options_instance=DesignateConfigurationAdapter(

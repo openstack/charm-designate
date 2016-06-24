@@ -62,6 +62,10 @@ def create_servers_and_domains(*args):
         reactive.set_state('domains.created')
 
 @reactive.when('cluster.available')
+def update_peers(cluster):
+    designate.update_peers(cluster)
+
+@reactive.when('cluster.available')
 @reactive.when('domains.created')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def render_all_configs(*args):
