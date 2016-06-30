@@ -57,7 +57,6 @@ def render_full_config(interfaces_list):
     DesignateCharm.singleton.render_full_config(interfaces_list)
 
 
-                                                                                
 def register_endpoints(keystone):
     """When the keystone interface connects, register this unit in the keystone
     catalogue.
@@ -87,6 +86,11 @@ def configure_ssl(keystone=None):
 def update_peers(cluster):
     DesignateCharm.singleton.update_peers(cluster)
 
+def assess_status():
+    """Just call the BarbicanCharm.singleton.assess_status() command to update
+    status on the unit.
+    """
+    DesignateCharm.singleton.assess_status()
 
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
     """Get database URIs for the two designate databases"""
@@ -139,6 +143,9 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
             openstack_ip.INTERNAL: 9001,
         }
     }
+
+    required_relations = ['shared-db', 'amqp', 'identity-service',
+                          'dns-backend']
 
     restart_map = {
         '/etc/default/openstack': services,

@@ -19,6 +19,7 @@ def install_packages():
 def setup_amqp_req(amqp):
     amqp.request_access(username='designate',
                         vhost='openstack')
+    designate.assess_status()
 
 
 @reactive.when('shared-db.connected')
@@ -27,11 +28,13 @@ def setup_database(database):
                        hookenv.unit_private_ip(), prefix='designate')
     database.configure('dpm', 'dpm',
                        hookenv.unit_private_ip(), prefix='dpm')
+    designate.assess_status()
 
 
 @reactive.when('identity-service.connected')
 def setup_endpoint(keystone):
     designate.register_endpoints(keystone) 
+    designate.assess_status()
 
 
 @reactive.when_not('base-config.rendered')
@@ -80,3 +83,10 @@ def render_all_configs_single_node(*args):
 @reactive.when('ha.connected')
 def cluster_connected(hacluster):
     designate.configure_ha_resources(hacluster)
+    designate.assess_status()
+
+@reactive.when('config.changed')
+def config_changed():
+    """When the configuration changes, assess the unit's status to update any
+    juju state required"""
+    designate.assess_status()
