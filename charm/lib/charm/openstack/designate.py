@@ -4,7 +4,7 @@ import subprocess
 import charmhelpers.contrib.openstack.utils as ch_utils
 import charms_openstack.adapters as openstack_adapters
 import charms_openstack.charm as openstack_charm
-import charms_openstack.ip as openstack_ip
+import charms_openstack.ip as os_ip
 import charmhelpers.core.hookenv as hookenv
 
 DESIGNATE_DIR = '/etc/designate'
@@ -92,6 +92,7 @@ def assess_status():
     """
     DesignateCharm.singleton.assess_status()
 
+
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
     """Get database URIs for the two designate databases"""
 
@@ -138,9 +139,9 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
 
     api_ports = {
         'designate-api': {
-            openstack_ip.PUBLIC: 9001,
-            openstack_ip.ADMIN: 9001,
-            openstack_ip.INTERNAL: 9001,
+            os_ip.PUBLIC: 9001,
+            os_ip.ADMIN: 9001,
+            os_ip.INTERNAL: 9001,
         }
     }
 
@@ -307,6 +308,11 @@ class DesignateConfigurationAdapter(
         return daemon_arg
 
 
+    @property
+    def rndc_master_ip(self):
+        """Returns IP address slave DNS slave should use to query master
+        """
+        return os_ip.resolve_address(endpoint_type=os_ip.INTERNAL)
 #class DesignateCharmFactory(openstack_charm.OpenStackCharmFactory):
 #
 #    releases = {
