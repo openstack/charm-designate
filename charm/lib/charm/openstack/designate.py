@@ -188,6 +188,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         @returns None
         """
         configs = [RC_FILE, DESIGNATE_CONF, RNDC_KEY_CONF, DESIGNATE_DEFAULT]
+        if self.haproxy_enabled():
+            configs.append(self.HAPROXY_CONF)
         DesignateCharm.singleton.render_with_interfaces(
             interfaces_list,
             configs=configs)

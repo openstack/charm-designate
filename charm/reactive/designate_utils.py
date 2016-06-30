@@ -10,6 +10,10 @@ def run_command(cmd):
     p = subprocess.Popen(cmd, env=os_env, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
     out, err = p.communicate()
+    if p.returncode != 0:
+        raise RuntimeError(
+            "{} failed, status code {} stdout {} stderr {}".format(
+                cmd, p.returncode, out, err))
     return out, err
 
 
