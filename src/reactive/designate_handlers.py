@@ -79,6 +79,7 @@ def render_all_configs(*args):
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def render_all_configs_single_node(*args):
     designate.render_full_config(args)
+    designate.render_rndc_keys()
 
 @reactive.when('ha.connected')
 def cluster_connected(hacluster):

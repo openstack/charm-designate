@@ -7,6 +7,7 @@ import charms_openstack.adapters as openstack_adapters
 import charms_openstack.charm as openstack_charm
 import charms_openstack.ip as os_ip
 import charmhelpers.core.hookenv as hookenv
+import charmhelpers.core.host as host
 
 DESIGNATE_DIR = '/etc/designate'
 DESIGNATE_DEFAULT = '/etc/default/openstack'
@@ -87,6 +88,9 @@ def configure_ssl(keystone=None):
 def update_peers(cluster):
     DesignateCharm.singleton.update_peers(cluster)
 
+def render_rndc_keys():
+    DesignateCharm.singleton.render_rndc_keys()
+
 def assess_status():
     """Just call the BarbicanCharm.singleton.assess_status() command to update
     status on the unit.
@@ -121,15 +125,15 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
        
     @property
     def pool_config(self): 
-        config = []
+        pconfig = []
         for slave in self.slave_ips:
            unit_name = slave['unit'].replace('/', '_').replace('-', '_')
-           config.append({
+           pconfig.append({
                'nameserver': 'nameserver_{}'.format(unit_name),
                'pool_target': 'nameserver_{}'.format(unit_name),
                'address': slave['address'],
            })
-        return config
+        return pconfig
 
     @property
     def nameservers(self):
@@ -157,6 +161,33 @@ class DesignateConfigurationAdapter(
             port_map=port_map,
             service_name='designate')
 
+    @property
+    def pool_config(self):
+        pconfig = []
+        for entry in self.dns_slaves.split():
+           address, port, key = entry.split(':')
+           unit_name = address.replace('.', '_')
+           pconfig.append({
+               'nameserver': 'nameserver_{}'.format(unit_name),
+               'pool_target': 'nameserver_{}'.format(unit_name),
+               'address': address,
+               'rndc_key_file': '/etc/designate/rndc_{}.key'.format(unit_name),
+           })
+        return pconfig
+
+    @property
+    def nameservers(self):
+        return ', '.join([s['nameserver'] for s in self.pool_config])
+
+    @property
+    def pool_targets(self):
+        return ', '.join([s['pool_target'] for s in self.pool_config])
+
+    @property
+    def slave_addresses(self):
+        return ', '.join(['{}:53'.format(s['address'])
+                                         for s in self.pool_config])
+ 
     @property
     def nova_domain_id(self):
         """Returns the id of the domain corresponding to the user supplied
@@ -207,13 +238,6 @@ class DesignateConfigurationAdapter(
         """Returns IP address slave DNS slave should use to query master
         """
         return os_ip.resolve_address(endpoint_type=os_ip.INTERNAL)
-#class DesignateCharmFactory(openstack_charm.OpenStackCharmFactory):
-#
-#    releases = {
-#        'liberty': DesignateCharm
-#    }
-#
-#    first_release = 'liberty'
 
 class DesignateAdapters(openstack_adapters.OpenStackAPIRelationAdapters):
     """
@@ -310,6 +334,33 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         """
         DesignateCharm.singleton.render_with_interfaces(interfaces_list)
 
+    def write_key_file(self, unit_name, key):
+        """Write rndc keyfile for given unit_name
+
+        @param unit_name: str Name of unit using key
+        @param key: str RNDC key
+        @returns None
+        """
+        key_file = '/etc/designate/rndc_{}.key'.format(unit_name)
+        template = ('key "rndc-key" {{\n    algorithm hmac-md5;\n    '
+                    'secret "{}";\n}};')
+        host.write_file(
+            key_file,
+            str.encode(template.format(key)),
+            owner='root',
+            group='designate',
+            perms=0o440)
+
+    def render_rndc_keys(self):
+        """Render the rndc keys supplied via user config
+
+        @returns None
+        """
+        for entry in hookenv.config('dns-slaves').split():
+            address, port, key = entry.split(':')
+            unit_name = address.replace('.', '_')
+            self.write_key_file(unit_name, key)
+     
     @classmethod
     def get_domain_id(cls, domain):
         """Return the domain ID for a given domain name

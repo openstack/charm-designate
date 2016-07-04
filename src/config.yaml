@@ -1,0 +1,29 @@
+options:
+  dns-slaves:
+    default:
+    type: string
+    description: |
+      List of DNS slaves which will accept addzone/delzone rndc commands from
+      Designate. List is of the form slave_ip:rndc_port:rndc_key. This should
+      only be used if DNS servers are outside of Juju control. Using the
+      designate-bind charm is the prefered approach.
+  nova-domain:
+    default: 'www.example.com.'
+    type: string
+    description: Domain to add records for new instances to
+  nova-domain-email:
+    default: 'email@example.com'
+    type: string
+    description: Email address of the person responsible for the domain.
+  dns-server-record:
+    default: 'ns1.www.example.com.'
+    type: string
+    description: DNS server record
+  neutron-domain:
+    default: 'www.bob.com.'
+    type: string
+    description: Domain to add  floating ip records to
+  neutron-domain-email:
+    default: 'email@example.com'
+    type: string
+    description: Email address of the person responsible for the domain.
