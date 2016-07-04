@@ -1,3 +1,4 @@
+
 import os
 import subprocess
 
@@ -108,13 +109,120 @@ class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
         return self.get_uri(prefix='dpm')
 
 
-class DesignateAdapters(openstack_adapters.OpenStackRelationAdapters):
+class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
+
+    interface_type = "dns"
+    def __init__(self, relation):
+        super(BindRNDCRelationAdapter, self).__init__(relation)
+
+    @property
+    def slave_ips(self):
+        return self.relation.slave_ips()
+       
+    @property
+    def pool_config(self): 
+        config = []
+        for slave in self.slave_ips:
+           unit_name = slave['unit'].replace('/', '_').replace('-', '_')
+           config.append({
+               'nameserver': 'nameserver_{}'.format(unit_name),
+               'pool_target': 'nameserver_{}'.format(unit_name),
+               'address': slave['address'],
+           })
+        return config
+
+    @property
+    def nameservers(self):
+        return ', '.join([s['nameserver'] for s in self.pool_config])
+
+    @property
+    def pool_targets(self):
+        return ', '.join([s['pool_target'] for s in self.pool_config])
+
+    @property
+    def slave_addresses(self):
+        return ', '.join(['{}:53'.format(s['address'])
+                                         for s in self.pool_config])
+
+    @property
+    def rndc_info(self):
+        return self.relation.rndc_info()
+
+ 
+class DesignateConfigurationAdapter(
+      openstack_adapters.APIConfigurationAdapter):
+
+    def __init__(self, port_map=None):
+        super(DesignateConfigurationAdapter, self).__init__(
+            port_map=port_map,
+            service_name='designate')
+
+    @property
+    def nova_domain_id(self):
+        """Returns the id of the domain corresponding to the user supplied
+        'nova-domain'
+
+        @returns nova domain id
+        """
+        domain = hookenv.config('nova-domain')
+        return DesignateCharm.get_domain_id(domain)
+
+    @property
+    def neutron_domain_id(self):
+        """Returns the id of the domain corresponding to the user supplied
+        'neutron-domain'
+
+        @returns neutron domain id
+        """
+        domain = hookenv.config('neutron-domain')
+        return DesignateCharm.get_domain_id(domain)
+
+    @property
+    def nova_conf_args(self):
+        """Returns config file directive to point daemons at nova config file.
+        These directives are designed to be used in /etc/default/ files
+
+        @returns startup config file option
+        """
+        daemon_arg = ''
+        if os.path.exists(NOVA_SINK_FILE):
+            daemon_arg = '--config-file={}'.format(NOVA_SINK_FILE)
+        return daemon_arg
+
+    @property
+    def neutron_conf_args(self):
+        """Returns config file directive to point daemons at neutron config
+        file. These directives are designed to be used in /etc/default/ files
+
+        @returns startup config file option
+        """
+        daemon_arg = ''
+        if os.path.exists(NEUTRON_SINK_FILE):
+            daemon_arg = '--config-file={}'.format(NEUTRON_SINK_FILE)
+        return daemon_arg
+
+
+    @property
+    def rndc_master_ip(self):
+        """Returns IP address slave DNS slave should use to query master
+        """
+        return os_ip.resolve_address(endpoint_type=os_ip.INTERNAL)
+#class DesignateCharmFactory(openstack_charm.OpenStackCharmFactory):
+#
+#    releases = {
+#        'liberty': DesignateCharm
+#    }
+#
+#    first_release = 'liberty'
+
+class DesignateAdapters(openstack_adapters.OpenStackAPIRelationAdapters):
     """
     Adapters class for the Designate charm.
     """
     relation_adapters = {
         'shared_db': DesignateDBAdapter,
         'cluster': openstack_adapters.PeerHARelationAdapter,
+        'dns_backend': BindRNDCRelationAdapter,
     }
 
     def __init__(self, relations):
@@ -122,6 +230,7 @@ class DesignateAdapters(openstack_adapters.OpenStackRelationAdapters):
             relations,
             options_instance=DesignateConfigurationAdapter(
                 port_map=DesignateCharm.api_ports))
+
 
 class DesignateCharm(openstack_charm.HAOpenStackCharm):
     """Designate charm"""
@@ -257,68 +366,3 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                 hookenv.config('neutron-domain-email'))
             hookenv.leader_set({'domain-init-done': True})
 
-class DesignateConfigurationAdapter(
-      openstack_adapters.APIConfigurationAdapter):
-
-    def __init__(self, port_map=None):
-        super(DesignateConfigurationAdapter, self).__init__(
-            port_map=port_map,
-            service_name='designate')
-
-    @property
-    def nova_domain_id(self):
-        """Returns the id of the domain corresponding to the user supplied
-        'nova-domain'
-
-        @returns nova domain id
-        """
-        domain = hookenv.config('nova-domain')
-        return DesignateCharm.get_domain_id(domain)
-
-    @property
-    def neutron_domain_id(self):
-        """Returns the id of the domain corresponding to the user supplied
-        'neutron-domain'
-
-        @returns neutron domain id
-        """
-        domain = hookenv.config('neutron-domain')
-        return DesignateCharm.get_domain_id(domain)
-
-    @property
-    def nova_conf_args(self):
-        """Returns config file directive to point daemons at nova config file.
-        These directives are designed to be used in /etc/default/ files
-
-        @returns startup config file option
-        """
-        daemon_arg = ''
-        if os.path.exists(NOVA_SINK_FILE):
-            daemon_arg = '--config-file={}'.format(NOVA_SINK_FILE)
-        return daemon_arg
-
-    @property
-    def neutron_conf_args(self):
-        """Returns config file directive to point daemons at neutron config
-        file. These directives are designed to be used in /etc/default/ files
-
-        @returns startup config file option
-        """
-        daemon_arg = ''
-        if os.path.exists(NEUTRON_SINK_FILE):
-            daemon_arg = '--config-file={}'.format(NEUTRON_SINK_FILE)
-        return daemon_arg
-
-
-    @property
-    def rndc_master_ip(self):
-        """Returns IP address slave DNS slave should use to query master
-        """
-        return os_ip.resolve_address(endpoint_type=os_ip.INTERNAL)
-#class DesignateCharmFactory(openstack_charm.OpenStackCharmFactory):
-#
-#    releases = {
-#        'liberty': DesignateCharm
-#    }
-#
-#    first_release = 'liberty'
