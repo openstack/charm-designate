@@ -136,6 +136,7 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
     def pool_config(self):
         pconfig = []
         for slave in self.slave_ips:
+            print('SLAVE: {}'.format(slave))
             unit_name = slave['unit'].replace('/', '_').replace('-', '_')
             pconfig.append({
                 'nameserver': 'nameserver_{}'.format(unit_name),
