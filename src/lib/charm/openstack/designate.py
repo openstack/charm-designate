@@ -30,6 +30,7 @@ def db_sync_done():
     """
     return DesignateCharm.singleton.db_sync_done()
 
+
 def db_sync():
     """Use the singleton from the DesignateCharm to run db migration
     """
@@ -46,6 +47,7 @@ def create_initial_servers_and_domains():
     """Use the singleton from the DesignateCharm to run render_base_config
     """
     DesignateCharm.singleton.create_initial_servers_and_domains()
+
 
 def domain_init_done():
     """Use the singleton from the DesignateCharm to run render_base_config
@@ -70,26 +72,32 @@ def register_endpoints(keystone):
                                 charm.internal_url,
                                 charm.admin_url)
 
+
 def configure_ha_resources(hacluster):
     """Use the singleton from the DesignateCharm to run render_base_config
     """
     DesignateCharm.singleton.configure_ha_resources(hacluster)
+
 
 def restart_all():
     """Use the singleton from the DesignateCharm to run render_base_config
     """
     DesignateCharm.singleton.restart_all()
 
+
 def configure_ssl(keystone=None):
     """Use the singleton from the DesignateCharm to run render_base_config
     """
     DesignateCharm.singleton.configure_ssl(keystone)
 
+
 def update_peers(cluster):
     DesignateCharm.singleton.update_peers(cluster)
 
+
 def render_rndc_keys():
     DesignateCharm.singleton.render_rndc_keys()
+
 
 def assess_status():
     """Just call the BarbicanCharm.singleton.assess_status() command to update
@@ -116,23 +124,24 @@ class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
 class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
 
     interface_type = "dns"
+
     def __init__(self, relation):
         super(BindRNDCRelationAdapter, self).__init__(relation)
 
     @property
     def slave_ips(self):
         return self.relation.slave_ips()
-       
+
     @property
-    def pool_config(self): 
+    def pool_config(self):
         pconfig = []
         for slave in self.slave_ips:
-           unit_name = slave['unit'].replace('/', '_').replace('-', '_')
-           pconfig.append({
-               'nameserver': 'nameserver_{}'.format(unit_name),
-               'pool_target': 'nameserver_{}'.format(unit_name),
-               'address': slave['address'],
-           })
+            unit_name = slave['unit'].replace('/', '_').replace('-', '_')
+            pconfig.append({
+                'nameserver': 'nameserver_{}'.format(unit_name),
+                'pool_target': 'nameserver_{}'.format(unit_name),
+                'address': slave['address'],
+            })
         return pconfig
 
     @property
@@ -146,13 +155,13 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
     @property
     def slave_addresses(self):
         return ', '.join(['{}:53'.format(s['address'])
-                                         for s in self.pool_config])
+                         for s in self.pool_config])
 
     @property
     def rndc_info(self):
         return self.relation.rndc_info()
 
- 
+
 class DesignateConfigurationAdapter(
       openstack_adapters.APIConfigurationAdapter):
 
@@ -165,14 +174,15 @@ class DesignateConfigurationAdapter(
     def pool_config(self):
         pconfig = []
         for entry in self.dns_slaves.split():
-           address, port, key = entry.split(':')
-           unit_name = address.replace('.', '_')
-           pconfig.append({
-               'nameserver': 'nameserver_{}'.format(unit_name),
-               'pool_target': 'nameserver_{}'.format(unit_name),
-               'address': address,
-               'rndc_key_file': '/etc/designate/rndc_{}.key'.format(unit_name),
-           })
+            address, port, key = entry.split(':')
+            unit_name = address.replace('.', '_')
+            pconfig.append({
+                'nameserver': 'nameserver_{}'.format(unit_name),
+                'pool_target': 'nameserver_{}'.format(unit_name),
+                'address': address,
+                'rndc_key_file': '/etc/designate/rndc_{}.key'.format(
+                    unit_name),
+            })
         return pconfig
 
     @property
@@ -186,8 +196,8 @@ class DesignateConfigurationAdapter(
     @property
     def slave_addresses(self):
         return ', '.join(['{}:53'.format(s['address'])
-                                         for s in self.pool_config])
- 
+                         for s in self.pool_config])
+
     @property
     def nova_domain_id(self):
         """Returns the id of the domain corresponding to the user supplied
@@ -232,12 +242,12 @@ class DesignateConfigurationAdapter(
             daemon_arg = '--config-file={}'.format(NEUTRON_SINK_FILE)
         return daemon_arg
 
-
     @property
     def rndc_master_ip(self):
         """Returns IP address slave DNS slave should use to query master
         """
         return os_ip.resolve_address(endpoint_type=os_ip.INTERNAL)
+
 
 class DesignateAdapters(openstack_adapters.OpenStackAPIRelationAdapters):
     """
@@ -306,14 +316,12 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
             release = ch_utils.os_release('python-keystonemiddleware')
         super(DesignateCharm, self).__init__(release=release, **kwargs)
 
-
     def install(self):
         """Customise the installation, configure the source and then call the
         parent install() method to install the packages
         """
         self.configure_source()
         super(DesignateCharm, self).install()
-
 
     def render_base_config(self, interfaces_list):
         """Render initial config to bootstrap Designate service
@@ -360,7 +368,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
             address, port, key = entry.split(':')
             unit_name = address.replace('.', '_')
             self.write_key_file(unit_name, key)
-     
+
     @classmethod
     def get_domain_id(cls, domain):
         """Return the domain ID for a given domain name
@@ -416,4 +424,3 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                 hookenv.config('neutron-domain'),
                 hookenv.config('neutron-domain-email'))
             hookenv.leader_set({'domain-init-done': True})
-

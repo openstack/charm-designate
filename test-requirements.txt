@@ -1,0 +1,7 @@
+# Unit test requirements
+flake8>=2.2.4,<=2.4.1
+os-testr>=0.4.1
+charms.reactive
+mock>=1.2
+coverage>=3.6
+git+https://github.com/gnuoy/charms.openstack.git@bug/general#egg=charms.openstack
