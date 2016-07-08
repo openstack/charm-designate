@@ -21,42 +21,61 @@ RC_FILE = '/root/novarc'
 def install():
     """Use the singleton from the DesignateCharm to install the packages on the
     unit
+
+    @returns: None
     """
     DesignateCharm.singleton.install()
 
 
 def db_sync_done():
-    """Use the singleton from the DesignateCharm to run db migration
+    """Use the singleton from the DesignateCharm to check if db migration has
+    been run
+
+    @returns: str or None. Str if sync has been done otherwise None
     """
     return DesignateCharm.singleton.db_sync_done()
 
 
 def db_sync():
     """Use the singleton from the DesignateCharm to run db migration
+
+    @returns: None
     """
     DesignateCharm.singleton.db_sync()
 
 
 def render_base_config(interfaces_list):
     """Use the singleton from the DesignateCharm to run render_base_config
+
+    @param interfaces_list: List of instances of interface classes.
+    @returns: None
     """
     DesignateCharm.singleton.render_base_config(interfaces_list)
 
 
 def create_initial_servers_and_domains():
-    """Use the singleton from the DesignateCharm to run render_base_config
+    """Use the singleton from the DesignateCharm to run create inital servers
+    and domains in designate
+
+    @returns: None
     """
     DesignateCharm.singleton.create_initial_servers_and_domains()
 
 
 def domain_init_done():
-    """Use the singleton from the DesignateCharm to run render_base_config
+    """Use the singleton from the DesignateCharm to check if inital servers
+    and domains have been created
+
+    @returns: str or None. Str if init has been done otherwise None
     """
     return DesignateCharm.singleton.domain_init_done()
 
 
 def render_full_config(interfaces_list):
-    """Use the singleton from the DesignateCharm to run render_base_config
+    """Use the singleton from the DesignateCharm to render all configs
+
+    @param interfaces_list: List of instances of interface classes.
+    @returns: None
     """
     DesignateCharm.singleton.render_full_config(interfaces_list)
 
@@ -64,6 +83,9 @@ def render_full_config(interfaces_list):
 def register_endpoints(keystone):
     """When the keystone interface connects, register this unit in the keystone
     catalogue.
+
+    @param keystone: KeystoneRequires() interface class
+    @returns: None
     """
     charm = DesignateCharm.singleton
     keystone.register_endpoints(charm.service_type,
@@ -74,34 +96,55 @@ def register_endpoints(keystone):
 
 
 def configure_ha_resources(hacluster):
-    """Use the singleton from the DesignateCharm to run render_base_config
+    """Use the singleton from the DesignateCharm to run configure ha resources
+
+    @param hacluster: OpenstackHAPeers() interface class
+    @returns: None
     """
     DesignateCharm.singleton.configure_ha_resources(hacluster)
 
 
 def restart_all():
-    """Use the singleton from the DesignateCharm to run render_base_config
+    """Use the singleton from the DesignateCharm to restart all registered
+    services
+
+    @returns: None
     """
     DesignateCharm.singleton.restart_all()
 
 
 def configure_ssl(keystone=None):
-    """Use the singleton from the DesignateCharm to run render_base_config
+    """Use the singleton from the DesignateCharm to configure ssl
+
+    @param keystone: KeystoneRequires() interface class
+    @returns: None
     """
     DesignateCharm.singleton.configure_ssl(keystone)
 
 
-def update_peers(cluster):
-    DesignateCharm.singleton.update_peers(cluster)
+def update_peers(hacluster):
+    """Use the singleton from the DesignateCharm to update peers with detials
+    of this unit
+
+    @param hacluster: OpenstackHAPeers() interface class
+    @returns: None
+    """
+    DesignateCharm.singleton.update_peers(hacluster)
 
 
 def render_rndc_keys():
+    """Use the singleton from the DesignateCharm write out rndc key files
+
+    @returns: None
+    """
     DesignateCharm.singleton.render_rndc_keys()
 
 
 def assess_status():
     """Just call the BarbicanCharm.singleton.assess_status() command to update
     status on the unit.
+
+    @returns: None
     """
     DesignateCharm.singleton.assess_status()
 
@@ -114,10 +157,12 @@ class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
 
     @property
     def designate_uri(self):
+        """URI for designate DB"""
         return self.get_uri(prefix='designate')
 
     @property
     def designate_pool_uri(self):
+        """URI for designate pool DB"""
         return self.get_uri(prefix='dpm')
 
 
@@ -130,13 +175,28 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
 
     @property
     def slave_ips(self):
+        '''List of DNS slave address infoprmation
+
+        @returns: list [{'unit': unitname, 'address': 'address'},
+                        ...]
+        '''
         return self.relation.slave_ips()
 
     @property
     def pool_config(self):
+        '''List of DNS slave information from Juju attached DNS slaves
+
+        Creates a dict for each backends and returns a list of those dicts.
+        The designate config file has a section per backend. The template uses
+        the nameserver and pool_target names to create a section for each
+        backend
+
+        @returns: list [{'nameserver': name, 'pool_target': name,
+                         'address': slave_ip_addr},
+                        ...]
+        '''
         pconfig = []
         for slave in self.slave_ips:
-            print('SLAVE: {}'.format(slave))
             unit_name = slave['unit'].replace('/', '_').replace('-', '_')
             pconfig.append({
                 'nameserver': 'nameserver_{}'.format(unit_name),
@@ -147,19 +207,36 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
 
     @property
     def nameservers(self):
+        '''List of nameserver section names
+
+        @returns: str Comma delimited list of nameserver section names
+        '''
         return ', '.join([s['nameserver'] for s in self.pool_config])
 
     @property
     def pool_targets(self):
+        '''List of pool_target section names
+
+        @returns: str Comma delimited list of pool_target section names
+        '''
         return ', '.join([s['pool_target'] for s in self.pool_config])
 
     @property
     def slave_addresses(self):
+        '''List of slave IP addresses
+
+        @returns: str Comma delimited list of slave IP addresses
+        '''
         return ', '.join(['{}:53'.format(s['address'])
                          for s in self.pool_config])
 
     @property
     def rndc_info(self):
+        '''Rndc key and algorith in formation.
+
+        @returns: dict {'algorithm': rndc_algorithm,
+                        'secret': rndc_secret_digest}
+        '''
         return self.relation.rndc_info()
 
 
@@ -173,6 +250,19 @@ class DesignateConfigurationAdapter(
 
     @property
     def pool_config(self):
+        '''List of DNS slave information from user defined config
+
+        Creates a dict for each backends and returns a list of those dicts.
+        The designate config file has a section per backend. The template uses
+        the nameserver and pool_target names to create a section for each
+        backend.
+
+        @returns: list [{'nameserver': name,
+                         'pool_target': name,
+                         'address': slave_ip_addr,
+                         'rndc_key_file': rndc_key_file},
+                        ...]
+        '''
         pconfig = []
         for entry in self.dns_slaves.split():
             address, port, key = entry.split(':')
@@ -188,14 +278,26 @@ class DesignateConfigurationAdapter(
 
     @property
     def nameservers(self):
+        '''List of nameserver section names
+
+        @returns: str Comma delimited list of nameserver section names
+        '''
         return ', '.join([s['nameserver'] for s in self.pool_config])
 
     @property
     def pool_targets(self):
+        '''List of pool_target section names
+
+        @returns: str Comma delimited list of pool_target section names
+        '''
         return ', '.join([s['pool_target'] for s in self.pool_config])
 
     @property
     def slave_addresses(self):
+        '''List of slave IP addresses
+
+        @returns: str Comma delimited list of slave IP addresses
+        '''
         return ', '.join(['{}:53'.format(s['address'])
                          for s in self.pool_config])
 
