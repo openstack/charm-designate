@@ -4,3 +4,5 @@ layers
 interfaces
 builds
 deps
+.testrepository
+__pycache__
