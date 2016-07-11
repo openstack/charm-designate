@@ -467,7 +467,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
 
         @returns None
         """
-        for entry in hookenv.config('dns-slaves').split():
+        slaves = hookenv.config('dns-slaves') or ''
+        for entry in slaves.split():
             address, port, key = entry.split(':')
             unit_name = address.replace('.', '_')
             self.write_key_file(unit_name, key)
@@ -479,7 +480,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         @param domain: Domain name
         @returns domain_id
         """
-        get_cmd = ['reactive/designate_utils.py', 'domain-get', domain]
+        get_cmd = ['reactive/designate_utils.py', 'domain-get',
+                   '--domain-name', domain]
         output = subprocess.check_output(get_cmd)
         if output:
             return output.decode('utf8').strip()
@@ -494,8 +496,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                       domain.
         @returns None
         """
-        create_cmd = ['reactive/designate_utils.py', 'domain-create', domain,
-                      email]
+        create_cmd = ['reactive/designate_utils.py', 'domain-create',
+                      '--domain-name', domain, '--email', email]
         subprocess.check_call(create_cmd)
 
     @classmethod
@@ -505,7 +507,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         @param nsname: Name of NameserverS record
         @returns None
         """
-        create_cmd = ['reactive/designate_utils.py', 'server-create', nsname]
+        create_cmd = ['reactive/designate_utils.py', 'server-create',
+                      '--server-name', nsname]
         subprocess.check_call(create_cmd)
 
     def domain_init_done(self):

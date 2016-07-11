@@ -27,3 +27,11 @@ options:
     default: 'email@example.com'
     type: string
     description: Email address of the person responsible for the domain.
+  neutron-record-format:
+    default: '%(octet0)s-%(octet1)s-%(octet2)s-%(octet3)s.%(domain)s'
+    type: string
+    description: Format of floating ip global records
+  nova-record-format:
+    default: '%(hostname)s.%(tenant_id)s.%(domain)s'
+    type: string
+    description: Format of floating ip global records

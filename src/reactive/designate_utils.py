@@ -31,11 +31,23 @@ def get_server_id(server_name):
         return servers[server_name]['id']
 
 
+def display_server_id(server_name):
+    server_id = get_server_id(server_name)
+    if server_id:
+        print(server_id)
+
+
 def get_domain_id(domain_name):
     domains = get_domains()
     if domains.get(domain_name):
         return domains[domain_name]['id']
 
+
+def display_domain_id(domain_name):
+    domain_id = get_domain_id(domain_name)
+    if domain_id:
+        print(domain_id)
+    
 
 def create_server(server_name):
     server_id = get_server_id(server_name)
@@ -47,7 +59,7 @@ def create_server(server_name):
         '-f', 'value',
     ]
     out, err = run_command(cmd)
-    return get_server_id(server_name)
+    print(get_server_id(server_name))
 
 
 def create_domain(domain_name, domain_email):
@@ -61,12 +73,14 @@ def create_domain(domain_name, domain_email):
         '-f', 'value',
     ]
     out, err = run_command(cmd)
-    return get_domain_id(domain_name)
+    print(get_domain_id(domain_name))
 
 
-def delete_domain(domain_id):
-    cmd = ['domain-delete', domain_id]
-    run_command(cmd)
+def delete_domain(domain_name):
+    domain_id = get_domain_id(domain_name)
+    if domain_id:
+        cmd = ['domain-delete', domain_id]
+        run_command(cmd)
 
 
 def get_domains():
@@ -95,25 +109,41 @@ def get_servers():
             }
     return servers
 
+def display_domains():
+    for domain in get_domains():
+        print(domain)
+
+def display_servers():
+    for server in get_servers():
+        print(server)
+
+
 if __name__ == '__main__':
-    get_environment()
+    commands = {
+        'domain-create': create_domain,
+        'server-create': create_server,
+        'domain-get': display_domain_id,
+        'server-get': display_server_id,
+        'domain-delete': delete_domain,
+        'domain-list': display_domains,
+        'server-list': display_servers,
+    }
+    cmd_args = []
     parser = argparse.ArgumentParser(description='Manage designate.')
-    parser.add_argument('command', nargs='*', help='designate command')
+    parser.add_argument('command',
+                        help='One of: {}'.format(', '.join(commands.keys())))
+    parser.add_argument('--domain-name', help='Domain Name')
+    parser.add_argument('--server-name', help='Server Name')
+    parser.add_argument('--email', help='Email Address')
     args = parser.parse_args()
-    if args.command[0] == 'domain-create':
-        print(create_domain(args.command[0], args.command[1]))
-    elif args.command[0] == 'server-create':
-        print(create_server(args.command[1]))
-    elif args.command[0] == 'domain-get':
-        domain_id = get_domain_id(args, args.command[1])
-        if domain_id:
-            print(domain_id)
-    elif args.command[0] == 'server-get':
-        server_id = get_server_id(args, args.command[1])
-        if server_id:
-            print(server_id)
-    elif args.command[0] == 'domain-delete':
-        domain_id = get_domain_id(args, args.command[1])
-        delete_domain(domain_id)
-    elif args.command[0] == 'domain-list':
-        print(get_domains())
+    if args.domain_name:
+        cmd_args.append(args.domain_name)
+    if args.server_name:
+        cmd_args.append(args.server_name)
+    if args.email:
+        cmd_args.append(args.email)
+
+    if cmd_args:
+        commands[args.command](*cmd_args)
+    else:
+        commands[args.command]()
