@@ -141,12 +141,21 @@ def render_rndc_keys():
 
 
 def assess_status():
-    """Just call the BarbicanCharm.singleton.assess_status() command to update
+    """Just call the DesignateCharm.singleton.assess_status() command to update
     status on the unit.
 
     @returns: None
     """
     DesignateCharm.singleton.assess_status()
+
+
+def update_pools():
+    """Just call the DesignateCharm.singleton.update_pools() command to update
+    pool info in the db
+
+    @returns: None
+    """
+    DesignateCharm.singleton.update_pools()
 
 
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
@@ -400,6 +409,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         '/etc/designate/rndc.key': services,
         '/etc/designate/conf.d/nova_sink.cfg': services,
         '/etc/designate/conf.d/neutron_sink.cfg': services,
+        '/etc/designate/pools.yaml': [''],
         RC_FILE: [''],
     }
     service_type = 'designate'
@@ -408,7 +418,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
     adapters_class = DesignateAdapters
 
     ha_resources = ['vips', 'haproxy']
-    release = 'liberty'
+    release = 'mitaka'
 
     def __init__(self, release=None, **kwargs):
         """Custom initialiser for class
@@ -530,3 +540,9 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                 hookenv.config('neutron-domain'),
                 hookenv.config('neutron-domain-email'))
             hookenv.leader_set({'domain-init-done': True})
+
+    def update_pools(self):
+        # designate-manage communicates with designate via message bus so no
+        # need to set OS_ vars
+        cmd = ['designate-manage', 'pool', 'update']
+        subprocess.check_call(cmd)

@@ -89,6 +89,7 @@ def update_peers(cluster):
 def render_all_configs(*args):
     '''Write out all designate config include bootstrap domain info'''
     designate.render_full_config(args)
+    designate.update_pools()
 
 
 @reactive.when_not('cluster.available')
@@ -98,14 +99,16 @@ def render_all_configs_single_node(*args):
     '''Write out all designate config include bootstrap domain info'''
     designate.render_full_config(args)
     designate.render_rndc_keys()
+    designate.update_pools()
 
 
 @reactive.when('ha.connected')
 def cluster_connected(hacluster):
     '''Configure HA resources in corosync'''
     designate.configure_ha_resources(hacluster)
+    designate.render_full_config(args)
+    designate.update_pools()
     designate.assess_status()
-
 
 @reactive.when('config.changed')
 def config_changed():

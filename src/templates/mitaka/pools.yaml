@@ -1,0 +1,59 @@
+- id: 794ccc2c-d751-44fe-b57f-8894c9f5c842
+  name: default
+  description: Pool genergated by Juju
+
+  ns_records:
+    - hostname: {{ options.dns_server_record }}
+      priority: 10
+
+  nameservers:
+{% if dns_backend.pool_config %}
+{% for slave in dns_backend.pool_config %}
+    - host: {{ slave.address }}
+      port: 53
+{% endfor %}
+{% endif %}
+{% if options.pool_config %}
+{% for slave in dns_backend.pool_config %}
+    - host: {{ slave.address }}
+      port: 53
+{% endfor %}
+{% endif %}
+
+  targets:
+{% if dns_backend.pool_config %}
+{% for slave in dns_backend.pool_config %}
+    - type: bind9
+      masters:
+        - host: {{ options.rndc_master_ip }}
+          port: 5354
+      options:
+        rndc_host: {{ slave.address }}
+        rndc_key_file: /etc/designate/rndc.key
+{% endfor %}
+{% endif %}
+{% if options.pool_config %}
+{% for slave in options.pool_config %}
+    - type: bind9
+      masters:
+        - host: {{ options.rndc_master_ip }}
+          port: 5354
+      options:
+        rndc_host: {{ slave.address }}
+        rndc_key_file: {{ slave.rndc_key_file }}
+{% endfor %}
+{% endif %}
+
+  also_notifies:
+{% if dns_backend.pool_config %}
+{% for slave in dns_backend.pool_config %}
+    - host: {{ slave.address }}
+      port: 53
+{% endfor %}
+{% endif %}
+{% if options.pool_config %}
+{% for slave in dns_backend.pool_config %}
+    - host: {{ slave.address }}
+      port: 53
+{% endfor %}
+{% endif %}
