@@ -6,6 +6,7 @@ import charmhelpers.contrib.openstack.utils as ch_utils
 import charms_openstack.adapters as openstack_adapters
 import charms_openstack.charm as openstack_charm
 import charms_openstack.ip as os_ip
+import charmhelpers.core.decorators as decorators
 import charmhelpers.core.hookenv as hookenv
 import charmhelpers.core.host as host
 
@@ -490,6 +491,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         @param domain: Domain name
         @returns domain_id
         """
+        cls.ensure_api_responding()
         get_cmd = ['reactive/designate_utils.py', 'domain-get',
                    '--domain-name', domain]
         output = subprocess.check_output(get_cmd)
@@ -506,6 +508,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                       domain.
         @returns None
         """
+        cls.ensure_api_responding()
         create_cmd = ['reactive/designate_utils.py', 'domain-create',
                       '--domain-name', domain, '--email', email]
         subprocess.check_call(create_cmd)
@@ -517,6 +520,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         @param nsname: Name of NameserverS record
         @returns None
         """
+        cls.ensure_api_responding()
         create_cmd = ['reactive/designate_utils.py', 'server-create',
                       '--server-name', nsname]
         subprocess.check_call(create_cmd)
@@ -525,13 +529,26 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         return hookenv.leader_get(attribute='domain-init-done')
 
     @classmethod
+    def ensure_api_responding(self):
+
+        @decorators.retry_on_exception(
+            30, base_delay=5, exc_type=subprocess.CalledProcessError)
+        def check_designate_api():
+            print("Checking API service is responding")
+            check_cmd = ['reactive/designate_utils.py', 'server-list']
+            subprocess.check_call(check_cmd)
+
+        check_designate_api()
+        return True
+
+    @classmethod
     def create_initial_servers_and_domains(cls):
         """Create the nameserver entry and domains based on the charm user
         supplied config
 
         @returns None
         """
-        if hookenv.is_leader():
+        if hookenv.is_leader() and cls.ensure_api_responding():
             cls.create_server(hookenv.config('dns-server-record'))
             cls.create_domain(
                 hookenv.config('nova-domain'),
