@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-"""Amulet tests on a basic aodh deployment on trusty-liberty."""
+"""Amulet tests on a basic aodh deployment on trusty-mitaka."""
 
 from basic_deployment import DesignateBasicDeployment
 
 if __name__ == '__main__':
     deployment = DesignateBasicDeployment(
         series='trusty',
-        openstack='cloud:trusty-liberty',
-        source='cloud:trusty-updates/liberty')
+        openstack='cloud:trusty-mitaka',
+        source='cloud:trusty-updates/mitaka')
     deployment.run_tests()

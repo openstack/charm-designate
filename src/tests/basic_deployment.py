@@ -400,19 +400,13 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         # and corresponding config files affected by the change
         conf_file = '/etc/designate/designate.conf'
         services = {svc: conf_file for svc in self.designate_svcs}
-#        services = {
-#            'designate-api': conf_file,
-#            'designate-evaluator': conf_file,
-#            'designate-notifier': conf_file,
-#            'designate-listener': conf_file,
-#        }
 
         # Make config change, check for service restarts
         u.log.debug('Making config change on {}...'.format(juju_service))
         mtime = u.get_sentry_time(sentry)
         self.d.configure(juju_service, set_alternate)
 
-        sleep_time = 40
+        sleep_time = 50
         for s, conf_file in services.iteritems():
             u.log.debug("Checking that service restarted: {}".format(s))
             if not u.validate_service_config_changed(sentry, mtime, s,

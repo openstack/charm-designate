@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+
+"""Amulet tests on a basic aodh deployment on trusty-mitaka."""
+
+from basic_deployment import DesignateBasicDeployment
+
+if __name__ == '__main__':
+    deployment = DesignateBasicDeployment(series='xenial')
+    deployment.run_tests()
