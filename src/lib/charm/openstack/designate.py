@@ -544,5 +544,6 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
     def update_pools(self):
         # designate-manage communicates with designate via message bus so no
         # need to set OS_ vars
-        cmd = ['designate-manage', 'pool', 'update']
-        subprocess.check_call(cmd)
+        if hookenv.is_leader():
+            cmd = ['designate-manage', 'pool', 'update']
+            subprocess.check_call(cmd)
