@@ -47,7 +47,7 @@ def display_domain_id(domain_name):
     domain_id = get_domain_id(domain_name)
     if domain_id:
         print(domain_id)
-    
+
 
 def create_server(server_name):
     server_id = get_server_id(server_name)
@@ -109,9 +109,11 @@ def get_servers():
             }
     return servers
 
+
 def display_domains():
     for domain in get_domains():
         print(domain)
+
 
 def display_servers():
     for server in get_servers():

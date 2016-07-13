@@ -370,30 +370,31 @@ class TestDesignateCharm(Helper):
             self.write_key_file.assert_has_calls(calls)
 
     def test_get_domain_id(self):
+        self.patch(designate.DesignateCharm, 'ensure_api_responding')
         self.patch(designate.subprocess, 'check_output')
         self.check_output.return_value = b'hi\n'
         self.assertEqual(designate.DesignateCharm.get_domain_id('domain'),
                          'hi')
         self.check_output.assert_called_with(
             ['reactive/designate_utils.py',
-             'domain-get',
-             'domain'])
+             'domain-get', '--domain-name', 'domain'])
 
     def test_create_domain(self):
+        self.patch(designate.DesignateCharm, 'ensure_api_responding')
         self.patch(designate.subprocess, 'check_call')
         designate.DesignateCharm.create_domain('domain', 'email')
         self.check_call.assert_called_with(
             ['reactive/designate_utils.py',
-             'domain-create',
-             'domain',
-             'email'])
+             'domain-create', '--domain-name', 'domain',
+             '--email', 'email'])
 
     def test_create_server(self):
         self.patch(designate.subprocess, 'check_call')
+        self.patch(designate.DesignateCharm, 'ensure_api_responding')
         designate.DesignateCharm.create_server('nameservername')
         self.check_call.assert_called_with(
             ['reactive/designate_utils.py',
-             'server-create',
+             'server-create', '--server-name',
              'nameservername'])
 
     def test_domain_init_done(self):
@@ -413,6 +414,8 @@ class TestDesignateCharm(Helper):
             'neutron-domain': 'neutrondomain',
             'neutron-domain-email': 'neutronemail',
         }
+        self.patch(designate.DesignateCharm, 'ensure_api_responding')
+        self.ensure_api_responding.return_value = True
         self.patch(designate.hookenv, 'is_leader', return_value=True)
         self.patch(designate.hookenv, 'leader_set')
         self.patch(designate.DesignateCharm, 'create_server')

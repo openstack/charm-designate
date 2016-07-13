@@ -106,9 +106,8 @@ def render_all_configs_single_node(*args):
 def cluster_connected(hacluster):
     '''Configure HA resources in corosync'''
     designate.configure_ha_resources(hacluster)
-    designate.render_full_config(args)
-    designate.update_pools()
     designate.assess_status()
+
 
 @reactive.when('config.changed')
 def config_changed():

@@ -247,7 +247,7 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
         @returns: dict {'algorithm': rndc_algorithm,
                         'secret': rndc_secret_digest}
         '''
-        return self.relation.rndc_info()
+        return self.relation.rndc_info
 
 
 class DesignateConfigurationAdapter(
