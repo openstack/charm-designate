@@ -63,8 +63,7 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         other_services = [{'name': 'mysql'},
                           {'name': 'rabbitmq-server'},
                           {'name': 'keystone'},
-                          {'name': 'designate-bind',
-                           'location': 'cs:~gnuoy/trusty/designate-bind-3'}]
+                          {'name': 'designate-bind'}]
         super(DesignateBasicDeployment, self)._add_services(this_service,
                                                             other_services)
 

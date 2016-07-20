@@ -19,6 +19,10 @@ import os
 import subprocess
 
 
+def display(msg):
+    print(msg)
+
+
 def run_command(cmd):
     os_env = get_environment(os.environ.copy())
     p = subprocess.Popen(cmd, env=os_env, stdout=subprocess.PIPE,
@@ -48,7 +52,7 @@ def get_server_id(server_name):
 def display_server_id(server_name):
     server_id = get_server_id(server_name)
     if server_id:
-        print(server_id)
+        display(server_id)
 
 
 def get_domain_id(domain_name):
@@ -60,7 +64,7 @@ def get_domain_id(domain_name):
 def display_domain_id(domain_name):
     domain_id = get_domain_id(domain_name)
     if domain_id:
-        print(domain_id)
+        display(domain_id)
 
 
 def create_server(server_name):
@@ -73,7 +77,7 @@ def create_server(server_name):
         '-f', 'value',
     ]
     out, err = run_command(cmd)
-    print(get_server_id(server_name))
+    display(get_server_id(server_name))
 
 
 def create_domain(domain_name, domain_email):
@@ -87,7 +91,7 @@ def create_domain(domain_name, domain_email):
         '-f', 'value',
     ]
     out, err = run_command(cmd)
-    print(get_domain_id(domain_name))
+    display(get_domain_id(domain_name))
 
 
 def delete_domain(domain_name):
@@ -126,12 +130,12 @@ def get_servers():
 
 def display_domains():
     for domain in get_domains():
-        print(domain)
+        display(domain)
 
 
 def display_servers():
     for server in get_servers():
-        print(server)
+        display(server)
 
 
 if __name__ == '__main__':

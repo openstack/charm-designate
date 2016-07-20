@@ -4,4 +4,4 @@ os-testr>=0.4.1
 charms.reactive
 mock>=1.2
 coverage>=3.6
-git+https://github.com/gnuoy/charms.openstack.git@bug/general#egg=charms.openstack
+git+https://github.com/openstack/charms.openstack#egg=charms.openstack

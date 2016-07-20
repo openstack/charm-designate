@@ -228,16 +228,20 @@ class TestDesignateHandlers(unittest.TestCase):
         self.update_peers.assert_called_once_with(cluster)
 
     def test_render_all_configs(self):
+        self.patch(handlers.designate, 'update_pools')
         self.patch(handlers.designate, 'render_full_config')
         handlers.render_all_configs('arg1', 'arg2')
         self.render_full_config.assert_called_once_with(('arg1', 'arg2', ))
+        self.update_pools.assert_called_once_with()
 
     def test_render_all_configs_single_node(self):
         self.patch(handlers.designate, 'render_full_config')
         self.patch(handlers.designate, 'render_rndc_keys')
+        self.patch(handlers.designate, 'update_pools')
         handlers.render_all_configs_single_node('arg1', 'arg2')
         self.render_full_config.assert_called_once_with(('arg1', 'arg2', ))
         self.render_rndc_keys.assert_called_once_with()
+        self.update_pools.assert_called_once_with()
 
     def test_cluster_connected(self):
         hacluster = mock.MagicMock()

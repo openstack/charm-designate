@@ -90,24 +90,27 @@ class TestDesignateUtils(unittest.TestCase):
     def test_create_server(self):
         _server_ids = ['servid1', None]
         self.patch(dutils, 'get_server_id')
+        self.patch(dutils, 'display')
         self.get_server_id.side_effect = lambda x: _server_ids.pop()
         self.patch(dutils, 'run_command')
         self.run_command.return_value = ('out', 'err')
-        self.assertEqual(dutils.create_server('server1'), 'servid1')
+        dutils.create_server('server1')
         cmd = [
             'designate', 'server-create',
             '--name', 'server1',
             '-f', 'value',
         ]
         self.run_command.assert_called_with(cmd)
+        self.display.assert_called_with('servid1')
 
     def test_create_domain(self):
         _domain_ids = ['domainid1', None]
         self.patch(dutils, 'get_domain_id')
+        self.patch(dutils, 'display')
         self.get_domain_id.side_effect = lambda x: _domain_ids.pop()
         self.patch(dutils, 'run_command')
         self.run_command.return_value = ('out', 'err')
-        self.assertEqual(dutils.create_domain('dom1', 'email1'), 'domainid1')
+        dutils.create_domain('dom1', 'email1')
         cmd = [
             'designate', 'domain-create',
             '--name', 'dom1',
@@ -115,8 +118,10 @@ class TestDesignateUtils(unittest.TestCase):
             '-f', 'value',
         ]
         self.run_command.assert_called_with(cmd)
+        self.display.assert_called_with('domainid1')
 
     def test_delete_domain(self):
+        self.patch(dutils, 'get_domain_id', return_value='dom1')
         self.patch(dutils, 'run_command')
         dutils.delete_domain('dom1')
         self.run_command.assert_called_with(['domain-delete', 'dom1'])

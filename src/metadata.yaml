@@ -8,9 +8,11 @@ description: |
  * Integrated with Keystone for authentication
  * Framework in place to integrate with Nova and Neutron notifications
  * Support for PowerDNS and Bind9 out of the box
+tags:
+  - openstack
+  - dns
 series:
  - trusty
- - wily
  - xenial
 subordinate: false
 provides:

@@ -203,7 +203,7 @@ class TestBindRNDCRelationAdapter(Helper):
 
     def test_rndc_info(self):
         relation = mock.MagicMock()
-        relation.rndc_info.return_value = 'rndcstuff'
+        relation.rndc_info = 'rndcstuff'
         a = designate.BindRNDCRelationAdapter(relation)
         self.assertEqual(a.rndc_info, 'rndcstuff')
 
