@@ -90,6 +90,7 @@ def create_servers_and_domains(*args):
     designate.create_initial_servers_and_domains()
     if designate.domain_init_done():
         reactive.set_state('domains.created')
+        designate.render_full_config(args)
 
 
 @reactive.when('cluster.available')
@@ -99,7 +100,7 @@ def update_peers(cluster):
 
 
 @reactive.when('cluster.available')
-@reactive.when('domains.created')
+@reactive.when('db.synched')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def render_all_configs(*args):
     '''Write out all designate config include bootstrap domain info'''
@@ -108,7 +109,7 @@ def render_all_configs(*args):
 
 
 @reactive.when_not('cluster.available')
-@reactive.when('domains.created')
+@reactive.when('db.synched')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def render_all_configs_single_node(*args):
     '''Write out all designate config include bootstrap domain info'''

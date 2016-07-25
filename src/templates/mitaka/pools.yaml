@@ -2,9 +2,11 @@
   name: default
   description: Pool genergated by Juju
 
+{% if options.dns_server_record %}
   ns_records:
     - hostname: {{ options.dns_server_record }}
       priority: 10
+{% endif %}
 
   nameservers:
 {% if dns_backend.pool_config %}

@@ -198,16 +198,16 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
 
     @property
     def slave_ips(self):
-        '''List of DNS slave address infoprmation
+        """List of DNS slave address infoprmation
 
         @returns: list [{'unit': unitname, 'address': 'address'},
                         ...]
-        '''
+        """
         return self.relation.slave_ips()
 
     @property
     def pool_config(self):
-        '''List of DNS slave information from Juju attached DNS slaves
+        """List of DNS slave information from Juju attached DNS slaves
 
         Creates a dict for each backends and returns a list of those dicts.
         The designate config file has a section per backend. The template uses
@@ -217,7 +217,7 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
         @returns: list [{'nameserver': name, 'pool_target': name,
                          'address': slave_ip_addr},
                         ...]
-        '''
+        """
         pconfig = []
         for slave in self.slave_ips:
             unit_name = slave['unit'].replace('/', '_').replace('-', '_')
@@ -229,37 +229,29 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
         return pconfig
 
     @property
-    def nameservers(self):
-        '''List of nameserver section names
-
-        @returns: str Comma delimited list of nameserver section names
-        '''
-        return ', '.join([s['nameserver'] for s in self.pool_config])
-
-    @property
     def pool_targets(self):
-        '''List of pool_target section names
+        """List of pool_target section names
 
         @returns: str Comma delimited list of pool_target section names
-        '''
+        """
         return ', '.join([s['pool_target'] for s in self.pool_config])
 
     @property
     def slave_addresses(self):
-        '''List of slave IP addresses
+        """List of slave IP addresses
 
         @returns: str Comma delimited list of slave IP addresses
-        '''
+        """
         return ', '.join(['{}:53'.format(s['address'])
                          for s in self.pool_config])
 
     @property
     def rndc_info(self):
-        '''Rndc key and algorith in formation.
+        """Rndc key and algorith in formation.
 
         @returns: dict {'algorithm': rndc_algorithm,
                         'secret': rndc_secret_digest}
-        '''
+        """
         return self.relation.rndc_info
 
 
@@ -273,7 +265,7 @@ class DesignateConfigurationAdapter(
 
     @property
     def pool_config(self):
-        '''List of DNS slave information from user defined config
+        """List of DNS slave information from user defined config
 
         Creates a dict for each backends and returns a list of those dicts.
         The designate config file has a section per backend. The template uses
@@ -285,7 +277,7 @@ class DesignateConfigurationAdapter(
                          'address': slave_ip_addr,
                          'rndc_key_file': rndc_key_file},
                         ...]
-        '''
+        """
         pconfig = []
         for entry in self.dns_slaves.split():
             address, port, key = entry.split(':')
@@ -300,27 +292,19 @@ class DesignateConfigurationAdapter(
         return pconfig
 
     @property
-    def nameservers(self):
-        '''List of nameserver section names
-
-        @returns: str Comma delimited list of nameserver section names
-        '''
-        return ', '.join([s['nameserver'] for s in self.pool_config])
-
-    @property
     def pool_targets(self):
-        '''List of pool_target section names
+        """List of pool_target section names
 
         @returns: str Comma delimited list of pool_target section names
-        '''
+        """
         return ', '.join([s['pool_target'] for s in self.pool_config])
 
     @property
     def slave_addresses(self):
-        '''List of slave IP addresses
+        """List of slave IP addresses
 
         @returns: str Comma delimited list of slave IP addresses
-        '''
+        """
         return ', '.join(['{}:53'.format(s['address'])
                          for s in self.pool_config])
 
@@ -332,7 +316,9 @@ class DesignateConfigurationAdapter(
         @returns nova domain id
         """
         domain = hookenv.config('nova-domain')
-        return DesignateCharm.get_domain_id(domain)
+        if domain:
+            return DesignateCharm.get_domain_id(domain)
+        return None
 
     @property
     def neutron_domain_id(self):
@@ -342,7 +328,9 @@ class DesignateConfigurationAdapter(
         @returns neutron domain id
         """
         domain = hookenv.config('neutron-domain')
-        return DesignateCharm.get_domain_id(domain)
+        if domain:
+            return DesignateCharm.get_domain_id(domain)
+        return None
 
     @property
     def nova_conf_args(self):
@@ -539,20 +527,23 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         subprocess.check_call(create_cmd)
 
     def domain_init_done(self):
+        """Query leader db to see if domain creation is donei
+
+        @returns boolean"""
         return hookenv.leader_get(attribute='domain-init-done')
 
     @classmethod
-    def ensure_api_responding(self):
+    @decorators.retry_on_exception(
+        10, base_delay=5, exc_type=subprocess.CalledProcessError)
+    def ensure_api_responding(cls):
+        """Check that the api service is responding.
 
-        @decorators.retry_on_exception(
-            30, base_delay=5, exc_type=subprocess.CalledProcessError)
-        def check_designate_api():
-            print("Checking API service is responding")
-            check_cmd = ['reactive/designate_utils.py', 'server-list']
-            subprocess.check_call(check_cmd)
-
-        check_designate_api()
-        return True
+        The retry_on_exception decorator will cause this method to be called
+        until it succeeds or retry limit is exceeded"""
+        hookenv.log('Checking API service is responding',
+                    level=hookenv.WARNING)
+        check_cmd = ['reactive/designate_utils.py', 'server-list']
+        subprocess.check_call(check_cmd)
 
     @classmethod
     def create_initial_servers_and_domains(cls):
@@ -562,13 +553,21 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         @returns None
         """
         if hookenv.is_leader() and cls.ensure_api_responding():
-            cls.create_server(hookenv.config('dns-server-record'))
-            cls.create_domain(
-                hookenv.config('nova-domain'),
-                hookenv.config('nova-domain-email'))
-            cls.create_domain(
-                hookenv.config('neutron-domain'),
-                hookenv.config('neutron-domain-email'))
+            if hookenv.config('nameservers'):
+                for ns in hookenv.config('nameservers').split():
+                    cls.create_server(ns)
+            else:
+                hookenv.log('No nameserver specified, skipping creation of'
+                            'nova and neutron domains', level=hookenv.WARNING)
+                return
+            if hookenv.config('nova-domain'):
+                cls.create_domain(
+                    hookenv.config('nova-domain'),
+                    hookenv.config('nova-domain-email'))
+            if hookenv.config('neutron-domain'):
+                cls.create_domain(
+                    hookenv.config('neutron-domain'),
+                    hookenv.config('neutron-domain-email'))
             hookenv.leader_set({'domain-init-done': True})
 
     def update_pools(self):
@@ -577,3 +576,11 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         if hookenv.is_leader():
             cmd = ['designate-manage', 'pool', 'update']
             subprocess.check_call(cmd)
+
+    def custom_assess_status_check(self):
+        if (not hookenv.config('nameservers') and
+                (hookenv.config('nova-domain') or
+                 hookenv.config('neutron-domain'))):
+            return 'blocked', ('nameservers must be set when specifying'
+                               ' nova-domain or neutron-domain')
+        return None, None

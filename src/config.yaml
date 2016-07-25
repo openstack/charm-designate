@@ -8,30 +8,33 @@ options:
       only be used if DNS servers are outside of Juju control. Using the
       designate-bind charm is the prefered approach.
   nova-domain:
-    default: 'www.example.com.'
+    default:
     type: string
     description: Domain to add records for new instances to
   nova-domain-email:
-    default: 'email@example.com'
+    default:
     type: string
     description: Email address of the person responsible for the domain.
-  dns-server-record:
-    default: 'ns1.www.example.com.'
+  nameservers:
+    default:
     type: string
-    description: DNS server record
+    description: |
+      Space delimited list of nameservers. These are the nameservers that have
+      been provided to the domain registrar in order to delegate the domain to
+      Designate. e.g. "ns1.example.com ns2.example.com"
   neutron-domain:
-    default: 'www.bob.com.'
+    default:
     type: string
     description: Domain to add  floating ip records to
   neutron-domain-email:
-    default: 'email@example.com'
+    default:
     type: string
     description: Email address of the person responsible for the domain.
   neutron-record-format:
-    default: '%(octet0)s-%(octet1)s-%(octet2)s-%(octet3)s.%(domain)s'
+    default: '%(octet0)s-%(octet1)s-%(octet2)s-%(octet3)s.%(zone)s'
     type: string
     description: Format of floating ip global records
   nova-record-format:
-    default: '%(hostname)s.%(tenant_id)s.%(domain)s'
+    default: '%(hostname)s.%(tenant_id)s.%(zone)s'
     type: string
     description: Format of floating ip global records

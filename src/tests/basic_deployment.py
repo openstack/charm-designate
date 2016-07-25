@@ -22,6 +22,7 @@ import time
 import designateclient.client as designate_client
 import designateclient.v1.domains as domains
 import designateclient.v1.records as records
+import designateclient.v1.servers as servers
 
 import charmhelpers.contrib.openstack.amulet.deployment as amulet_deployment
 import charmhelpers.contrib.openstack.amulet.utils as os_amulet_utils
@@ -36,6 +37,8 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
     TEST_DOMAIN = 'amuletexample.com.'
     TEST_WWW_RECORD = "www.{}".format(TEST_DOMAIN)
     TEST_RECORD = {TEST_WWW_RECORD: '10.0.0.23'}
+    TEST_NS1_RECORD = 'ns1.amuletexample.com.'
+    TEST_NS2_RECORD = 'ns2.amuletexample.com.'
 
     def __init__(self, series, openstack=None, source=None, stable=False):
         """Deploy the entire test environment."""
@@ -348,11 +351,47 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
             message = u.relation_error('designate dns-backend', ret)
             amulet.raise_status(amulet.FAIL, msg=message)
 
+    def get_server_id(self, server_name):
+        server_id = None
+        for server in self.designate.servers.list():
+            if server.name == server_name:
+                server_id = server.id
+                break
+        return server_id
+
+    def get_test_server_id(self):
+        return self.get_server_id(self.TEST_NS2_RECORD)
+
+    def check_test_server_gone(self):
+        return not self.get_test_server_id()
+
+    def test_400_server_creation(self):
+        """Simple api calls to create domain"""
+        # Designate does not allow the last server to be delete so ensure ns1
+        # always present
+        if not self.get_server_id(self.TEST_NS1_RECORD):
+            server = servers.Server(name=self.TEST_NS1_RECORD)
+            new_server = self.designate.servers.create(server)
+
+        u.log.debug('Checking if server exists before trying to create it')
+        old_server_id = self.get_test_server_id()
+        if old_server_id:
+            u.log.debug('Deleting old server')
+            self.designate.servers.delete(old_server_id)
+        self.check_and_wait(
+            self.check_test_server_gone,
+            desc='Waiting for server to disappear')
+        u.log.debug('Creating new server')
+        server = servers.Server(name=self.TEST_NS2_RECORD)
+        new_server = self.designate.servers.create(server)
+        assert(new_server is not None)
+
     def get_domain_id(self, domain_name):
         domain_id = None
         for dom in self.designate.domains.list():
             if dom.name == domain_name:
                 domain_id = dom.id
+                break
         return domain_id
 
     def get_test_domain_id(self):
@@ -368,7 +407,7 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         cmd_out = subprocess.check_output(lookup_cmd).rstrip('\r\n')
         return self.TEST_RECORD[self.TEST_WWW_RECORD] == cmd_out
 
-    def test_400_domain_creation(self):
+    def test_410_domain_creation(self):
         """Simple api calls to create domain"""
         u.log.debug('Checking if domain exists before trying to create it')
         old_dom_id = self.get_test_domain_id()

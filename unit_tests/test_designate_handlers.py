@@ -106,12 +106,12 @@ class TestDesignateHandlers(unittest.TestCase):
             ],
             'render_all_configs': [
                 all_interfaces,
-                ('domains.created', ),
+                ('db.synched', ),
                 ('cluster.available', ),
             ],
             'render_all_configs_single_node': [
                 all_interfaces,
-                ('domains.created', ),
+                ('db.synched', ),
             ],
             'run_db_migration': [
                 all_interfaces,
@@ -211,6 +211,7 @@ class TestDesignateHandlers(unittest.TestCase):
         self.patch(handlers.reactive, 'set_state')
         self.patch(handlers.designate, 'create_initial_servers_and_domains')
         self.patch(handlers.designate, 'domain_init_done')
+        self.patch(handlers.designate, 'render_full_config')
         self.domain_init_done.return_value = False
         handlers.create_servers_and_domains('arg1', 'arg2')
         self.create_initial_servers_and_domains.assert_called_once_with()
@@ -220,6 +221,7 @@ class TestDesignateHandlers(unittest.TestCase):
         handlers.create_servers_and_domains('arg1', 'arg2')
         self.create_initial_servers_and_domains.assert_called_once_with()
         self.set_state.assert_called_once_with('domains.created')
+        self.render_full_config.assert_called_once_with(('arg1', 'arg2'))
 
     def test_update_peers(self):
         cluster = mock.MagicMock()

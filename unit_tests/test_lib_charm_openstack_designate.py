@@ -194,9 +194,6 @@ class TestBindRNDCRelationAdapter(Helper):
                        'pool_target': 'nameserver_unit_2'}]
             self.assertEqual(a.pool_config, expect)
             self.assertEqual(
-                a.nameservers,
-                'nameserver_unit_1, nameserver_unit_2')
-            self.assertEqual(
                 a.pool_targets,
                 'nameserver_unit_1, nameserver_unit_2')
             self.assertEqual(a.slave_addresses, 'addr1:53, addr2:53')
@@ -230,7 +227,6 @@ class TestDesignateConfigurationAdapter(Helper):
                        'pool_target': 'nameserver_ip2',
                        'rndc_key_file': '/etc/designate/rndc_ip2.key'}]
             self.assertEqual(a.pool_config, expect)
-            self.assertEqual(a.nameservers, 'nameserver_ip1, nameserver_ip2')
             self.assertEqual(a.pool_targets, 'nameserver_ip1, nameserver_ip2')
             self.assertEqual(a.slave_addresses, 'ip1:53, ip2:53')
 
@@ -408,7 +404,7 @@ class TestDesignateCharm(Helper):
 
     def test_create_initial_servers_and_domains(self):
         test_config = {
-            'dns-server-record': 'dnsserverrec1',
+            'nameservers': 'dnsserverrec1',
             'nova-domain': 'novadomain',
             'nova-domain-email': 'novaemail',
             'neutron-domain': 'neutrondomain',
