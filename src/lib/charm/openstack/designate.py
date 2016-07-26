@@ -552,7 +552,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
 
         @returns None
         """
-        if hookenv.is_leader() and cls.ensure_api_responding():
+        cls.ensure_api_responding()
+        if hookenv.is_leader():
             if hookenv.config('nameservers'):
                 for ns in hookenv.config('nameservers').split():
                     cls.create_server(ns)
