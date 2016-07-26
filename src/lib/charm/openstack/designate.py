@@ -94,6 +94,18 @@ def render_full_config(interfaces_list):
     DesignateCharm.singleton.render_full_config(interfaces_list)
 
 
+def render_sink_configs(interfaces_list):
+    """Use the singleton from the DesignateCharm to render sink configs
+
+    @param interfaces_list: List of instances of interface classes.
+    @returns: None
+    """
+    configs = [NOVA_SINK_FILE, NEUTRON_SINK_FILE]
+    DesignateCharm.singleton.render_with_interfaces(
+        interfaces_list,
+        configs=configs)
+
+
 def register_endpoints(keystone):
     """When the keystone interface connects, register this unit in the keystone
     catalogue.

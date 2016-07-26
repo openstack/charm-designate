@@ -120,6 +120,9 @@ class TestDesignateHandlers(unittest.TestCase):
             'configure_designate': [
                 all_interfaces,
             ],
+            'configure_designate_single': [
+                all_interfaces,
+            ],
         }
         when_not_patterns = {
             'install_packages': [('installed', )],
@@ -183,6 +186,7 @@ class TestDesignateHandlers(unittest.TestCase):
     def test_configure_designate(self):
         self.patch(handlers.reactive, 'set_state')
         self.patch(handlers.designate, 'render_base_config')
+        self.patch(handlers.reactive.RelationBase, 'from_state')
         handlers.configure_designate('arg1', 'arg2')
         self.render_base_config.assert_called_once_with(('arg1', 'arg2', ))
         self.set_state.assert_called_once_with('base-config.rendered')
@@ -211,7 +215,7 @@ class TestDesignateHandlers(unittest.TestCase):
         self.patch(handlers.reactive, 'set_state')
         self.patch(handlers.designate, 'create_initial_servers_and_domains')
         self.patch(handlers.designate, 'domain_init_done')
-        self.patch(handlers.designate, 'render_full_config')
+        self.patch(handlers.designate, 'render_sink_configs')
         self.domain_init_done.return_value = False
         handlers.create_servers_and_domains('arg1', 'arg2')
         self.create_initial_servers_and_domains.assert_called_once_with()
@@ -221,7 +225,7 @@ class TestDesignateHandlers(unittest.TestCase):
         handlers.create_servers_and_domains('arg1', 'arg2')
         self.create_initial_servers_and_domains.assert_called_once_with()
         self.set_state.assert_called_once_with('domains.created')
-        self.render_full_config.assert_called_once_with(('arg1', 'arg2'))
+        self.render_sink_configs.assert_called_once_with(('arg1', 'arg2'))
 
     def test_update_peers(self):
         cluster = mock.MagicMock()
@@ -231,6 +235,7 @@ class TestDesignateHandlers(unittest.TestCase):
 
     def test_render_all_configs(self):
         self.patch(handlers.designate, 'update_pools')
+        self.patch(handlers.designate, 'render_rndc_keys')
         self.patch(handlers.designate, 'render_full_config')
         handlers.render_all_configs('arg1', 'arg2')
         self.render_full_config.assert_called_once_with(('arg1', 'arg2', ))

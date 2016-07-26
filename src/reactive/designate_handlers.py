@@ -61,6 +61,10 @@ def setup_endpoint(keystone):
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def configure_designate(*args):
     '''Configure the minimum to boostrap designate'''
+    # If cluster relation is available it needs to passed in
+    cluster = reactive.RelationBase.from_state('cluster.available')
+    if cluster is not None:
+        args = args + (cluster, )
     designate.render_base_config(args)
     reactive.set_state('base-config.rendered')
 
@@ -90,7 +94,7 @@ def create_servers_and_domains(*args):
     designate.create_initial_servers_and_domains()
     if designate.domain_init_done():
         reactive.set_state('domains.created')
-        designate.render_full_config(args)
+        designate.render_sink_configs(args)
 
 
 @reactive.when('cluster.available')
@@ -105,6 +109,7 @@ def update_peers(cluster):
 def render_all_configs(*args):
     '''Write out all designate config include bootstrap domain info'''
     designate.render_full_config(args)
+    designate.render_rndc_keys()
     designate.update_pools()
 
 
