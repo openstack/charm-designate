@@ -27,8 +27,10 @@
 {% for slave in dns_backend.pool_config %}
     - type: bind9
       masters:
-        - host: {{ options.rndc_master_ip }}
+{% for rndc_master_ip in cluster.internal_addresses %}
+        - host: {{ rndc_master_ip }}
           port: 5354
+{% endfor %}
       options:
         rndc_host: {{ slave.address }}
         rndc_key_file: /etc/designate/rndc.key
@@ -38,8 +40,10 @@
 {% for slave in options.pool_config %}
     - type: bind9
       masters:
-        - host: {{ options.rndc_master_ip }}
+{% for rndc_master_ip in cluster.internal_addresses %}
+        - host: {{ rndc_master_ip }}
           port: 5354
+{% endfor %}
       options:
         rndc_host: {{ slave.address }}
         rndc_key_file: {{ slave.rndc_key_file }}
