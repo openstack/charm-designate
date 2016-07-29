@@ -1,4 +1,4 @@
-export OS_AUTH_URL=http://{{ identity_service.auth_host }}:{{ identity_service.auth_port }}/v2.0
+export OS_AUTH_URL={{ identity_service.auth_protocol }}://{{ identity_service.auth_host }}:{{ identity_service.auth_port }}/v2.0
 export OS_TENANT_NAME={{ identity_service.service_tenant }}
 export OS_USERNAME={{ identity_service.service_username }}
 export OS_PASSWORD={{ identity_service.service_password }}

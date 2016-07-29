@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import contextlib
 import os
 import subprocess
+import uuid
 
 import charmhelpers.contrib.openstack.utils as ch_utils
 import charms_openstack.adapters as openstack_adapters
@@ -100,7 +102,7 @@ def render_sink_configs(interfaces_list):
     @param interfaces_list: List of instances of interface classes.
     @returns: None
     """
-    configs = [NOVA_SINK_FILE, NEUTRON_SINK_FILE]
+    configs = [NOVA_SINK_FILE, NEUTRON_SINK_FILE, DESIGNATE_DEFAULT]
     DesignateCharm.singleton.render_with_interfaces(
         interfaces_list,
         configs=configs)
@@ -458,7 +460,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         configs = [RC_FILE, DESIGNATE_CONF, RNDC_KEY_CONF, DESIGNATE_DEFAULT]
         if self.haproxy_enabled():
             configs.append(self.HAPROXY_CONF)
-        DesignateCharm.singleton.render_with_interfaces(
+        self.render_with_interfaces(
             interfaces_list,
             configs=configs)
 
@@ -467,7 +469,10 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
 
         @returns None
         """
-        DesignateCharm.singleton.render_with_interfaces(interfaces_list)
+        # Render base config first to ensure Designate API is responding as
+        # sink configs rely on it.
+        self.render_base_config(interfaces_list)
+        self.render_with_interfaces(interfaces_list)
 
     def write_key_file(self, unit_name, key):
         """Write rndc keyfile for given unit_name
@@ -504,12 +509,14 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         @param domain: Domain name
         @returns domain_id
         """
-        cls.ensure_api_responding()
-        get_cmd = ['reactive/designate_utils.py', 'domain-get',
-                   '--domain-name', domain]
-        output = subprocess.check_output(get_cmd)
-        if output:
-            return output.decode('utf8').strip()
+        if domain:
+            cls.ensure_api_responding()
+            get_cmd = ['reactive/designate_utils.py', 'domain-get',
+                       '--domain-name', domain]
+            output = subprocess.check_output(get_cmd)
+            if output:
+                return output.decode('utf8').strip()
+        return None
 
     @classmethod
     def create_domain(cls, domain, email):
@@ -558,30 +565,51 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         subprocess.check_call(check_cmd)
 
     @classmethod
+    @contextlib.contextmanager
+    def check_zone_ids(cls, nova_domain_name, neutron_domain_name):
+        zone_org_ids = {
+            'nova-domain-id': cls.get_domain_id(nova_domain_name),
+            'neutron-domain-id': cls.get_domain_id(neutron_domain_name),
+        }
+        yield
+        zone_ids = {
+            'nova-domain-id': cls.get_domain_id(nova_domain_name),
+            'neutron-domain-id': cls.get_domain_id(neutron_domain_name),
+        }
+        if zone_org_ids != zone_ids:
+            # Update leader-db to trigger peers to rerender configs
+            # as sink files will need updating with new domain ids
+            # Use host ID and current time UUID to help with debugging
+            hookenv.leader_set({'domain-init-done': uuid.uuid1()})
+
+    @classmethod
     def create_initial_servers_and_domains(cls):
         """Create the nameserver entry and domains based on the charm user
         supplied config
 
         @returns None
         """
-        cls.ensure_api_responding()
         if hookenv.is_leader():
-            if hookenv.config('nameservers'):
-                for ns in hookenv.config('nameservers').split():
-                    cls.create_server(ns)
-            else:
-                hookenv.log('No nameserver specified, skipping creation of'
-                            'nova and neutron domains', level=hookenv.WARNING)
-                return
-            if hookenv.config('nova-domain'):
-                cls.create_domain(
-                    hookenv.config('nova-domain'),
-                    hookenv.config('nova-domain-email'))
-            if hookenv.config('neutron-domain'):
-                cls.create_domain(
-                    hookenv.config('neutron-domain'),
-                    hookenv.config('neutron-domain-email'))
-            hookenv.leader_set({'domain-init-done': True})
+            cls.ensure_api_responding()
+            nova_domain_name = hookenv.config('nova-domain')
+            neutron_domain_name = hookenv.config('neutron-domain')
+            with cls.check_zone_ids(nova_domain_name, neutron_domain_name):
+                if hookenv.config('nameservers'):
+                    for ns in hookenv.config('nameservers').split():
+                        cls.create_server(ns)
+                else:
+                    hookenv.log('No nameserver specified, skipping creation of'
+                                'nova and neutron domains',
+                                level=hookenv.WARNING)
+                    return
+                if nova_domain_name:
+                    cls.create_domain(
+                        nova_domain_name,
+                        hookenv.config('nova-domain-email'))
+                if neutron_domain_name:
+                    cls.create_domain(
+                        neutron_domain_name,
+                        hookenv.config('neutron-domain-email'))
 
     def update_pools(self):
         # designate-manage communicates with designate via message bus so no
