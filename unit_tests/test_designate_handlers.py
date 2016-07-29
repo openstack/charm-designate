@@ -104,12 +104,7 @@ class TestDesignateHandlers(unittest.TestCase):
                 ('base-config.rendered', ),
                 ('db.synched', ),
             ],
-            'render_all_configs': [
-                all_interfaces,
-                ('db.synched', ),
-                ('cluster.available', ),
-            ],
-            'render_all_configs_single_node': [
+            'configure_designate_full': [
                 all_interfaces,
                 ('db.synched', ),
             ],
@@ -117,18 +112,14 @@ class TestDesignateHandlers(unittest.TestCase):
                 all_interfaces,
                 ('base-config.rendered', ),
             ],
-            'configure_designate': [
-                all_interfaces,
-            ],
-            'configure_designate_single': [
+            'configure_designate_basic': [
                 all_interfaces,
             ],
         }
         when_not_patterns = {
             'install_packages': [('installed', )],
             'run_db_migration': [('db.synched', )],
-            'render_all_configs_single_node': [('cluster.available', )],
-            'configure_designate': [('base-config.rendered', )],
+            'configure_designate_basic': [('base-config.rendered', )],
             'create_servers_and_domains': [('domains.created', )],
         }
         # check the when hooks are attached to the expected functions
@@ -136,6 +127,7 @@ class TestDesignateHandlers(unittest.TestCase):
                      (_when_not_args, when_not_patterns)]:
             for f, args in t.items():
                 # check that function is in patterns
+                print(f)
                 self.assertTrue(f in p.keys())
                 # check that the lists are equal
                 l = [a['args'] for a in args]
@@ -183,19 +175,13 @@ class TestDesignateHandlers(unittest.TestCase):
         self.register_endpoints.assert_called_once_with('endpoint_object')
         self.assess_status.assert_called_once_with()
 
-    def test_configure_designate(self):
+    def test_configure_designate_basic(self):
         self.patch(handlers.reactive, 'set_state')
         self.patch(handlers.designate, 'render_base_config')
         self.patch(handlers.reactive.RelationBase, 'from_state')
-        handlers.configure_designate('arg1', 'arg2')
+        handlers.configure_designate_basic('arg1', 'arg2')
         self.render_base_config.assert_called_once_with(('arg1', 'arg2', ))
         self.set_state.assert_called_once_with('base-config.rendered')
-
-    def test_configure_ssl(self):
-        keystone = mock.MagicMock()
-        self.patch(handlers.designate, 'configure_ssl')
-        handlers.configure_ssl(keystone)
-        self.configure_ssl.assert_called_once_with(keystone)
 
     def test_run_db_migration(self):
         self.patch(handlers.reactive, 'set_state')
@@ -211,42 +197,26 @@ class TestDesignateHandlers(unittest.TestCase):
         self.db_sync.assert_called_once_with()
         self.set_state.assert_called_once_with('db.synched')
 
-    def test_create_servers_and_domains(self):
-        self.patch(handlers.reactive, 'set_state')
-        self.patch(handlers.designate, 'create_initial_servers_and_domains')
-        self.patch(handlers.designate, 'domain_init_done')
-        self.patch(handlers.designate, 'render_sink_configs')
-        self.domain_init_done.return_value = False
-        handlers.create_servers_and_domains('arg1', 'arg2')
-        self.create_initial_servers_and_domains.assert_called_once_with()
-        self.assertFalse(self.set_state.called)
-        self.create_initial_servers_and_domains.reset_mock()
-        self.domain_init_done.return_value = True
-        handlers.create_servers_and_domains('arg1', 'arg2')
-        self.create_initial_servers_and_domains.assert_called_once_with()
-        self.set_state.assert_called_once_with('domains.created')
-        self.render_sink_configs.assert_called_once_with(('arg1', 'arg2'))
-
     def test_update_peers(self):
         cluster = mock.MagicMock()
         self.patch(handlers.designate, 'update_peers')
         handlers.update_peers(cluster)
         self.update_peers.assert_called_once_with(cluster)
 
-    def test_render_all_configs(self):
-        self.patch(handlers.designate, 'update_pools')
-        self.patch(handlers.designate, 'render_rndc_keys')
+    def test_configure_designate_full(self):
+        self.patch(handlers.reactive.RelationBase, 'from_state',
+                   return_value=None)
+        self.patch(handlers.designate, 'configure_ssl')
         self.patch(handlers.designate, 'render_full_config')
-        handlers.render_all_configs('arg1', 'arg2')
-        self.render_full_config.assert_called_once_with(('arg1', 'arg2', ))
-        self.update_pools.assert_called_once_with()
-
-    def test_render_all_configs_single_node(self):
-        self.patch(handlers.designate, 'render_full_config')
+        self.patch(handlers.designate, 'create_initial_servers_and_domains')
+        self.patch(handlers.designate, 'render_sink_configs')
         self.patch(handlers.designate, 'render_rndc_keys')
         self.patch(handlers.designate, 'update_pools')
-        handlers.render_all_configs_single_node('arg1', 'arg2')
+        handlers.configure_designate_full('arg1', 'arg2')
+        self.configure_ssl.assert_called_once_with()
         self.render_full_config.assert_called_once_with(('arg1', 'arg2', ))
+        self.create_initial_servers_and_domains.assert_called_once_with()
+        self.render_sink_configs.assert_called_once_with(('arg1', 'arg2', ))
         self.render_rndc_keys.assert_called_once_with()
         self.update_pools.assert_called_once_with()
 

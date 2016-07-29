@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import contextlib
 import unittest
 
 import mock
@@ -315,7 +316,7 @@ class TestDesignateCharm(Helper):
     def test_render_base_config(self):
         self.patch(designate.DesignateCharm, 'haproxy_enabled')
         self.patch(
-            designate.DesignateCharm.singleton,
+            designate.DesignateCharm,
             'render_with_interfaces')
         self.patch_object(designate.DesignateCharm, 'haproxy_enabled',
                           new=lambda x: True)
@@ -333,7 +334,7 @@ class TestDesignateCharm(Helper):
 
     def test_render_full_config(self):
         self.patch(
-            designate.DesignateCharm.singleton,
+            designate.DesignateCharm,
             'render_with_interfaces')
         a = designate.DesignateCharm(release='mitaka')
         a.render_full_config('interface_list')
@@ -416,6 +417,12 @@ class TestDesignateCharm(Helper):
         self.patch(designate.hookenv, 'leader_set')
         self.patch(designate.DesignateCharm, 'create_server')
         self.patch(designate.DesignateCharm, 'create_domain')
+
+        @contextlib.contextmanager
+        def fake_check_zone_ids(a, b):
+            yield
+        self.patch(designate.DesignateCharm, 'check_zone_ids',
+                   new=fake_check_zone_ids)
         with mock.patch.object(designate.hookenv, 'config',
                                side_effect=FakeConfig(test_config)):
             designate.DesignateCharm.create_initial_servers_and_domains()
@@ -424,4 +431,27 @@ class TestDesignateCharm(Helper):
                 mock.call('novadomain', 'novaemail'),
                 mock.call('neutrondomain', 'neutronemail')]
             self.create_domain.assert_has_calls(calls)
-            self.leader_set.assert_called_once_with({'domain-init-done': True})
+
+    def test_check_zone_ids_change(self):
+        self.patch(designate.hookenv, 'leader_set')
+        DOMAIN_LOOKSUPS = ['novaid1', 'neutronid1', 'novaid1', 'neutronid2']
+
+        def fake_get_domain_id(a):
+            return DOMAIN_LOOKSUPS.pop()
+        self.patch(designate.DesignateCharm, 'get_domain_id',
+                   side_effect=fake_get_domain_id)
+        with designate.DesignateCharm.check_zone_ids('novadom', 'neutrondom'):
+            pass
+        self.leader_set.assert_called_once_with({'domain-init-done': mock.ANY})
+
+    def test_check_zone_ids_nochange(self):
+        self.patch(designate.hookenv, 'leader_set')
+        DOMAIN_LOOKSUPS = ['novaid1', 'neutronid1', 'novaid1', 'neutronid1']
+
+        def fake_get_domain_id(a):
+            return DOMAIN_LOOKSUPS.pop()
+        self.patch(designate.DesignateCharm, 'get_domain_id',
+                   side_effect=fake_get_domain_id)
+        with designate.DesignateCharm.check_zone_ids('novadom', 'neutrondom'):
+            pass
+        self.assertFalse(self.leader_set.called)
