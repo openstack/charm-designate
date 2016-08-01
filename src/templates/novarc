@@ -1,7 +1,19 @@
+{% if identity_service.api_version == '3' -%}
+export OS_AUTH_URL={{ identity_service.auth_protocol }}://{{ identity_service.auth_host }}:{{ identity_service.auth_port }}/v3
+export OS_USERNAME={{ identity_service.service_username }}
+export OS_PASSWORD={{ identity_service.service_password }}
+export OS_USER_DOMAIN_NAME=default
+export OS_PROJECT_DOMAIN_NAME=default
+export OS_PROJECT_NAME={{ identity_service.service_tenant }}
+export OS_REGION_NAME={{ options.region }}
+export OS_IDENTITY_API_VERSION=3
+export OS_DNS_ENDPOINT={{ options.service_listen_info.designate_api.url }}
+export OS_AUTH_VERSION=3
+{% else -%}
 export OS_AUTH_URL={{ identity_service.auth_protocol }}://{{ identity_service.auth_host }}:{{ identity_service.auth_port }}/v2.0
 export OS_TENANT_NAME={{ identity_service.service_tenant }}
 export OS_USERNAME={{ identity_service.service_username }}
 export OS_PASSWORD={{ identity_service.service_password }}
 export OS_REGION_NAME={{ options.region }}
 export OS_DNS_ENDPOINT={{ options.service_listen_info.designate_api.url }}
-
+{% endif -%}
