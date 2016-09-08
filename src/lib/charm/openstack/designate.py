@@ -270,7 +270,7 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
 
 
 class DesignateConfigurationAdapter(
-      openstack_adapters.APIConfigurationAdapter):
+        openstack_adapters.APIConfigurationAdapter):
 
     def __init__(self, port_map=None):
         super(DesignateConfigurationAdapter, self).__init__(
