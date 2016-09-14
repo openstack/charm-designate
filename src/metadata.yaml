@@ -14,6 +14,7 @@ tags:
 series:
  - trusty
  - xenial
+ - yakkety
 subordinate: false
 provides:
   dnsaas:
