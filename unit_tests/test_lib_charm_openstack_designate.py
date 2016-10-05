@@ -285,6 +285,8 @@ class TestDesignateAdapters(Helper):
         self.patch(
             designate.openstack_adapters.APIConfigurationAdapter,
             'get_network_addresses')
+        cluster_relation = mock.MagicMock()
+        cluster_relation.relation_name = 'cluster'
         amqp_relation = mock.MagicMock()
         amqp_relation.relation_name = 'amqp'
         shared_db_relation = mock.MagicMock()
@@ -294,6 +296,7 @@ class TestDesignateAdapters(Helper):
         other_relation.thingy = 'help'
         # verify that the class is created with a DesignateConfigurationAdapter
         b = designate.DesignateAdapters([amqp_relation,
+                                         cluster_relation,
                                          shared_db_relation,
                                          other_relation])
         # ensure that the relevant things got put on.
