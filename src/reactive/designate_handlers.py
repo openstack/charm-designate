@@ -93,6 +93,7 @@ def configure_designate_full(*args):
     cluster = reactive.RelationBase.from_state('cluster.available')
     if cluster is not None:
         args = args + (cluster, )
+    designate.upgrade_if_available(args)
     designate.configure_ssl()
     designate.render_full_config(args)
     designate.create_initial_servers_and_domains()

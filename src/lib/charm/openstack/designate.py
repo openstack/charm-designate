@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import collections
 import contextlib
 import os
 import subprocess
@@ -184,6 +185,15 @@ def update_pools():
     @returns: None
     """
     DesignateCharm.singleton.update_pools()
+
+
+def upgrade_if_available(interfaces_list):
+    """Just call the DesignateCharm.singleton.upgrade_if_available() command to
+    update OpenStack package if upgrade is available
+
+    @returns: None
+    """
+    DesignateCharm.singleton.upgrade_if_available(interfaces_list)
 
 
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
@@ -435,6 +445,14 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
 
     ha_resources = ['vips', 'haproxy']
     release = 'mitaka'
+    release_pkg = 'designate-common'
+    package_codenames = {
+        'designate-common': collections.OrderedDict([
+            ('2', 'mitaka'),
+            ('3', 'newton'),
+            ('4', 'ocata'),
+        ]),
+    }
 
     def __init__(self, release=None, **kwargs):
         """Custom initialiser for class

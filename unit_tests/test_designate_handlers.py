@@ -206,6 +206,7 @@ class TestDesignateHandlers(unittest.TestCase):
     def test_configure_designate_full(self):
         self.patch(handlers.reactive.RelationBase, 'from_state',
                    return_value=None)
+        self.patch(handlers.designate, 'upgrade_if_available')
         self.patch(handlers.designate, 'configure_ssl')
         self.patch(handlers.designate, 'render_full_config')
         self.patch(handlers.designate, 'create_initial_servers_and_domains')
@@ -219,6 +220,7 @@ class TestDesignateHandlers(unittest.TestCase):
         self.render_sink_configs.assert_called_once_with(('arg1', 'arg2', ))
         self.render_rndc_keys.assert_called_once_with()
         self.update_pools.assert_called_once_with()
+        self.upgrade_if_available.assert_called_once_with(('arg1', 'arg2', ))
 
     def test_cluster_connected(self):
         hacluster = mock.MagicMock()
