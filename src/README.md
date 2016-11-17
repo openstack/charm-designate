@@ -1,6 +1,6 @@
 # Overview
 
-This charm provides the Designate (DNSaaS) for an OpenStack Cloud.
+This charm provides Designate (DNSaaS) for an OpenStack Cloud.
 
 
 # Usage
