@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#
+
 # Copyright 2016 Canonical Ltd
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Amulet tests on a basic designate deployment on yakkety-newton."""
+
+"""Amulet tests on a basic aodh deployment on trusty-ocata."""
 
 from basic_deployment import DesignateBasicDeployment
 
 if __name__ == '__main__':
-    deployment = DesignateBasicDeployment(series='yakkety')
+    deployment = DesignateBasicDeployment(series='zesty')
     deployment.run_tests()
