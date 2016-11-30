@@ -304,8 +304,8 @@ class TestDesignateAdapters(Helper):
             isinstance(
                 b.other,
                 designate.openstack_adapters.OpenStackRelationAdapter))
-        self.assertTrue(isinstance(b.options,
-                                   designate.DesignateConfigurationAdapter))
+        self.assertIsInstance(b.options,
+                              designate.DesignateConfigurationAdapter)
 
 
 class TestDesignateCharm(Helper):
