@@ -312,6 +312,8 @@ class TestDesignateCharm(Helper):
 
     def test_install(self):
         self.patch(designate.DesignateCharm, 'configure_source')
+        self.patch(designate.DesignateCharm, 'update_api_ports')
+        self.ch_config.side_effect = lambda: {'openstack-origin': 'distro'}
         a = designate.DesignateCharm(release='mitaka')
         a.install()
         self.configure_source.assert_called_with()
