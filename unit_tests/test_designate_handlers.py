@@ -151,18 +151,15 @@ class TestDesignateHandlers(unittest.TestCase):
     def test_database(self):
         self.patch(handlers.designate, 'assess_status')
         database = mock.MagicMock()
-        self.patch(handlers.hookenv, 'unit_private_ip', 'private_ip')
         handlers.setup_database(database)
         calls = [
             mock.call(
                 'designate',
                 'designate',
-                'private_ip',
                 prefix='designate'),
             mock.call(
                 'dpm',
                 'dpm',
-                'private_ip',
                 prefix='dpm'),
         ]
         database.configure.has_calls(calls)

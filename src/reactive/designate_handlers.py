@@ -14,7 +14,6 @@
 
 
 import charm.openstack.designate as designate
-import charmhelpers.core.hookenv as hookenv
 import charms.reactive as reactive
 
 COMPLETE_INTERFACE_STATES = [
@@ -44,9 +43,9 @@ def setup_amqp_req(amqp):
 def setup_database(database):
     """Send request designate accounts and dbs"""
     database.configure('designate', 'designate',
-                       hookenv.unit_private_ip(), prefix='designate')
+                       prefix='designate')
     database.configure('dpm', 'dpm',
-                       hookenv.unit_private_ip(), prefix='dpm')
+                       prefix='dpm')
     designate.assess_status()
 
 
