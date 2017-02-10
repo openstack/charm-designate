@@ -78,14 +78,14 @@ class TestDesignateUtils(unittest.TestCase):
     def test_get_server_id(self):
         self.patch(dutils, 'get_servers')
         self.get_servers.return_value = {'server1': {'id': 'servid1'}}
-        self.assertEquals(dutils.get_server_id('server1'), 'servid1')
-        self.assertEquals(dutils.get_server_id('server2'), None)
+        self.assertEqual(dutils.get_server_id('server1'), 'servid1')
+        self.assertEqual(dutils.get_server_id('server2'), None)
 
     def test_get_domain_id(self):
         self.patch(dutils, 'get_domains')
         self.get_domains.return_value = {'domain1': {'id': 'domainid1'}}
-        self.assertEquals(dutils.get_domain_id('domain1'), 'domainid1')
-        self.assertEquals(dutils.get_domain_id('domain2'), None)
+        self.assertEqual(dutils.get_domain_id('domain1'), 'domainid1')
+        self.assertEqual(dutils.get_domain_id('domain2'), None)
 
     def test_create_server(self):
         _server_ids = ['servid1', None]
