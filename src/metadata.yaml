@@ -15,6 +15,7 @@ series:
  - trusty
  - xenial
  - yakkety
+ - zesty
 subordinate: false
 provides:
   dnsaas:
