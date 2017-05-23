@@ -38,3 +38,7 @@ options:
     default: '%(hostname)s.%(tenant_id)s.%(zone)s'
     type: string
     description: Format of floating ip global records
+  enable-host-header:
+    default: false
+    type: boolean
+    description: Enables host request headers.
