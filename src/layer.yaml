@@ -1,1 +1,5 @@
 includes: ['layer:openstack-api', 'interface:bind-rndc', 'interface:hacluster', 'interface:openstack-ha']
+options:
+  basic:
+    use_venv: True
+    include_system_packages: True
