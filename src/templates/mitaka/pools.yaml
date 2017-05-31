@@ -9,21 +9,21 @@
 {% endif %}
 
   nameservers:
-{% if dns_backend.pool_config %}
+{% if dns_backend and dns_backend.pool_config %}
 {% for slave in dns_backend.pool_config %}
     - host: {{ slave.address }}
       port: 53
 {% endfor %}
 {% endif %}
 {% if options.pool_config %}
-{% for slave in dns_backend.pool_config %}
+{% for slave in options.pool_config %}
     - host: {{ slave.address }}
       port: 53
 {% endfor %}
 {% endif %}
 
   targets:
-{% if dns_backend.pool_config %}
+{% if dns_backend and dns_backend.pool_config %}
 {% for slave in dns_backend.pool_config %}
     - type: bind9
       masters:
@@ -51,14 +51,14 @@
 {% endif %}
 
   also_notifies:
-{% if dns_backend.pool_config %}
+{% if dns_backend and dns_backend.pool_config %}
 {% for slave in dns_backend.pool_config %}
     - host: {{ slave.address }}
       port: 53
 {% endfor %}
 {% endif %}
 {% if options.pool_config %}
-{% for slave in dns_backend.pool_config %}
+{% for slave in options.pool_config %}
     - host: {{ slave.address }}
       port: 53
 {% endfor %}

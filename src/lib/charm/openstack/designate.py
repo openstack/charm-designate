@@ -25,6 +25,7 @@ import charms_openstack.ip as os_ip
 import charmhelpers.core.decorators as decorators
 import charmhelpers.core.hookenv as hookenv
 import charmhelpers.core.host as host
+import charms.reactive as reactive
 
 DESIGNATE_DIR = '/etc/designate'
 DESIGNATE_DEFAULT = '/etc/default/openstack'
@@ -282,10 +283,9 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
 class DesignateConfigurationAdapter(
         openstack_adapters.APIConfigurationAdapter):
 
-    def __init__(self, port_map=None):
+    def __init__(self, port_map=None, *args, **kwargs):
         super(DesignateConfigurationAdapter, self).__init__(
-            port_map=port_map,
-            service_name='designate')
+            port_map=port_map, service_name='designate', *args, **kwargs)
 
     @property
     def pool_config(self):
@@ -303,17 +303,36 @@ class DesignateConfigurationAdapter(
                         ...]
         """
         pconfig = []
-        for entry in self.dns_slaves.split():
-            address, port, key = entry.split(':')
-            unit_name = address.replace('.', '_')
-            pconfig.append({
-                'nameserver': 'nameserver_{}'.format(unit_name),
-                'pool_target': 'nameserver_{}'.format(unit_name),
-                'address': address,
-                'rndc_key_file': '/etc/designate/rndc_{}.key'.format(
-                    unit_name),
-            })
+        if self.dns_slaves:
+            for entry in self.dns_slaves.split():
+                try:
+                    address, port, key = entry.split(':')
+                    unit_name = address.replace('.', '_')
+                    pconfig.append({
+                        'nameserver': 'nameserver_{}'.format(unit_name),
+                        'pool_target': 'nameserver_{}'.format(unit_name),
+                        'address': address,
+                        'rndc_key_file': '/etc/designate/rndc_{}.key'.format(
+                            unit_name),
+                    })
+                except ValueError:
+                    # the entry doesn't until 3 values, so ignore it.
+                    pass
         return pconfig
+
+    def invalid_pool_config(self):
+        """Validates that the pool config at least looks like something that
+        can be used.
+
+        @returns: Error string or None if okay
+        """
+        if self.dns_slaves:
+            for entry in self.dns_slaves.split():
+                try:
+                    _, __, ___ = entry.split(':')
+                except ValueError:
+                    return "dns_slaves is malformed"
+        return None
 
     @property
     def pool_targets(self):
@@ -426,8 +445,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         }
     }
 
-    required_relations = ['shared-db', 'amqp', 'identity-service',
-                          'dns-backend']
+    required_relations = ['shared-db', 'amqp', 'identity-service', ]
 
     restart_map = {
         '/etc/default/openstack': services,
@@ -442,6 +460,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
     default_service = 'designate-api'
     sync_cmd = ['designate-manage', 'database', 'sync']
     adapters_class = DesignateAdapters
+    configuration_class = DesignateConfigurationAdapter
 
     ha_resources = ['vips', 'haproxy']
     release = 'mitaka'
@@ -518,10 +537,14 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         @returns None
         """
         slaves = hookenv.config('dns-slaves') or ''
-        for entry in slaves.split():
-            address, port, key = entry.split(':')
-            unit_name = address.replace('.', '_')
-            self.write_key_file(unit_name, key)
+        try:
+            for entry in slaves.split():
+                address, port, key = entry.split(':')
+                unit_name = address.replace('.', '_')
+                self.write_key_file(unit_name, key)
+        except ValueError as e:
+            hookenv.log("Problem with 'dns-slaves' config: {}"
+                        .format(str(e)), level=hookenv.ERROR)
 
     @classmethod
     def get_domain_id(cls, domain):
@@ -645,4 +668,13 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                  hookenv.config('neutron-domain'))):
             return 'blocked', ('nameservers must be set when specifying'
                                ' nova-domain or neutron-domain')
+        dns_backend_available = (reactive
+                                 .RelationBase
+                                 .from_state('dns-backend.available'))
+        invalid_dns = self.options.invalid_pool_config()
+        if invalid_dns:
+            return 'blocked', invalid_dns
+        if not (dns_backend_available or hookenv.config('dns-slaves')):
+            return 'blocked', ('Need either a dns-backend relation or '
+                               'config(dns-slaves) or both.')
         return None, None
