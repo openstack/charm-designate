@@ -1,44 +1,44 @@
 options:
   dns-slaves:
-    default:
     type: string
+    default:
     description: |
       List of DNS slaves which will accept addzone/delzone rndc commands from
       Designate. List is of the form slave_ip:rndc_port:rndc_key. This should
       only be used if DNS servers are outside of Juju control. Using the
       designate-bind charm is the prefered approach.
   nova-domain:
-    default:
     type: string
+    default:
     description: Domain to add records for new instances to
   nova-domain-email:
-    default:
     type: string
+    default:
     description: Email address of the person responsible for the domain.
   nameservers:
-    default:
     type: string
+    default:
     description: |
       Space delimited list of nameservers. These are the nameservers that have
       been provided to the domain registrar in order to delegate the domain to
       Designate. e.g. "ns1.example.com. ns2.example.com."
   neutron-domain:
-    default:
     type: string
-    description: Domain to add  floating ip records to
+    default:
+    description: Domain to add floating IP records to.
   neutron-domain-email:
-    default:
     type: string
+    default:
     description: Email address of the person responsible for the domain.
   neutron-record-format:
+    type: string
     default: '%(octet0)s-%(octet1)s-%(octet2)s-%(octet3)s.%(zone)s'
-    type: string
-    description: Format of floating ip global records
+    description: Format of floating IP global records.
   nova-record-format:
-    default: '%(hostname)s.%(tenant_id)s.%(zone)s'
     type: string
-    description: Format of floating ip global records
+    default: '%(hostname)s.%(tenant_id)s.%(zone)s'
+    description: Format of floating IP global records.
   enable-host-header:
-    default: false
     type: boolean
+    default: false
     description: Enables host request headers.
