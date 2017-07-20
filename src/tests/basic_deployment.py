@@ -147,10 +147,10 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         # Authenticate admin with designate endpoint
         designate_ep = self.keystone.service_catalog.url_for(
             service_type='dns',
-            endpoint_type='publicURL')
+            interface='publicURL')
         keystone_ep = self.keystone.service_catalog.url_for(
             service_type='identity',
-            endpoint_type='publicURL')
+            interface='publicURL')
         self.designate = designate_client.Client(
             version='1',
             auth_url=keystone_ep,
