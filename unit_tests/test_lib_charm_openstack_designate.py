@@ -71,90 +71,6 @@ class Helper(unittest.TestCase):
         setattr(self, name, started)
 
 
-class TestOpenStackDesignate(Helper):
-
-    def test_install(self):
-        self.patch(designate.DesignateCharm.singleton, 'install')
-        designate.install()
-        self.install.assert_called_once_with()
-
-    def test_db_sync_done(self):
-        self.patch(designate.DesignateCharm.singleton, 'db_sync_done')
-        designate.db_sync_done()
-        self.db_sync_done.assert_called_once_with()
-
-    def test_db_sync(self):
-        self.patch(designate.DesignateCharm.singleton, 'db_sync')
-        designate.db_sync()
-        self.db_sync.assert_called_once_with()
-
-    def test_render_base_config(self):
-        self.patch(designate.DesignateCharm.singleton, 'render_base_config')
-        designate.render_base_config('interfaces_list')
-        self.render_base_config.assert_called_once_with('interfaces_list')
-
-    def test_domain_init_done(self):
-        self.patch(designate.DesignateCharm.singleton, 'domain_init_done')
-        designate.domain_init_done()
-        self.domain_init_done.assert_called_once_with()
-
-    def test_render_full_config(self):
-        self.patch(designate.DesignateCharm.singleton, 'render_full_config')
-        designate.render_full_config('interfaces_list')
-        self.render_full_config.assert_called_once_with('interfaces_list')
-
-    def test_register_endpoints(self):
-        self.patch(designate.DesignateCharm, 'service_type',
-                   new_callable=mock.PropertyMock)
-        self.patch(designate.DesignateCharm, 'region',
-                   new_callable=mock.PropertyMock)
-        self.patch(designate.DesignateCharm, 'public_url',
-                   new_callable=mock.PropertyMock)
-        self.patch(designate.DesignateCharm, 'internal_url',
-                   new_callable=mock.PropertyMock)
-        self.patch(designate.DesignateCharm, 'admin_url',
-                   new_callable=mock.PropertyMock)
-        self.service_type.return_value = 'type1'
-        self.region.return_value = 'region1'
-        self.public_url.return_value = 'public_url'
-        self.internal_url.return_value = 'internal_url'
-        self.admin_url.return_value = 'admin_url'
-        keystone = mock.MagicMock()
-        designate.register_endpoints(keystone)
-        keystone.register_endpoints.assert_called_once_with(
-            'type1', 'region1', 'public_url', 'internal_url', 'admin_url')
-
-    def test_configure_ha_resources(self):
-        self.patch(designate.DesignateCharm.singleton, 'db_sync')
-        designate.db_sync()
-        self.db_sync.assert_called_once_with()
-
-    def test_restart_all(self):
-        self.patch(designate.DesignateCharm.singleton, 'restart_all')
-        designate.restart_all()
-        self.restart_all.assert_called_once_with()
-
-    def test_configure_ssl(self):
-        self.patch(designate.DesignateCharm.singleton, 'configure_ssl')
-        designate.configure_ssl()
-        self.configure_ssl.assert_called_once_with(None)
-
-    def test_update_peers(self):
-        self.patch(designate.DesignateCharm.singleton, 'update_peers')
-        designate.update_peers('cluster')
-        self.update_peers.assert_called_once_with('cluster')
-
-    def test_render_rndc_keys(self):
-        self.patch(designate.DesignateCharm.singleton, 'render_rndc_keys')
-        designate.render_rndc_keys()
-        self.render_rndc_keys.assert_called_once_with()
-
-    def test_assess_status(self):
-        self.patch(designate.DesignateCharm.singleton, 'assess_status')
-        designate.assess_status()
-        self.assess_status.assert_called_once_with()
-
-
 class TestDesignateDBAdapter(Helper):
 
     def fake_get_uri(self, prefix):
@@ -279,35 +195,6 @@ class TestDesignateConfigurationAdapter(Helper):
         self.assertEqual(a.rndc_master_ip, 'intip')
 
 
-class TestDesignateAdapters(Helper):
-
-    def test_designate_adapters(self):
-        self.patch(
-            designate.openstack_adapters.APIConfigurationAdapter,
-            'get_network_addresses')
-        cluster_relation = mock.MagicMock()
-        cluster_relation.relation_name = 'cluster'
-        amqp_relation = mock.MagicMock()
-        amqp_relation.relation_name = 'amqp'
-        shared_db_relation = mock.MagicMock()
-        shared_db_relation.relation_name = 'shared_db'
-        other_relation = mock.MagicMock()
-        other_relation.relation_name = 'other'
-        other_relation.thingy = 'help'
-        # verify that the class is created with a DesignateConfigurationAdapter
-        b = designate.DesignateAdapters([amqp_relation,
-                                         cluster_relation,
-                                         shared_db_relation,
-                                         other_relation])
-        # ensure that the relevant things got put on.
-        self.assertTrue(
-            isinstance(
-                b.other,
-                designate.openstack_adapters.OpenStackRelationAdapter))
-        self.assertIsInstance(b.options,
-                              designate.DesignateConfigurationAdapter)
-
-
 class TestDesignateCharm(Helper):
 
     def test_install(self):
@@ -420,6 +307,7 @@ class TestDesignateCharm(Helper):
         self.ensure_api_responding.return_value = True
         self.patch(designate.hookenv, 'is_leader', return_value=True)
         self.patch(designate.hookenv, 'leader_set')
+        self.patch(designate.hookenv, 'leader_get', return_value=False)
         self.patch(designate.DesignateCharm, 'create_server')
         self.patch(designate.DesignateCharm, 'create_domain')
 

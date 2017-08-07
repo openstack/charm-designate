@@ -20,7 +20,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
             'when': {
                 'setup_amqp_req': ('amqp.connected', ),
                 'setup_database': ('shared-db.connected', ),
-                'setup_endpoint': ('identity-service.connected', ),
+                'maybe_setup_endpoint': ('identity-service.connected', ),
                 'configure_ssl': ('identity-service.available', ),
                 'update_peers': ('cluster.available', ),
                 'config_changed': ('config.changed', ),
@@ -34,10 +34,14 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'configure_designate_basic': all_interfaces,
             },
             'when_not': {
+                'setup_amqp_req': ('amqp.requested-access', ),
+                'setup_database': ('shared-db.setup', ),
                 'install_packages': ('installed', ),
                 'run_db_migration': ('db.synched', ),
                 'configure_designate_basic': ('base-config.rendered', ),
                 'create_servers_and_domains': ('domains.created', ),
+                'run_assess_status_on_every_hook': (
+                    'dont-set-assess-status', ),
             },
             'when_any': {
                 'set_dns_config_available': (
@@ -58,23 +62,36 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
 
 class TestHandlers(test_utils.PatchHelper):
 
+    def _patch_provide_charm_instance(self):
+        the_charm = mock.MagicMock()
+        self.patch_object(handlers, 'provide_charm_instance',
+                          name='provide_charm_instance',
+                          new=mock.MagicMock())
+        self.provide_charm_instance().__enter__.return_value = the_charm
+        self.provide_charm_instance().__exit__.return_value = None
+        return the_charm
+
     def test_install_packages(self):
-        self.patch_object(handlers.designate, 'install')
+        the_charm = self._patch_provide_charm_instance()
         self.patch_object(handlers.reactive, 'set_state')
+        self.patch_object(handlers.reactive, 'remove_state')
         handlers.install_packages()
-        self.install.assert_called_once_with()
-        self.set_state.assert_called_once_with('installed')
+        the_charm.install.assert_called_once_with()
+        calls = [mock.call('amqp.requested-access'),
+                 mock.call('shared-db.setup'),
+                 mock.call('base-config.rendered'),
+                 mock.call('db.synched')]
+        self.remove_state.assert_has_calls(calls)
 
     def test_setup_amqp_req(self):
-        self.patch_object(handlers.designate, 'assess_status')
+        self.patch_object(handlers.reactive, 'set_state')
         amqp = mock.MagicMock()
         handlers.setup_amqp_req(amqp)
         amqp.request_access.assert_called_once_with(
             username='designate', vhost='openstack')
-        self.assess_status.assert_called_once_with()
+        self.set_state.assert_called_once_with('amqp.requested-access')
 
     def test_database(self):
-        self.patch_object(handlers.designate, 'assess_status')
         database = mock.MagicMock()
         handlers.setup_database(database)
         calls = [
@@ -88,74 +105,72 @@ class TestHandlers(test_utils.PatchHelper):
                 prefix='dpm'),
         ]
         database.configure.has_calls(calls)
-        self.assess_status.assert_called_once_with()
 
     def test_setup_endpoint(self):
-        self.patch_object(handlers.designate, 'assess_status')
-        self.patch_object(handlers.designate, 'register_endpoints')
-        handlers.setup_endpoint('endpoint_object')
-        self.register_endpoints.assert_called_once_with('endpoint_object')
-        self.assess_status.assert_called_once_with()
+        the_charm = self._patch_provide_charm_instance()
+        the_charm.service_type = 's1'
+        the_charm.region = 'r1'
+        the_charm.public_url = 'p1'
+        the_charm.internal_url = 'i1'
+        the_charm.admin_url = 'a1'
+        args = ['s1', 'r1', 'p1', 'i1', 'a1']
+        self.patch_object(handlers, 'is_data_changed',
+                          name='is_data_changed',
+                          new=mock.MagicMock())
+        self.is_data_changed().__enter__.return_value = True
+        self.is_data_changed().__exit__.return_value = None
+        keystone = mock.MagicMock()
+        handlers.maybe_setup_endpoint(keystone)
+        self.is_data_changed.called_once_with(mock.ANY, args)
+        keystone.register_endpoints.assert_called_once_with(*args)
 
     def test_configure_designate_basic(self):
+        the_charm = self._patch_provide_charm_instance()
         self.patch_object(handlers.reactive, 'set_state')
-        self.patch_object(handlers.designate, 'render_base_config')
         self.patch_object(handlers.reactive.RelationBase, 'from_state',
                           return_value=None)
         handlers.configure_designate_basic('arg1', 'arg2')
-        self.render_base_config.assert_called_once_with(('arg1', 'arg2', ))
+        the_charm.render_base_config.assert_called_once_with(
+            ('arg1', 'arg2', ))
         self.set_state.assert_called_once_with('base-config.rendered')
 
     def test_run_db_migration(self):
+        the_charm = self._patch_provide_charm_instance()
         self.patch_object(handlers.reactive, 'set_state')
-        self.patch_object(handlers.designate, 'db_sync')
-        self.patch_object(handlers.designate, 'db_sync_done')
-        self.db_sync_done.return_value = False
+        the_charm.db_sync_done.return_value = False
         handlers.run_db_migration('arg1', 'arg2')
-        self.db_sync.assert_called_once_with()
+        the_charm.db_sync.assert_called_once_with()
         self.assertFalse(self.set_state.called)
-        self.db_sync.reset_mock()
-        self.db_sync_done.return_value = True
+        the_charm.db_sync.reset_mock()
+        the_charm.db_sync_done.return_value = True
         handlers.run_db_migration('arg1', 'arg2')
-        self.db_sync.assert_called_once_with()
+        the_charm.db_sync.assert_called_once_with()
         self.set_state.assert_called_once_with('db.synched')
 
     def test_update_peers(self):
-        cluster = mock.MagicMock()
-        self.patch_object(handlers.designate, 'update_peers')
-        handlers.update_peers(cluster)
-        self.update_peers.assert_called_once_with(cluster)
+        the_charm = self._patch_provide_charm_instance()
+        handlers.update_peers('cluster')
+        the_charm.update_peers.assert_called_once_with('cluster')
 
     def test_configure_designate_full(self):
+        the_charm = self._patch_provide_charm_instance()
         self.patch_object(handlers.reactive.RelationBase,
                           'from_state',
                           return_value=None)
-        self.patch_object(handlers.designate, 'upgrade_if_available')
-        self.patch_object(handlers.designate, 'configure_ssl')
-        self.patch_object(handlers.designate, 'render_full_config')
-        self.patch_object(handlers.designate,
-                          'create_initial_servers_and_domains')
-        self.patch_object(handlers.designate, 'render_sink_configs')
-        self.patch_object(handlers.designate, 'render_rndc_keys')
-        self.patch_object(handlers.designate, 'update_pools')
         handlers.configure_designate_full('arg1', 'arg2')
-        self.configure_ssl.assert_called_once_with()
-        self.render_full_config.assert_called_once_with(('arg1', 'arg2', ))
-        self.create_initial_servers_and_domains.assert_called_once_with()
-        self.render_sink_configs.assert_called_once_with(('arg1', 'arg2', ))
-        self.render_rndc_keys.assert_called_once_with()
-        self.update_pools.assert_called_once_with()
-        self.upgrade_if_available.assert_called_once_with(('arg1', 'arg2', ))
+        the_charm.configure_ssl.assert_called_once_with()
+        the_charm.render_full_config.assert_called_once_with(
+            ('arg1', 'arg2', ))
+        the_charm.create_initial_servers_and_domains.assert_called_once_with()
+        the_charm.render_with_interfaces.assert_called_once_with(
+            ('arg1', 'arg2'), configs=mock.ANY)
+        the_charm.render_rndc_keys.assert_called_once_with()
+        the_charm.update_pools.assert_called_once_with()
+        the_charm.upgrade_if_available.assert_called_once_with(
+            ('arg1', 'arg2', ))
 
     def test_cluster_connected(self):
+        the_charm = self._patch_provide_charm_instance()
         hacluster = mock.MagicMock()
-        self.patch_object(handlers.designate, 'configure_ha_resources')
-        self.patch_object(handlers.designate, 'assess_status')
         handlers.cluster_connected(hacluster)
-        self.configure_ha_resources.assert_called_once_with(hacluster)
-        self.assess_status.assert_called_once_with()
-
-    def test_config_changed(self):
-        self.patch_object(handlers.designate, 'assess_status')
-        handlers.config_changed()
-        self.assess_status.assert_called_once_with()
+        the_charm.configure_ha_resources.assert_called_once_with(hacluster)

@@ -36,172 +36,8 @@ NEUTRON_SINK_FILE = DESIGNATE_DIR + '/conf.d/neutron_sink.cfg'
 RC_FILE = '/root/novarc'
 
 
-def install():
-    """Use the singleton from the DesignateCharm to install the packages on the
-    unit
-
-    @returns: None
-    """
-    DesignateCharm.singleton.install()
-
-
-def db_sync_done():
-    """Use the singleton from the DesignateCharm to check if db migration has
-    been run
-
-    @returns: str or None. Str if sync has been done otherwise None
-    """
-    return DesignateCharm.singleton.db_sync_done()
-
-
-def db_sync():
-    """Use the singleton from the DesignateCharm to run db migration
-
-    @returns: None
-    """
-    DesignateCharm.singleton.db_sync()
-
-
-def render_base_config(interfaces_list):
-    """Use the singleton from the DesignateCharm to run render_base_config
-
-    @param interfaces_list: List of instances of interface classes.
-    @returns: None
-    """
-    DesignateCharm.singleton.render_base_config(interfaces_list)
-
-
-def create_initial_servers_and_domains():
-    """Use the singleton from the DesignateCharm to run create inital servers
-    and domains in designate
-
-    @returns: None
-    """
-    DesignateCharm.singleton.create_initial_servers_and_domains()
-
-
-def domain_init_done():
-    """Use the singleton from the DesignateCharm to check if inital servers
-    and domains have been created
-
-    @returns: str or None. Str if init has been done otherwise None
-    """
-    return DesignateCharm.singleton.domain_init_done()
-
-
-def render_full_config(interfaces_list):
-    """Use the singleton from the DesignateCharm to render all configs
-
-    @param interfaces_list: List of instances of interface classes.
-    @returns: None
-    """
-    DesignateCharm.singleton.render_full_config(interfaces_list)
-
-
-def render_sink_configs(interfaces_list):
-    """Use the singleton from the DesignateCharm to render sink configs
-
-    @param interfaces_list: List of instances of interface classes.
-    @returns: None
-    """
-    configs = [NOVA_SINK_FILE, NEUTRON_SINK_FILE, DESIGNATE_DEFAULT]
-    DesignateCharm.singleton.render_with_interfaces(
-        interfaces_list,
-        configs=configs)
-
-
-def register_endpoints(keystone):
-    """When the keystone interface connects, register this unit in the keystone
-    catalogue.
-
-    @param keystone: KeystoneRequires() interface class
-    @returns: None
-    """
-    charm = DesignateCharm.singleton
-    keystone.register_endpoints(charm.service_type,
-                                charm.region,
-                                charm.public_url,
-                                charm.internal_url,
-                                charm.admin_url)
-
-
-def configure_ha_resources(hacluster):
-    """Use the singleton from the DesignateCharm to run configure ha resources
-
-    @param hacluster: OpenstackHAPeers() interface class
-    @returns: None
-    """
-    DesignateCharm.singleton.configure_ha_resources(hacluster)
-
-
-def restart_all():
-    """Use the singleton from the DesignateCharm to restart all registered
-    services
-
-    @returns: None
-    """
-    DesignateCharm.singleton.restart_all()
-
-
-def configure_ssl(keystone=None):
-    """Use the singleton from the DesignateCharm to configure ssl
-
-    @param keystone: KeystoneRequires() interface class
-    @returns: None
-    """
-    DesignateCharm.singleton.configure_ssl(keystone)
-
-
-def update_peers(hacluster):
-    """Use the singleton from the DesignateCharm to update peers with detials
-    of this unit
-
-    @param hacluster: OpenstackHAPeers() interface class
-    @returns: None
-    """
-    DesignateCharm.singleton.update_peers(hacluster)
-
-
-def render_rndc_keys():
-    """Use the singleton from the DesignateCharm write out rndc key files
-
-    @returns: None
-    """
-    DesignateCharm.singleton.render_rndc_keys()
-
-
-def assess_status():
-    """Just call the DesignateCharm.singleton.assess_status() command to update
-    status on the unit.
-
-    @returns: None
-    """
-    DesignateCharm.singleton.assess_status()
-
-
-def update_pools():
-    """Just call the DesignateCharm.singleton.update_pools() command to update
-    pool info in the db
-
-    @returns: None
-    """
-    DesignateCharm.singleton.update_pools()
-
-
-def upgrade_if_available(interfaces_list):
-    """Just call the DesignateCharm.singleton.upgrade_if_available() command to
-    update OpenStack package if upgrade is available
-
-    @returns: None
-    """
-    DesignateCharm.singleton.upgrade_if_available(interfaces_list)
-
-
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
     """Get database URIs for the two designate databases"""
-
-    def __init__(self, relation):
-        super(DesignateDBAdapter, self).__init__(relation)
 
     @property
     def designate_uri(self):
@@ -217,9 +53,6 @@ class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
 class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
 
     interface_type = "dns"
-
-    def __init__(self, relation):
-        super(BindRNDCRelationAdapter, self).__init__(relation)
 
     @property
     def slave_ips(self):
@@ -282,10 +115,6 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
 
 class DesignateConfigurationAdapter(
         openstack_adapters.APIConfigurationAdapter):
-
-    def __init__(self, port_map=None, *args, **kwargs):
-        super(DesignateConfigurationAdapter, self).__init__(
-            port_map=port_map, service_name='designate', *args, **kwargs)
 
     @property
     def pool_config(self):
@@ -415,12 +244,6 @@ class DesignateAdapters(openstack_adapters.OpenStackAPIRelationAdapters):
         'cluster': openstack_adapters.PeerHARelationAdapter,
         'dns_backend': BindRNDCRelationAdapter,
     }
-
-    def __init__(self, relations):
-        super(DesignateAdapters, self).__init__(
-            relations,
-            options_instance=DesignateConfigurationAdapter(
-                port_map=DesignateCharm.api_ports))
 
 
 class DesignateCharm(openstack_charm.HAOpenStackCharm):
@@ -631,10 +454,14 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         """Create the nameserver entry and domains based on the charm user
         supplied config
 
+        NOTE(AJK): This only wants to be done ONCE and by the leader, so we use
+        leader settings to store that we've done it, after it's successfully
+        completed.
+
         @returns None
         """
-        if hookenv.is_leader():
-            cls.ensure_api_responding()
+        KEY = 'create_initial_servers_and_domains'
+        if hookenv.is_leader() and not hookenv.leader_get(KEY):
             nova_domain_name = hookenv.config('nova-domain')
             neutron_domain_name = hookenv.config('neutron-domain')
             with cls.check_zone_ids(nova_domain_name, neutron_domain_name):
@@ -654,13 +481,32 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                     cls.create_domain(
                         neutron_domain_name,
                         hookenv.config('neutron-domain-email'))
+            # if this fails, we weren't the leader any more; another unit may
+            # attempt to do this too.
+            hookenv.leader_set(KEY, 'done')
 
     def update_pools(self):
         # designate-manage communicates with designate via message bus so no
         # need to set OS_ vars
+        # NOTE(AJK) this runs with every hook (once most relations are up) and
+        # so if it fails it will be picked up by the next relation change or
+        # update-status.  i.e. it will heal eventually.
         if hookenv.is_leader():
-            cmd = ['designate-manage', 'pool', 'update']
-            subprocess.check_call(cmd)
+            try:
+                cmd = "designate-manage pool update"
+                # Note(tinwood) that this command may fail if the pools.yaml
+                # doesn't actually contain any pools.  This happens when the
+                # relation is broken, which errors out the charm.  This stops
+                # this happening and logs the error.
+                subprocess.check_call(cmd.split(), timeout=60)
+            except subprocess.CalledProcessError as e:
+                hookenv.log("designate-manage pool update failed: {}"
+                            .format(str(e)))
+            except subprocess.TimeoutExpired as e:
+                # the timeout is if the rabbitmq server has gone away; it just
+                # retries continuously; this lets the hook complete.
+                hookenv.log("designate-manage pool command timed out: {}".
+                            format(str(e)))
 
     def custom_assess_status_check(self):
         if (not hookenv.config('nameservers') and
