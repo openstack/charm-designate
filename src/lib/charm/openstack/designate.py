@@ -483,7 +483,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                         hookenv.config('neutron-domain-email'))
             # if this fails, we weren't the leader any more; another unit may
             # attempt to do this too.
-            hookenv.leader_set(KEY, 'done')
+            hookenv.leader_set({KEY: 'done'})
 
     def update_pools(self):
         # designate-manage communicates with designate via message bus so no
