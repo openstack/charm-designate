@@ -17,7 +17,6 @@ import subprocess
 import charm.openstack.designate as designate
 import charms.reactive as reactive
 import charmhelpers.core.hookenv as hookenv
-import charmhelpers.contrib.network.ip as ip
 
 from charms_openstack.charm import provide_charm_instance
 from charms_openstack.charm.utils import is_data_changed
@@ -86,11 +85,10 @@ def setup_amqp_req(amqp):
 @reactive.when_not('shared-db.setup')
 def setup_database(database):
     """Send request designate accounts and dbs"""
-    hostname = ip.get_address_in_network(database.access_network())
     database.configure('designate', 'designate',
-                       prefix='designate', hostname=hostname)
+                       prefix='designate')
     database.configure('dpm', 'dpm',
-                       prefix='dpm', hostname=hostname)
+                       prefix='dpm')
     reactive.set_state('shared-db.setup')
 
 
