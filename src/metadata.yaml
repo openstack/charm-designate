@@ -12,9 +12,10 @@ tags:
   - openstack
   - dns
 series:
- - trusty
- - xenial
- - zesty
+  - xenial
+  - artful
+  - zesty
+  - trusty
 subordinate: false
 provides:
   dnsaas:
