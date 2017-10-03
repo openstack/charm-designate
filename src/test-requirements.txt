@@ -8,7 +8,7 @@ os-testr>=0.4.1
 charm-tools>=2.0.0
 requests==2.6.0
 # amulet deployment helpers
-bzr+lp:charm-helpers#egg=charmhelpers
+git+https://github.com/juju/charm-helpers#egg=charmhelpers
 # BEGIN: Amulet OpenStack Charm Helper Requirements
 # Liberty client lower constraints
 amulet>=1.14.3,<2.0
