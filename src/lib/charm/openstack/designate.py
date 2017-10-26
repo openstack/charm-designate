@@ -285,7 +285,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
     adapters_class = DesignateAdapters
     configuration_class = DesignateConfigurationAdapter
 
-    ha_resources = ['vips', 'haproxy']
+    ha_resources = ['vips', 'haproxy', 'dnsha']
     release = 'mitaka'
     release_pkg = 'designate-common'
     package_codenames = {
