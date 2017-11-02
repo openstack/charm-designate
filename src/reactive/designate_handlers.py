@@ -32,6 +32,7 @@ COMPLETE_INTERFACE_STATES = [
     'shared-db.available',
     'identity-service.available',
     'amqp.available',
+    'coordinator-memcached.available',
 ]
 
 

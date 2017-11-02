@@ -28,6 +28,8 @@ requires:
   ha:
     interface: hacluster
     scope: container
+  coordinator-memcached:
+    interface: memcache
 peers:
   cluster:
     interface: openstack-ha

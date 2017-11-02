@@ -12,6 +12,8 @@ charms:
     juju deploy mysql
     juju deploy rabbitmq-server
     juju deploy keystone
+    juju deploy memcached
+    juju add-relation designate memcached
     juju add-relation designate mysql
     juju add-relation designate rabbitmq-server
     juju add-relation designate keystone

@@ -243,6 +243,7 @@ class DesignateAdapters(openstack_adapters.OpenStackAPIRelationAdapters):
         'shared_db': DesignateDBAdapter,
         'cluster': openstack_adapters.PeerHARelationAdapter,
         'dns_backend': BindRNDCRelationAdapter,
+        'coordinator_memcached': openstack_adapters.MemcacheRelationAdapter,
     }
 
 
@@ -268,7 +269,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         }
     }
 
-    required_relations = ['shared-db', 'amqp', 'identity-service', ]
+    required_relations = ['shared-db', 'amqp', 'identity-service',
+                          'coordinator-memcached']
 
     restart_map = {
         '/etc/default/openstack': services,

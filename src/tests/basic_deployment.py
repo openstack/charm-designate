@@ -50,7 +50,7 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         self._deploy()
 
         u.log.info('Waiting on extended status checks...')
-        exclude_services = ['mongodb']
+        exclude_services = ['mongodb', 'memcached']
         self._auto_wait_for_status(exclude_services=exclude_services)
 
         self.d.sentry.wait()
@@ -68,6 +68,7 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
             {'name': 'percona-cluster', 'constraints': {'mem': '3072M'}},
             {'name': 'rabbitmq-server'},
             {'name': 'keystone'},
+            {'name': 'memcached', 'location': 'cs:memcached'},
             {'name': 'designate-bind'}
         ]
 
@@ -78,6 +79,7 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
 
         no_origin = [
             'designate-bind',
+            'memcached',
         ]
 
         super(DesignateBasicDeployment, self)._add_services(this_service,
@@ -93,6 +95,7 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
             'designate:identity-service': 'keystone:identity-service',
             'keystone:shared-db': 'percona-cluster:shared-db',
             'designate:dns-backend': 'designate-bind:dns-backend',
+            'designate:coordinator-memcached': 'memcached:cache',
         }
         super(DesignateBasicDeployment, self)._add_relations(relations)
 

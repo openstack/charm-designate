@@ -15,6 +15,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
             'dns-config.available',
             'shared-db.available',
             'identity-service.available',
+            'coordinator-memcached.available',
             'amqp.available')
         hook_set = {
             'when': {
