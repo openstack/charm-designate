@@ -27,6 +27,8 @@ import charmhelpers.core.hookenv as hookenv
 import charmhelpers.core.host as host
 import charms.reactive as reactive
 
+from charmhelpers.contrib.network import ip as ch_ip
+
 DESIGNATE_DIR = '/etc/designate'
 DESIGNATE_DEFAULT = '/etc/default/openstack'
 DESIGNATE_CONF = DESIGNATE_DIR + '/designate.conf'
@@ -233,6 +235,21 @@ class DesignateConfigurationAdapter(
         """Returns IP address slave DNS slave should use to query master
         """
         return os_ip.resolve_address(endpoint_type=os_ip.INTERNAL)
+
+    @property
+    def rndc_master_ips(self):
+        rndc_master_ips = []
+        rndc_master_ip = ch_ip.get_relation_ip('dns-backend')
+        rndc_master_ips.append(rndc_master_ip)
+        cluster_relid = hookenv.relation_ids('cluster')[0]
+        if hookenv.related_units(relid=cluster_relid):
+            for unit in hookenv.related_units(relid=cluster_relid):
+                rndc_master_ip = hookenv.relation_get('rndc-address',
+                                                      rid=cluster_relid,
+                                                      unit=unit)
+                if rndc_master_ip is not None:
+                    rndc_master_ips.append(rndc_master_ip)
+        return rndc_master_ips
 
 
 class DesignateAdapters(openstack_adapters.OpenStackAPIRelationAdapters):

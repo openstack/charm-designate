@@ -27,7 +27,7 @@
 {% for slave in dns_backend.pool_config %}
     - type: bind9
       masters:
-{% for rndc_master_ip in cluster.internal_addresses %}
+{% for rndc_master_ip in options.rndc_master_ips %}
         - host: {{ rndc_master_ip }}
           port: 5354
 {% endfor %}

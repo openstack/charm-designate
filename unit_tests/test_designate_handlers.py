@@ -22,6 +22,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'setup_amqp_req': ('amqp.connected', ),
                 'setup_database': ('shared-db.connected', ),
                 'maybe_setup_endpoint': ('identity-service.connected', ),
+                'expose_rndc_address': ('cluster.connected', ),
                 'configure_ssl': ('identity-service.available', ),
                 'update_peers': ('cluster.available', ),
                 'config_changed': ('config.changed', ),

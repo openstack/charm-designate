@@ -112,6 +112,12 @@ def maybe_setup_endpoint(keystone):
                 keystone.register_endpoints(*args)
 
 
+@reactive.when('cluster.connected')
+def expose_rndc_address(cluster):
+    rndc_address = ip.get_relation_ip('dns-backend')
+    cluster.set_address('rndc', rndc_address)
+
+
 @reactive.when_not('base-config.rendered')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def configure_designate_basic(*args):
