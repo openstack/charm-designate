@@ -34,10 +34,18 @@ options:
     type: string
     default: '%(octet0)s-%(octet1)s-%(octet2)s-%(octet3)s.%(zone)s'
     description: Format of floating IP global records.
+  neutron-record-formatv6:
+    type: string
+    default: '%(hostname)s.%(tenant_id)s.%(zone)s'
+    description: Format of floating IPv6 global records.
   nova-record-format:
     type: string
     default: '%(hostname)s.%(tenant_id)s.%(zone)s'
-    description: Format of floating IP global records.
+    description: Format of instance IPv4 global records.
+  nova-record-formatv6:
+    type: string
+    default: '%(hostname)s.%(tenant_id)s.%(zone)s'
+    description: Format of floating IPv6 global records.
   enable-host-header:
     type: boolean
     default: false
