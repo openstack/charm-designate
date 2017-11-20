@@ -69,7 +69,8 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
             {'name': 'rabbitmq-server'},
             {'name': 'keystone'},
             {'name': 'memcached', 'location': 'cs:memcached'},
-            {'name': 'designate-bind'}
+            {'name': 'designate-bind'},
+            {'name': 'neutron-api'}
         ]
 
         use_source = [
@@ -96,6 +97,9 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
             'keystone:shared-db': 'percona-cluster:shared-db',
             'designate:dns-backend': 'designate-bind:dns-backend',
             'designate:coordinator-memcached': 'memcached:cache',
+            'designate:dnsaas': 'neutron-api:external-dns',
+            'neutron-api:identity-service': 'keystone:identity-service',
+            'neutron-api:shared-db': 'percona-cluster:shared-db',
         }
         super(DesignateBasicDeployment, self)._add_relations(relations)
 
@@ -128,6 +132,7 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         self.pxc_sentry = self.d.sentry['percona-cluster'][0]
         self.keystone_sentry = self.d.sentry['keystone'][0]
         self.rabbitmq_sentry = self.d.sentry['rabbitmq-server'][0]
+        self.neutron_api_sentry = self.d.sentry['neutron-api'][0]
         u.log.debug('openstack release val: {}'.format(
             self._get_openstack_release()))
         u.log.debug('openstack release str: {}'.format(
@@ -378,6 +383,34 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         ret = u.validate_relation_data(unit, relation, expected)
         if ret:
             message = u.relation_error('designate dns-backend', ret)
+            amulet.raise_status(amulet.FAIL, msg=message)
+
+    def test_207_designate_neutron_api_relation(self):
+        """Verify the designate to neutron-api relation data"""
+        u.log.debug('Checking designate:dnsaas relation data...')
+        unit = self.designate_sentry
+        relation = ['dnsaas', 'neutron-api:external-dns']
+        designate_ip = u.valid_ip
+        expected = {
+            'endpoint': u.valid_url,
+            'private-address': designate_ip,
+        }
+        ret = u.validate_relation_data(unit, relation, expected)
+        if ret:
+            message = u.relation_error('designate dnsaas', ret)
+            amulet.raise_status(amulet.FAIL, msg=message)
+
+    def test_208_neutron_api_designate_relation(self):
+        """Verify the neutron-api to designate relation data"""
+        u.log.debug('Checking neutron-api:external-dns relation data...')
+        unit = self.neutron_api_sentry
+        relation = ['external-dns', 'designate:dnsaas']
+        expected = {
+            'private-address': u.valid_ip,
+        }
+        ret = u.validate_relation_data(unit, relation, expected)
+        if ret:
+            message = u.relation_error('neutron-api external-dns', ret)
             amulet.raise_status(amulet.FAIL, msg=message)
 
     def get_server_id(self, server_name):

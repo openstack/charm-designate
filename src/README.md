@@ -18,13 +18,13 @@ charms:
     juju add-relation designate rabbitmq-server
     juju add-relation designate keystone
 
-To add support for auto-generated records when guests are booted the charm 
-needs a relation with nova-compute:
+To add support for DNS record auto-generation when Neutron ports and
+floating IPs are created the charm needs a relation with neutron-api charm:
 
-    juju deploy nova-compute
-    juju add-relation designate nova-compute
+    juju deploy neutron-api
+    juju add-relation designate neutron-api
 
-The charm needs to store DNS records. This can be achieved  by setting the
+The charm needs to store DNS records. This can be achieved by setting the
 dns-slave config option or by relating to the designate-bind charm:
 
     juju deploy designate-bind

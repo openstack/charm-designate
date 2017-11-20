@@ -34,6 +34,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'run_db_migration': (
                     all_interfaces + ('base-config.rendered', )),
                 'configure_designate_basic': all_interfaces,
+                'expose_endpoint': ('dnsaas.connected', ),
             },
             'when_not': {
                 'setup_amqp_req': ('amqp.requested-access', ),

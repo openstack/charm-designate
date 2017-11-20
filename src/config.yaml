@@ -10,11 +10,15 @@ options:
   nova-domain:
     type: string
     default:
-    description: Domain to add records for new instances to
+    description: |
+      Domain to add records for new instances to
+      (NOTE: This option is obsolete starting from OpenStack Mitaka release)
   nova-domain-email:
     type: string
     default:
-    description: Email address of the person responsible for the domain.
+    description: |
+      Email address of the person responsible for the domain.
+      (NOTE: This option is obsolete starting from OpenStack Mitaka release)
   nameservers:
     type: string
     default:
@@ -25,27 +29,39 @@ options:
   neutron-domain:
     type: string
     default:
-    description: Domain to add floating IP records to.
+    description: |
+      Domain to add floating IP records to.
+      (NOTE: This option is obsolete starting from OpenStack Mitaka release)
   neutron-domain-email:
     type: string
     default:
-    description: Email address of the person responsible for the domain.
+    description: |
+      Email address of the person responsible for the domain.
+      (NOTE: This option is obsolete starting from OpenStack Mitaka release)
   neutron-record-format:
     type: string
     default: '%(octet0)s-%(octet1)s-%(octet2)s-%(octet3)s.%(zone)s'
-    description: Format of floating IP global records.
+    description: |
+      Format of floating IP global records.
+      (NOTE: This option is obsolete starting from OpenStack Mitaka release)
   neutron-record-formatv6:
     type: string
     default: '%(hostname)s.%(tenant_id)s.%(zone)s'
-    description: Format of floating IPv6 global records.
+    description: |
+      Format of floating IPv6 global records.
+      (NOTE: This option is obsolete starting from OpenStack Mitaka release)
   nova-record-format:
     type: string
     default: '%(hostname)s.%(tenant_id)s.%(zone)s'
-    description: Format of instance IPv4 global records.
+    description: |
+      Format of floating IP global records.
+      (NOTE: This option is obsolete starting from OpenStack Mitaka release)
   nova-record-formatv6:
     type: string
     default: '%(hostname)s.%(tenant_id)s.%(zone)s'
-    description: Format of floating IPv6 global records.
+    description: |
+      Format of floating IPv6 global records.
+      (NOTE: This option is obsolete starting from OpenStack Mitaka release)
   enable-host-header:
     type: boolean
     default: false

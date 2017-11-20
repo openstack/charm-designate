@@ -201,6 +201,12 @@ def cluster_connected(hacluster):
         instance.configure_ha_resources(hacluster)
 
 
+@reactive.when('dnsaas.connected')
+def expose_endpoint(endpoint):
+    with provide_charm_instance() as instance:
+        endpoint.expose_endpoint(instance.public_url)
+
+
 @reactive.when_not('dont-set-assess-status')
 def run_assess_status_on_every_hook():
     """The call to charm instance.assess_status() sets up the assess status

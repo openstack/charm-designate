@@ -1,4 +1,4 @@
-includes: ['layer:openstack-api', 'interface:bind-rndc', 'interface:hacluster', 'interface:openstack-ha', 'interface:memcache']
+includes: ['layer:openstack-api', 'interface:bind-rndc', 'interface:hacluster', 'interface:openstack-ha', 'interface:memcache', 'interface:designate']
 options:
   basic:
     use_venv: True
