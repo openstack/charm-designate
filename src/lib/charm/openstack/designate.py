@@ -389,6 +389,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                         .format(str(e)), level=hookenv.ERROR)
 
     @classmethod
+    @decorators.retry_on_exception(
+        40, base_delay=5, exc_type=subprocess.CalledProcessError)
     def get_domain_id(cls, domain):
         """Return the domain ID for a given domain name
 
@@ -405,6 +407,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         return None
 
     @classmethod
+    @decorators.retry_on_exception(
+        40, base_delay=5, exc_type=subprocess.CalledProcessError)
     def create_domain(cls, domain, email):
         """Create a domain
 
@@ -420,6 +424,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         subprocess.check_call(create_cmd)
 
     @classmethod
+    @decorators.retry_on_exception(
+        40, base_delay=5, exc_type=subprocess.CalledProcessError)
     def create_server(cls, nsname):
         """ create a nameserver entry with the supplied name
 
@@ -439,7 +445,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
 
     @classmethod
     @decorators.retry_on_exception(
-        10, base_delay=5, exc_type=subprocess.CalledProcessError)
+        40, base_delay=5, exc_type=subprocess.CalledProcessError)
     def ensure_api_responding(cls):
         """Check that the api service is responding.
 
