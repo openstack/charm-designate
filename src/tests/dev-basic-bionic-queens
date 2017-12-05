@@ -15,10 +15,10 @@
 # limitations under the License.
 
 
-"""Amulet tests on a basic aodh deployment on trusty-ocata."""
+"""Amulet tests on a basic aodh deployment on trusty-queens."""
 
 from basic_deployment import DesignateBasicDeployment
 
 if __name__ == '__main__':
-    deployment = DesignateBasicDeployment(series='zesty')
+    deployment = DesignateBasicDeployment(series='bionic')
     deployment.run_tests()

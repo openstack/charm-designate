@@ -13,8 +13,8 @@ tags:
   - dns
 series:
   - xenial
+  - bionic
   - artful
-  - zesty
   - trusty
 subordinate: false
 provides:
