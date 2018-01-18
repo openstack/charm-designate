@@ -25,7 +25,7 @@ import charms_openstack.ip as os_ip
 import charmhelpers.core.decorators as decorators
 import charmhelpers.core.hookenv as hookenv
 import charmhelpers.core.host as host
-import charms.reactive as reactive
+import charms.reactive.relations as relations
 
 from charmhelpers.contrib.network import ip as ch_ip
 
@@ -539,9 +539,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                  hookenv.config('neutron-domain'))):
             return 'blocked', ('nameservers must be set when specifying'
                                ' nova-domain or neutron-domain')
-        dns_backend_available = (reactive
-                                 .RelationBase
-                                 .from_state('dns-backend.available'))
+        dns_backend_available = (relations
+                                 .endpoint_from_flag('dns-backend.available'))
         invalid_dns = self.options.invalid_pool_config()
         if invalid_dns:
             return 'blocked', invalid_dns
