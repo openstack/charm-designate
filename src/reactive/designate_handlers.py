@@ -16,6 +16,7 @@ import subprocess
 
 import charm.openstack.designate as designate
 import charms.reactive as reactive
+import charms.reactive.relations as relations
 import charmhelpers.core.hookenv as hookenv
 import charmhelpers.contrib.network.ip as ip
 
@@ -123,10 +124,10 @@ def expose_rndc_address(cluster):
 def configure_designate_basic(*args):
     """Configure the minimum to boostrap designate"""
     # If cluster relation is available it needs to passed in
-    cluster = reactive.RelationBase.from_state('cluster.available')
+    cluster = relations.endpoint_from_flag('cluster.available')
     if cluster is not None:
         args = args + (cluster, )
-    dns_backend = reactive.RelationBase.from_state('dns-backend.available')
+    dns_backend = relations.endpoint_from_flag('dns-backend.available')
     if dns_backend is not None:
         args = args + (dns_backend, )
     with provide_charm_instance() as instance:
@@ -159,10 +160,10 @@ def update_peers(cluster):
 def configure_designate_full(*args):
     """Write out all designate config include bootstrap domain info"""
     # If cluster relation is available it needs to passed in
-    cluster = reactive.RelationBase.from_state('cluster.available')
+    cluster = relations.endpoint_from_flag('cluster.available')
     if cluster is not None:
         args = args + (cluster, )
-    dns_backend = reactive.RelationBase.from_state('dns-backend.available')
+    dns_backend = relations.endpoint_from_flag('dns-backend.available')
     if dns_backend is not None:
         args = args + (dns_backend, )
     with provide_charm_instance() as instance:
