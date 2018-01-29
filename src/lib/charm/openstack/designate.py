@@ -548,3 +548,13 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
             return 'blocked', ('Need either a dns-backend relation or '
                                'config(dns-slaves) or both.')
         return None, None
+
+    def pool_manager_cache_sync_done(self):
+        return hookenv.leader_get(attribute='pool-manager-cache-sync-done')
+
+    def pool_manager_cache_sync(self):
+        if not self.pool_manager_cache_sync_done() and hookenv.is_leader():
+            sync_cmd = "designate-manage pool-manager-cache sync"
+            subprocess.check_call(sync_cmd.split(), timeout=60)
+            hookenv.leader_set({'pool-manager-cache-sync-done': True})
+            self.restart_all()
