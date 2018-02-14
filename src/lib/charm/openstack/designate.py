@@ -388,6 +388,12 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
             hookenv.log("Problem with 'dns-slaves' config: {}"
                         .format(str(e)), level=hookenv.ERROR)
 
+    def configure_sink(self):
+        cmp_os_release = ch_utils.CompareOpenStackReleases(
+            self.release
+        )
+        return cmp_os_release < 'queens'
+
     @classmethod
     @decorators.retry_on_exception(
         40, base_delay=5, exc_type=subprocess.CalledProcessError)
@@ -534,16 +540,17 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                             format(str(e)))
 
     def custom_assess_status_check(self):
-        if (not hookenv.config('nameservers') and
-                (hookenv.config('nova-domain') or
-                 hookenv.config('neutron-domain'))):
-            return 'blocked', ('nameservers must be set when specifying'
-                               ' nova-domain or neutron-domain')
-        dns_backend_available = (relations
-                                 .endpoint_from_flag('dns-backend.available'))
+        if self.configure_sink():
+            if (not hookenv.config('nameservers') and
+                    (hookenv.config('nova-domain') or
+                     hookenv.config('neutron-domain'))):
+                return 'blocked', ('nameservers must be set when specifying'
+                                   ' nova-domain or neutron-domain')
         invalid_dns = self.options.invalid_pool_config()
         if invalid_dns:
             return 'blocked', invalid_dns
+        dns_backend_available = (relations
+                                 .endpoint_from_flag('dns-backend.available'))
         if not (dns_backend_available or hookenv.config('dns-slaves')):
             return 'blocked', ('Need either a dns-backend relation or '
                                'config(dns-slaves) or both.')

@@ -172,8 +172,9 @@ def configure_designate_full(*args):
         instance.render_full_config(args)
         try:
             # the following function should only run once for the leader.
-            instance.create_initial_servers_and_domains()
-            _render_sink_configs(instance, args)
+            if instance.configure_sink():
+                instance.create_initial_servers_and_domains()
+                _render_sink_configs(instance, args)
             instance.render_rndc_keys()
             instance.update_pools()
         except subprocess.CalledProcessError as e:
