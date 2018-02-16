@@ -30,8 +30,11 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'create_servers_and_domains': (
                     all_interfaces + ('base-config.rendered', 'db.synched')),
                 'configure_designate_full': (
-                    all_interfaces + ('db.synched', )),
+                    all_interfaces + (
+                        'db.synched', 'pool-manager-cache.synched')),
                 'run_db_migration': (
+                    all_interfaces + ('base-config.rendered', )),
+                'sync_pool_manager_cache': (
                     all_interfaces + ('base-config.rendered', )),
                 'configure_designate_basic': all_interfaces,
                 'expose_endpoint': ('dnsaas.connected', ),
@@ -41,6 +44,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'setup_database': ('shared-db.setup', ),
                 'install_packages': ('installed', ),
                 'run_db_migration': ('db.synched', ),
+                'sync_pool_manager_cache': ('pool-manager-cache.synched', ),
                 'configure_designate_basic': ('base-config.rendered', ),
                 'create_servers_and_domains': ('domains.created', ),
                 'run_assess_status_on_every_hook': (
@@ -149,6 +153,19 @@ class TestHandlers(test_utils.PatchHelper):
         handlers.run_db_migration('arg1', 'arg2')
         the_charm.db_sync.assert_called_once_with()
         self.set_state.assert_called_once_with('db.synched')
+
+    def test_sync_pool_manager_cache(self):
+        the_charm = self._patch_provide_charm_instance()
+        self.patch_object(handlers.reactive, 'set_state')
+        the_charm.pool_manager_cache_sync_done.return_value = False
+        handlers.sync_pool_manager_cache('arg1', 'arg2')
+        the_charm.pool_manager_cache_sync.assert_called_once_with()
+        self.assertFalse(self.set_state.called)
+        the_charm.pool_manager_cache_sync.reset_mock()
+        the_charm.pool_manager_cache_sync_done.return_value = True
+        handlers.sync_pool_manager_cache('arg1', 'arg2')
+        the_charm.pool_manager_cache_sync.assert_called_once_with()
+        self.set_state.assert_called_once_with('pool-manager-cache.synched')
 
     def test_update_peers(self):
         the_charm = self._patch_provide_charm_instance()

@@ -73,6 +73,7 @@ def install_packages():
     reactive.remove_state('shared-db.setup')
     reactive.remove_state('base-config.rendered')
     reactive.remove_state('db.synched')
+    reactive.remove_state('pool-manager-cache.synched')
 
 
 @reactive.when('amqp.connected')
@@ -146,6 +147,16 @@ def run_db_migration(*args):
             reactive.set_state('db.synched')
 
 
+@reactive.when_not('pool-manager-cache.synched')
+@reactive.when('base-config.rendered')
+@reactive.when(*COMPLETE_INTERFACE_STATES)
+def sync_pool_manager_cache(*args):
+    with provide_charm_instance() as instance:
+        instance.pool_manager_cache_sync()
+        if instance.pool_manager_cache_sync_done():
+            reactive.set_state('pool-manager-cache.synched')
+
+
 @reactive.when('cluster.available')
 def update_peers(cluster):
     """Inform designate peers about this unit"""
@@ -156,6 +167,7 @@ def update_peers(cluster):
 
 
 @reactive.when('db.synched')
+@reactive.when('pool-manager-cache.synched')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def configure_designate_full(*args):
     """Write out all designate config include bootstrap domain info"""
