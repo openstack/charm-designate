@@ -251,6 +251,14 @@ class DesignateConfigurationAdapter(
                     rndc_master_ips.append(rndc_master_ip)
         return rndc_master_ips
 
+    @property
+    def ns_records(self):
+        """List of NS records
+
+        @returns [] List of NS records
+        """
+        return self.nameserver_records.split()
+
 
 class DesignateAdapters(openstack_adapters.OpenStackAPIRelationAdapters):
     """

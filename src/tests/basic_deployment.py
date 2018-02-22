@@ -115,9 +115,13 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
             'root-password': 'ChangeMe123',
             'sst-password': 'ChangeMe123',
         }
+        designate_config = {
+            'nameserver-records': 'ns1-1.example.org. ns2-1.example.org.'
+        }
         configs = {
             'keystone': keystone_config,
             'percona-cluster': pxc_config,
+            'designate': designate_config,
         }
         super(DesignateBasicDeployment, self)._configure_services(configs)
 
@@ -147,10 +151,9 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         ]
 
         # Authenticate admin with keystone endpoint
-        self.keystone = u.authenticate_keystone_admin(self.keystone_sentry,
-                                                      user='admin',
-                                                      password='openstack',
-                                                      tenant='admin')
+        self.keystone_session, self.keystone = u.get_default_keystone_session(
+            self.keystone_sentry,
+            openstack_release=self._get_openstack_release())
 
         # Authenticate admin with designate endpoint
         designate_ep = self.keystone.service_catalog.url_for(
@@ -159,13 +162,18 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         keystone_ep = self.keystone.service_catalog.url_for(
             service_type='identity',
             interface='publicURL')
-        self.designate = designate_client.Client(
-            version='1',
-            auth_url=keystone_ep,
-            username="admin",
-            password="openstack",
-            tenant_name="admin",
-            endpoint=designate_ep)
+        if self._get_openstack_release() >= self.xenial_queens:
+            self.designate = designate_client.Client(
+                version='2',
+                session=self.keystone_session)
+        else:
+            self.designate = designate_client.Client(
+                version='1',
+                auth_url=keystone_ep,
+                username="admin",
+                password="openstack",
+                tenant_name="admin",
+                endpoint=designate_ep)
 
     def check_and_wait(self, check_command, interval=2, max_wait=200,
                        desc=None):
@@ -234,7 +242,10 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         }
         actual = self.keystone.service_catalog.get_endpoints()
 
-        ret = u.validate_svc_catalog_endpoint_data(expected, actual)
+        ret = u.validate_svc_catalog_endpoint_data(
+            expected,
+            actual,
+            openstack_release=self._get_openstack_release())
         if ret:
             amulet.raise_status(amulet.FAIL, msg=ret)
 
@@ -253,8 +264,13 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
                     'publicurl': u.valid_url,
                     'service_id': u.not_null}
 
-        ret = u.validate_endpoint_data(endpoints, admin_port, internal_port,
-                                       public_port, expected)
+        ret = u.validate_endpoint_data(
+            endpoints,
+            admin_port,
+            internal_port,
+            public_port,
+            expected,
+            openstack_release=self._get_openstack_release())
         if ret:
             message = 'Designate endpoint: {}'.format(ret)
             amulet.raise_status(amulet.FAIL, msg=message)
@@ -431,6 +447,9 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         """Simple api calls to create domain"""
         # Designate does not allow the last server to be delete so ensure ns1
         # always present
+        if self._get_openstack_release() >= self.xenial_queens:
+            u.log.info('Skipping server creation tests for Queens and above')
+            return
         if not self.get_server_id(self.TEST_NS1_RECORD):
             server = servers.Server(name=self.TEST_NS1_RECORD)
             new_server = self.designate.servers.create(server)
@@ -459,8 +478,19 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
     def get_test_domain_id(self):
         return self.get_domain_id(self.TEST_DOMAIN)
 
+    def get_test_zone_id(self):
+        zone_id = None
+        for zone in self.designate.zones.list():
+            if zone['name'] == self.TEST_DOMAIN:
+                zone_id = zone['id']
+                break
+        return zone_id
+
     def check_test_domain_gone(self):
         return not self.get_test_domain_id()
+
+    def check_test_zone_gone(self):
+        return not self.get_test_zone_id()
 
     def check_slave_resolve_test_record(self):
         lookup_cmd = [
@@ -470,6 +500,39 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         return self.TEST_RECORD[self.TEST_WWW_RECORD] == cmd_out
 
     def test_410_domain_creation(self):
+        if self._get_openstack_release() >= self.xenial_queens:
+            self.v3_410_zone_creation()
+        else:
+            self.v2_410_domain_creation()
+
+    def v3_410_zone_creation(self):
+        """Simple api calls to create domain"""
+        u.log.debug('Checking if zone exists before trying to create it')
+        old_zone_id = self.get_test_zone_id()
+        if old_zone_id:
+            u.log.debug('Deleting old zone')
+            self.designate.zones.delete(old_zone_id)
+        self.check_and_wait(
+            self.check_test_zone_gone,
+            desc='Waiting for zone to disappear')
+        u.log.debug('Creating new zone')
+        zone = self.designate.zones.create(
+            name=self.TEST_DOMAIN,
+            email="fred@amuletexample.com")
+        assert(zone is not None)
+        rs = self.designate.recordsets.create(
+            zone['id'],
+            'www',
+            'A',
+            [self.TEST_RECORD[self.TEST_WWW_RECORD]])
+        self.check_and_wait(
+            self.check_slave_resolve_test_record,
+            desc='Waiting for dns record to propagate')
+        u.log.debug('Tidy up delete test record')
+        self.designate.recordsets.delete(zone['id'], rs['id'])
+        u.log.debug('OK')
+
+    def v2_410_domain_creation(self):
         """Simple api calls to create domain"""
         u.log.debug('Checking if domain exists before trying to create it')
         old_dom_id = self.get_test_domain_id()
