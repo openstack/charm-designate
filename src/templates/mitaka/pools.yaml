@@ -32,6 +32,7 @@
           port: 5354
 {% endfor %}
       options:
+        host: {{ slave.address }}
         rndc_host: {{ slave.address }}
         rndc_key_file: /etc/designate/rndc.key
 {% endfor %}
@@ -45,6 +46,7 @@
           port: 5354
 {% endfor %}
       options:
+        host: {{ slave.address }}
         rndc_host: {{ slave.address }}
         rndc_key_file: {{ slave.rndc_key_file }}
 {% endfor %}
