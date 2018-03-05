@@ -66,10 +66,3 @@ options:
     type: boolean
     default: false
     description: Enables host request headers.
-  nameserver-records:
-    default: ""
-    type: string
-    description: |
-      String containing a list of NS records for zones hosted within this pool
-      space seperated.
-      e.g. "ns1-1.example.org ns1-1.example.org."

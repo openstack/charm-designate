@@ -257,7 +257,7 @@ class DesignateConfigurationAdapter(
 
         @returns [] List of NS records
         """
-        return self.nameserver_records.split()
+        return self.nameservers.split()
 
 
 class DesignateAdapters(openstack_adapters.OpenStackAPIRelationAdapters):
@@ -573,3 +573,35 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
             subprocess.check_call(sync_cmd.split(), timeout=60)
             hookenv.leader_set({'pool-manager-cache-sync-done': True})
             self.restart_all()
+
+
+class DesignateCharmQueens(DesignateCharm):
+
+    # This charms support Ocata and onward
+    release = 'ocata'
+
+    services = ['designate-mdns', 'designate-zone-manager',
+                'designate-agent', 'designate-pool-manager',
+                'designate-central', 'designate-sink',
+                'designate-api']
+
+    restart_map = {
+        '/etc/default/openstack': services,
+        '/etc/designate/designate.conf': services,
+        '/etc/designate/rndc.key': services,
+        '/etc/designate/pools.yaml': [''],
+        RC_FILE: [''],
+    }
+
+    def custom_assess_status_check(self):
+        if not hookenv.config('nameservers'):
+            return 'blocked', ('nameservers must be set')
+        invalid_dns = self.options.invalid_pool_config()
+        if invalid_dns:
+            return 'blocked', invalid_dns
+        dns_backend_available = (relations
+                                 .endpoint_from_flag('dns-backend.available'))
+        if not (dns_backend_available or hookenv.config('dns-slaves')):
+            return 'blocked', ('Need either a dns-backend relation or '
+                               'config(dns-slaves) or both.')
+        return None, None

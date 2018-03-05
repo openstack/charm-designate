@@ -116,7 +116,7 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
             'sst-password': 'ChangeMe123',
         }
         designate_config = {
-            'nameserver-records': 'ns1-1.example.org. ns2-1.example.org.'
+            'nameservers': 'ns1-1.example.org. ns2-1.example.org.'
         }
         configs = {
             'keystone': keystone_config,
