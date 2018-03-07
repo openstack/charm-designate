@@ -32,6 +32,7 @@ from charmhelpers.contrib.network import ip as ch_ip
 DESIGNATE_DIR = '/etc/designate'
 DESIGNATE_DEFAULT = '/etc/default/openstack'
 DESIGNATE_CONF = DESIGNATE_DIR + '/designate.conf'
+POOLS_YAML = DESIGNATE_DIR + '/pools.yaml'
 RNDC_KEY_CONF = DESIGNATE_DIR + '/rndc.key'
 NOVA_SINK_FILE = DESIGNATE_DIR + '/conf.d/nova_sink.cfg'
 NEUTRON_SINK_FILE = DESIGNATE_DIR + '/conf.d/neutron_sink.cfg'
@@ -303,7 +304,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         '/etc/designate/rndc.key': services,
         '/etc/designate/conf.d/nova_sink.cfg': services,
         '/etc/designate/conf.d/neutron_sink.cfg': services,
-        '/etc/designate/pools.yaml': [''],
+        POOLS_YAML: ['designate-pool-manager'],
         RC_FILE: [''],
     }
     service_type = 'designate'
@@ -538,6 +539,9 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
                 # relation is broken, which errors out the charm.  This stops
                 # this happening and logs the error.
                 subprocess.check_call(cmd.split(), timeout=60)
+                # Update leader db to trigger restarts
+                hookenv.leader_set(
+                    {'pool-yaml-hash': host.file_hash(POOLS_YAML)})
             except subprocess.CalledProcessError as e:
                 hookenv.log("designate-manage pool update failed: {}"
                             .format(str(e)))
