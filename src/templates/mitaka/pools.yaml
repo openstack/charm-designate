@@ -2,8 +2,8 @@
   name: default
   description: Pool genergated by Juju
 
-  ns_records:
 {% if options.ns_records %}
+  ns_records:
 {% for record in options.ns_records %}
     - hostname: {{ record }}
       priority: 10

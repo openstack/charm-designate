@@ -37,6 +37,7 @@ RNDC_KEY_CONF = DESIGNATE_DIR + '/rndc.key'
 NOVA_SINK_FILE = DESIGNATE_DIR + '/conf.d/nova_sink.cfg'
 NEUTRON_SINK_FILE = DESIGNATE_DIR + '/conf.d/neutron_sink.cfg'
 RC_FILE = '/root/novarc'
+openstack_charm.use_defaults('charm.default-select-release')
 
 
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
@@ -581,8 +582,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
 
 class DesignateCharmQueens(DesignateCharm):
 
-    # This charms support Ocata and onward
-    release = 'ocata'
+    # This charms support Queens and onward
+    release = 'queens'
 
     services = ['designate-mdns', 'designate-zone-manager',
                 'designate-agent', 'designate-pool-manager',
