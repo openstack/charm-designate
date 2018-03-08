@@ -30,6 +30,11 @@ dns-slave config option or by relating to the designate-bind charm:
     juju deploy designate-bind
     juju add-relation designate designate-bind
 
+For Queens and later, the nameservers config value must be set:
+
+    juju config designate nameservers="ns1.example.com. ns2.example.com."
+
+
 # Bugs
 
 Please report bugs on [Launchpad](https://bugs.launchpad.net/charm-designate/+filebug).
