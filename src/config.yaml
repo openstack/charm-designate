@@ -26,6 +26,7 @@ options:
       Space delimited list of nameservers. These are the nameservers that have
       been provided to the domain registrar in order to delegate the domain to
       Designate. e.g. "ns1.example.com. ns2.example.com."
+      This config value is required for Queens and later.
   neutron-domain:
     type: string
     default:
