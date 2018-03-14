@@ -209,6 +209,15 @@ class DesignateConfigurationAdapter(
         return None
 
     @property
+    def notification_handlers(self):
+        handlers = []
+        if os.path.exists(NOVA_SINK_FILE):
+            handlers.append('nova_fixed')
+        if os.path.exists(NEUTRON_SINK_FILE):
+            handlers.append('neutron_floatingip')
+        return ','.join(handlers)
+
+    @property
     def nova_conf_args(self):
         """Returns config file directive to point daemons at nova config file.
         These directives are designed to be used in /etc/default/ files
