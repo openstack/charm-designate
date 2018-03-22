@@ -54,16 +54,13 @@
 {% endfor %}
 {% endif %}
 
+{% if options.also_notifies_hosts %}
   also_notifies:
-{% if dns_backend and dns_backend.pool_config %}
-{% for slave in dns_backend.pool_config %}
-    - host: {{ slave.address }}
-      port: 53
+{% for also_notify_host in options.also_notifies_hosts %}
+    - host: {{ also_notify_host.address }}
+      port: {{ also_notify_host.port }}
 {% endfor %}
-{% endif %}
-{% if options.pool_config %}
-{% for slave in options.pool_config %}
-    - host: {{ slave.address }}
-      port: 53
-{% endfor %}
+# Workaround for https://bugs.launchpad.net/designate/+bug/1758013
+{% else %}
+  also_notifies: []
 {% endif %}

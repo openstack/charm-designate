@@ -67,3 +67,10 @@ options:
     type: boolean
     default: false
     description: Enables host request headers.
+  also-notifies:
+    type: string
+    default:
+    description: |
+      Space delimited list of DNS servers which should be notified on every
+      zone change in addition to the backend servers. List is of the form
+      also_notify_ip:also_notify_port

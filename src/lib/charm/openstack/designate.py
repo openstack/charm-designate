@@ -270,6 +270,15 @@ class DesignateConfigurationAdapter(
         """
         return self.nameservers.split()
 
+    @property
+    def also_notifies_hosts(self):
+        also_notifies_hosts = []
+        if hookenv.config('also-notifies'):
+            for entry in hookenv.config('also-notifies').split():
+                address, port = entry.split(':')
+                also_notifies_hosts.append({'address': address, 'port': port})
+        return also_notifies_hosts
+
 
 class DesignateAdapters(openstack_adapters.OpenStackAPIRelationAdapters):
     """
