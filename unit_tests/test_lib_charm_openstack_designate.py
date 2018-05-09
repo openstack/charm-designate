@@ -194,6 +194,20 @@ class TestDesignateConfigurationAdapter(Helper):
         a = designate.DesignateConfigurationAdapter(relation)
         self.assertEqual(a.rndc_master_ip, 'intip')
 
+    def test_also_notifies_hosts(self):
+        relation = mock.MagicMock
+        test_config = {
+            'also-notifies': '10.0.0.1:53 10.0.0.2:10053',
+        }
+        with mock.patch.object(designate.hookenv, 'config',
+                               side_effect=FakeConfig(test_config)):
+            expect = [{'address': '10.0.0.1',
+                       'port': '53'},
+                      {'address': '10.0.0.2',
+                       'port': '10053'}]
+            a = designate.DesignateConfigurationAdapter(relation)
+            self.assertEqual(a.also_notifies_hosts, expect)
+
 
 class TestDesignateCharm(Helper):
 
