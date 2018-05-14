@@ -74,3 +74,7 @@ options:
       Space delimited list of DNS servers which should be notified on every
       zone change in addition to the backend servers. List is of the form
       also_notify_ip:also_notify_port
+  enable-admin-api:
+    type: boolean
+    default: false
+    description: Enables experimental admin API for Designate.
