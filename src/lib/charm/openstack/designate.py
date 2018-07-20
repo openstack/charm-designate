@@ -346,6 +346,8 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
         ]),
     }
 
+    group = 'designate'
+
     def __init__(self, release=None, **kwargs):
         """Custom initialiser for class
         If no release is passed, then the charm determines the release from the
