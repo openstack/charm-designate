@@ -116,7 +116,8 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
             'sst-password': 'ChangeMe123',
         }
         designate_config = {
-            'nameservers': 'ns1-1.example.org. ns2-1.example.org.'
+            'nameservers': ' '.join([self.TEST_NS1_RECORD,
+                                     self.TEST_NS2_RECORD])
         }
         configs = {
             'keystone': keystone_config,
@@ -144,11 +145,20 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
         self.dns_slave_ip = self.designate_bind_sentry.relation(
             'dns-backend',
             'designate:dns-backend')['private-address']
-        self.designate_svcs = [
-            'designate-agent', 'designate-api', 'designate-central',
-            'designate-mdns', 'designate-pool-manager', 'designate-sink',
-            'designate-zone-manager',
-        ]
+        # bionic_rocky is the "first" rocky version, on Amulet list
+        # that is why start comparing with this version
+        if self._get_openstack_release() >= self.bionic_rocky:
+            self.designate_svcs = [
+                'designate-agent', 'designate-api', 'designate-central',
+                'designate-mdns', 'designate-worker', 'designate-sink',
+                'designate-producer',
+            ]
+        else:
+            self.designate_svcs = [
+                'designate-agent', 'designate-api', 'designate-central',
+                'designate-mdns', 'designate-pool-manager', 'designate-sink',
+                'designate-zone-manager',
+            ]
 
         # Authenticate admin with keystone endpoint
         self.keystone_session, self.keystone = u.get_default_keystone_session(
