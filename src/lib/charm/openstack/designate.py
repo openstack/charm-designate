@@ -630,3 +630,28 @@ class DesignateCharmQueens(DesignateCharm):
             return 'blocked', ('Need either a dns-backend relation or '
                                'config(dns-slaves) or both.')
         return None, None
+
+
+# Inheriting from DesignateCharmQueens allows to keep
+# enforcing nameservers' assignment while changing
+# appropriate packages and services
+class DesignateCharmRocky(DesignateCharmQueens):
+
+    release = 'rocky'
+    packages = ['designate-agent', 'designate-api', 'designate-central',
+                'designate-common', 'designate-mdns',
+                'designate-worker', 'designate-sink',
+                'designate-producer', 'bind9utils', 'python-apt']
+
+    services = ['designate-mdns', 'designate-producer',
+                'designate-agent', 'designate-worker',
+                'designate-central', 'designate-sink',
+                'designate-api']
+
+    restart_map = {
+        '/etc/default/openstack': services,
+        '/etc/designate/designate.conf': services,
+        '/etc/designate/rndc.key': services,
+        '/etc/designate/pools.yaml': [''],
+        RC_FILE: [''],
+    }
