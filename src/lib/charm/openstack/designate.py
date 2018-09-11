@@ -641,7 +641,9 @@ class DesignateCharmRocky(DesignateCharmQueens):
     packages = ['designate-agent', 'designate-api', 'designate-central',
                 'designate-common', 'designate-mdns',
                 'designate-worker', 'designate-sink',
-                'designate-producer', 'bind9utils', 'python-apt']
+                'designate-producer', 'bind9utils',
+                'python3-designate',
+                'python-apt']
 
     services = ['designate-mdns', 'designate-producer',
                 'designate-agent', 'designate-worker',
@@ -655,3 +657,12 @@ class DesignateCharmRocky(DesignateCharmQueens):
         '/etc/designate/pools.yaml': [''],
         RC_FILE: [''],
     }
+
+    purge_packages = [
+        'python-designate',
+        'python-memcache',
+        'designate-zone-manager',
+        'designate-pool-manager',
+    ]
+
+    python_version = 3
