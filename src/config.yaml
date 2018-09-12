@@ -78,3 +78,10 @@ options:
     type: boolean
     default: false
     description: Enables experimental admin API for Designate.
+  default-soa-expire:
+    type: int
+    default: 86400
+    description: |
+      Default SOA expire value in seconds to specify how long a
+      secondary will still treat its copy of the zone data as valid if
+      it can't contact the primary.
