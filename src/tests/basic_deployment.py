@@ -609,3 +609,21 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
 
         self.d.configure(juju_service, set_default)
         u.log.debug('OK')
+
+    def _assert_services(self, should_run):
+        services = self.designate_svcs
+        u.get_unit_process_ids(
+            {self.designate_sentry: services},
+            expect_success=should_run)
+
+    def test_910_pause_and_resume(self):
+        """The services can be paused and resumed. """
+        self._assert_services(should_run=True)
+        action_id = u.run_action(self.designate_sentry, "pause")
+        assert u.wait_on_action(action_id), "Pause action failed."
+
+        self._assert_services(should_run=False)
+
+        action_id = u.run_action(self.designate_sentry, "resume")
+        assert u.wait_on_action(action_id), "Resume action failed"
+        self._assert_services(should_run=True)
