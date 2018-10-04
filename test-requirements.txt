@@ -1,7 +1,13 @@
-# Unit test requirements
+# This file is managed centrally.  If you find the need to modify this as a
+# one-off, please don't.  Intead, consult #openstack-charms and ask about
+# requirements management in charms via bot-control.  Thank you.
+#
+# Lint and unit test requirements
 flake8>=2.2.4,<=2.4.1
 os-testr>=0.4.1
+requests>=2.18.4
 charms.reactive
 mock>=1.2
+nose>=1.3.7
 coverage>=3.6
-git+https://github.com/openstack/charms.openstack#egg=charms.openstack
+git+https://github.com/openstack/charms.openstack.git#egg=charms.openstack
