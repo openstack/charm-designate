@@ -1,0 +1,68 @@
+- id: 794ccc2c-d751-44fe-b57f-8894c9f5c842
+  name: default
+  description: Pool genergated by Juju
+
+{% if options.ns_records %}
+  ns_records:
+{% for record in options.ns_records %}
+    - hostname: {{ record }}
+      priority: 10
+{% endfor %}
+{% endif %}
+
+  nameservers:
+{% if dns_backend and dns_backend.pool_config %}
+{% for slave in dns_backend.pool_config %}
+    - host: {{ slave.address }}
+      port: 53
+{% endfor %}
+{% endif %}
+{% if options.pool_config %}
+{% for slave in options.pool_config %}
+    - host: {{ slave.address }}
+      port: 53
+{% endfor %}
+{% endif %}
+
+  targets:
+{% if dns_backend and dns_backend.pool_config %}
+{% for slave in dns_backend.pool_config %}
+    - type: bind9
+      masters:
+{% for rndc_master_ip in options.rndc_master_ips %}
+        - host: {{ rndc_master_ip }}
+          port: 5354
+{% endfor %}
+      options:
+        host: {{ slave.address }}
+        rndc_host: {{ slave.address }}
+        rndc_key_file: /etc/designate/rndc.key
+        port: 53
+{% endfor %}
+{% endif %}
+{% if options.pool_config %}
+{% for slave in options.pool_config %}
+    - type: bind9
+      masters:
+{% for rndc_master_ip in cluster.internal_addresses %}
+        - host: {{ rndc_master_ip }}
+          port: 5354
+{% endfor %}
+      options:
+        host: {{ slave.address }}
+        rndc_host: {{ slave.address }}
+        rndc_key_file: {{ slave.rndc_key_file }}
+        port: 53
+{% endfor %}
+{% endif %}
+
+{% if options.also_notifies_hosts %}
+  also_notifies:
+{% for also_notify_host in options.also_notifies_hosts %}
+    - host: {{ also_notify_host.address }}
+      port: {{ also_notify_host.port }}
+{% endfor %}
+# Workaround for https://bugs.launchpad.net/designate/+bug/1758013
+{% else %}
+  also_notifies: []
+{% endif %}
