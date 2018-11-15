@@ -37,7 +37,10 @@ RNDC_KEY_CONF = DESIGNATE_DIR + '/rndc.key'
 NOVA_SINK_FILE = DESIGNATE_DIR + '/conf.d/nova_sink.cfg'
 NEUTRON_SINK_FILE = DESIGNATE_DIR + '/conf.d/neutron_sink.cfg'
 RC_FILE = '/root/novarc'
-openstack_charm.use_defaults('charm.default-select-release')
+openstack_charm.use_defaults(
+    'charm.default-select-release',
+    'upgrade-charm',
+)
 
 
 class DesignateDBAdapter(openstack_adapters.DatabaseRelationAdapter):
