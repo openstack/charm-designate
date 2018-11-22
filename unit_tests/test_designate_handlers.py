@@ -84,8 +84,7 @@ class TestHandlers(test_utils.PatchHelper):
         self.patch_object(handlers.reactive, 'remove_state')
         handlers.install_packages()
         the_charm.install.assert_called_once_with()
-        calls = [mock.call('amqp.requested-access'),
-                 mock.call('shared-db.setup'),
+        calls = [mock.call('shared-db.setup'),
                  mock.call('base-config.rendered'),
                  mock.call('db.synched')]
         self.remove_state.assert_has_calls(calls)
@@ -96,7 +95,6 @@ class TestHandlers(test_utils.PatchHelper):
         handlers.setup_amqp_req(amqp)
         amqp.request_access.assert_called_once_with(
             username='designate', vhost='openstack')
-        self.set_state.assert_called_once_with('amqp.requested-access')
 
     def test_database(self):
         database = mock.MagicMock()
