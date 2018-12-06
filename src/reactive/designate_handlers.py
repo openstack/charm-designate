@@ -69,7 +69,6 @@ def install_packages():
     with provide_charm_instance() as instance:
         instance.install()
     reactive.set_state('installed')
-    reactive.remove_state('amqp.requested-access')
     reactive.remove_state('shared-db.setup')
     reactive.remove_state('base-config.rendered')
     reactive.remove_state('db.synched')
@@ -77,12 +76,10 @@ def install_packages():
 
 
 @reactive.when('amqp.connected')
-@reactive.when_not('amqp.requested-access')
 def setup_amqp_req(amqp):
     """Send request for rabbit access and vhost"""
     amqp.request_access(username='designate',
                         vhost='openstack')
-    reactive.set_state('amqp.requested-access')
 
 
 @reactive.when('shared-db.connected')
