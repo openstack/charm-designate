@@ -63,10 +63,6 @@ options:
     description: |
       Format of floating IPv6 global records.
       (NOTE: This option is obsolete starting from OpenStack Mitaka release)
-  enable-host-header:
-    type: boolean
-    default: false
-    description: Enables host request headers.
   also-notifies:
     type: string
     default:
