@@ -4,7 +4,7 @@
 #
 # Lint and unit test requirements
 flake8>=2.2.4,<=2.4.1
-os-testr>=0.4.1
+stestr>=2.2.0
 requests>=2.18.4
 charms.reactive
 mock>=1.2
