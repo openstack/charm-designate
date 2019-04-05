@@ -100,6 +100,7 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
             'designate:dnsaas': 'neutron-api:external-dns',
             'neutron-api:identity-service': 'keystone:identity-service',
             'neutron-api:shared-db': 'percona-cluster:shared-db',
+            'neutron-api:amqp': 'rabbitmq-server:amqp',
         }
         super(DesignateBasicDeployment, self)._add_relations(relations)
 

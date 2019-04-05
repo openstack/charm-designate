@@ -15,6 +15,7 @@ series:
   - xenial
   - bionic
   - cosmic
+  - disco
   - trusty
 subordinate: false
 provides:
