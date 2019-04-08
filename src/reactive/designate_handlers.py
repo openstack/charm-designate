@@ -18,6 +18,7 @@ import charm.openstack.designate as designate
 import charms.reactive as reactive
 import charms.reactive.relations as relations
 import charmhelpers.core.hookenv as hookenv
+import charmhelpers.core.host as host
 import charmhelpers.contrib.network.ip as ip
 
 from charms_openstack.charm import provide_charm_instance
@@ -227,3 +228,19 @@ def run_assess_status_on_every_hook():
     """
     with provide_charm_instance() as instance:
         instance.assess_status()
+
+
+@reactive.when('leadership.changed.pool-yaml-hash')
+def remote_pools_updated():
+    hookenv.log(
+        "Pools updated on remote host, restarting pool manager",
+        level=hookenv.DEBUG)
+    host.service_restart('designate-pool-manager')
+
+
+@reactive.when_file_changed(designate.POOLS_YAML)
+def local_pools_updated():
+    hookenv.log(
+        "Pools updated locally, restarting pool manager",
+        level=hookenv.DEBUG)
+    host.service_restart('designate-pool-manager')

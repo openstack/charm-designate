@@ -38,6 +38,8 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                     all_interfaces + ('base-config.rendered', )),
                 'configure_designate_basic': all_interfaces,
                 'expose_endpoint': ('dnsaas.connected', ),
+                'remote_pools_updated': (
+                    'leadership.changed.pool-yaml-hash', ),
             },
             'when_not': {
                 'setup_amqp_req': ('amqp.requested-access', ),
@@ -57,6 +59,9 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
             'when_none': {
                 'clear_dns_config_available': (
                     'dns-slaves-config-valid', 'dns-backend.available', ),
+            },
+            'when_file_changed': {
+                'local_pools_updated': ('/etc/designate/pools.yaml', ),
             },
             'hook': {
                 'check_dns_slaves': ('config-changed', ),
