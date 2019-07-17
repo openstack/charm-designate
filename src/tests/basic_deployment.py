@@ -65,7 +65,7 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
            """
         this_service = {'name': 'designate'}
         other_services = [
-            {'name': 'percona-cluster', 'constraints': {'mem': '3072M'}},
+            self.get_percona_service_entry(),
             {'name': 'rabbitmq-server'},
             {'name': 'keystone'},
             {'name': 'memcached', 'location': 'cs:memcached'},
