@@ -40,7 +40,7 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
     TEST_NS1_RECORD = 'ns1.amuletexample.com.'
     TEST_NS2_RECORD = 'ns2.amuletexample.com.'
 
-    def __init__(self, series, openstack=None, source=None, stable=False):
+    def __init__(self, series, openstack=None, source=None, stable=True):
         """Deploy the entire test environment."""
         super(DesignateBasicDeployment, self).__init__(series, openstack,
                                                        source, stable)
