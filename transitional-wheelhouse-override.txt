@@ -1,0 +1,6 @@
+# NOTE(fnordahl): the stable branch needs to have this wheelhouse override
+# in place until transition to ``include_system_packages=false`` is complete
+pip>=7.0.0,<8.2.0
+setuptools>24.3,<=39.0.1
+setuptools-scm<=1.17.0
+git+https://github.com/juju/charm-helpers.git@stable/19.07#egg=charmhelpers
