@@ -14,8 +14,8 @@ tags:
 series:
   - xenial
   - bionic
-  - cosmic
   - disco
+  - eoan
   - trusty
 subordinate: false
 provides:
