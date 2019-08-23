@@ -347,6 +347,7 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
             ('6', 'queens'),
             ('7', 'rocky'),
             ('8', 'stein'),
+            ('9', 'train'),
         ]),
     }
 
