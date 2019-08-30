@@ -48,8 +48,10 @@ def check_dns_slaves():
     accordingly.  Note, that hooks run BEFORE the reactive handlers so this
     should happen first during a hook.
     """
-    if hookenv.config('dns-slaves'):
-        with charm.provide_charm_instance() as instance:
+    with charm.provide_charm_instance() as instance:
+        # ensure policy.d overrides are picked up
+        instance.config_changed()
+        if hookenv.config('dns-slaves'):
             if not instance.options.invalid_pool_config():
                 reactive.set_state('dns-slaves-config-valid')
                 return

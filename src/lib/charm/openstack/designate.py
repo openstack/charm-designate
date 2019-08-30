@@ -22,6 +22,7 @@ import charmhelpers.contrib.openstack.utils as ch_utils
 import charms_openstack.adapters as openstack_adapters
 import charms_openstack.charm as openstack_charm
 import charms_openstack.ip as os_ip
+import charms_openstack.plugins as ch_plugins
 import charmhelpers.core.decorators as decorators
 import charmhelpers.core.hookenv as hookenv
 import charmhelpers.core.host as host
@@ -295,7 +296,9 @@ class DesignateAdapters(openstack_adapters.OpenStackAPIRelationAdapters):
     }
 
 
-class DesignateCharm(openstack_charm.HAOpenStackCharm):
+# note plugin comes first to override the config_changed method as a mixin
+class DesignateCharm(ch_plugins.PolicydOverridePlugin,
+                     openstack_charm.HAOpenStackCharm):
     """Designate charm"""
 
     name = 'designate'
@@ -352,6 +355,9 @@ class DesignateCharm(openstack_charm.HAOpenStackCharm):
     }
 
     group = 'designate'
+
+    # policyd override constants
+    policyd_service_name = 'designate'
 
     def __init__(self, release=None, **kwargs):
         """Custom initialiser for class

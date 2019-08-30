@@ -81,3 +81,11 @@ options:
       Default SOA expire value in seconds to specify how long a
       secondary will still treat its copy of the zone data as valid if
       it can't contact the primary.
+  use-policyd-override:
+    type: boolean
+    default: False
+    description: |
+      If True then use the resource file named 'policyd-override' to install
+      override YAML files in the service's policy.d directory.  The resource
+      file should be a ZIP file containing at least one yaml file with a .yaml
+      or .yml extension.  If False then remove the overrides.
