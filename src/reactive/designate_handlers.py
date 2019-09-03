@@ -21,9 +21,13 @@ import charmhelpers.core.hookenv as hookenv
 import charmhelpers.core.host as host
 import charmhelpers.contrib.network.ip as ip
 
-from charms_openstack.charm import provide_charm_instance
+import charms_openstack.charm as charm
 from charms_openstack.charm.utils import is_data_changed
 
+
+charm.use_defaults(
+    'certificates.available',
+)
 
 # If either dns-backend.available is set OR config('dns-slaves') is valid, then
 # the following state will be set.
@@ -45,7 +49,7 @@ def check_dns_slaves():
     should happen first during a hook.
     """
     if hookenv.config('dns-slaves'):
-        with provide_charm_instance() as instance:
+        with charm.provide_charm_instance() as instance:
             if not instance.options.invalid_pool_config():
                 reactive.set_state('dns-slaves-config-valid')
                 return
@@ -67,7 +71,7 @@ def clear_dns_config_available():
 @reactive.when_not('installed')
 def install_packages():
     """Install charms packages"""
-    with provide_charm_instance() as instance:
+    with charm.provide_charm_instance() as instance:
         instance.install()
     reactive.set_state('installed')
     reactive.remove_state('shared-db.setup')
@@ -103,7 +107,7 @@ def maybe_setup_endpoint(keystone):
     """When the keystone interface connects, register this unit in the keystone
     catalogue.
     """
-    with provide_charm_instance() as instance:
+    with charm.provide_charm_instance() as instance:
         args = [instance.service_type, instance.region, instance.public_url,
                 instance.internal_url, instance.admin_url]
         # This function checkes that the data has changed before sending it
@@ -129,7 +133,7 @@ def configure_designate_basic(*args):
     dns_backend = relations.endpoint_from_flag('dns-backend.available')
     if dns_backend is not None:
         args = args + (dns_backend, )
-    with provide_charm_instance() as instance:
+    with charm.provide_charm_instance() as instance:
         instance.render_base_config(args)
     reactive.set_state('base-config.rendered')
 
@@ -139,7 +143,7 @@ def configure_designate_basic(*args):
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def run_db_migration(*args):
     """Run database migrations"""
-    with provide_charm_instance() as instance:
+    with charm.provide_charm_instance() as instance:
         instance.db_sync()
         if instance.db_sync_done():
             reactive.set_state('db.synched')
@@ -149,7 +153,7 @@ def run_db_migration(*args):
 @reactive.when('base-config.rendered')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def sync_pool_manager_cache(*args):
-    with provide_charm_instance() as instance:
+    with charm.provide_charm_instance() as instance:
         instance.pool_manager_cache_sync()
         if instance.pool_manager_cache_sync_done():
             reactive.set_state('pool-manager-cache.synched')
@@ -158,7 +162,7 @@ def sync_pool_manager_cache(*args):
 @reactive.when('cluster.available')
 def update_peers(cluster):
     """Inform designate peers about this unit"""
-    with provide_charm_instance() as instance:
+    with charm.provide_charm_instance() as instance:
         # This function ONLY updates the peers if the data has changed.  Thus
         # it's okay to call it on every hook invocation.
         instance.update_peers(cluster)
@@ -176,7 +180,7 @@ def configure_designate_full(*args):
     dns_backend = relations.endpoint_from_flag('dns-backend.available')
     if dns_backend is not None:
         args = args + (dns_backend, )
-    with provide_charm_instance() as instance:
+    with charm.provide_charm_instance() as instance:
         instance.upgrade_if_available(args)
         instance.configure_ssl()
         instance.render_full_config(args)
@@ -209,13 +213,13 @@ def _render_sink_configs(instance, interfaces_list):
 @reactive.when('ha.connected')
 def cluster_connected(hacluster):
     """Configure HA resources in corosync"""
-    with provide_charm_instance() as instance:
+    with charm.provide_charm_instance() as instance:
         instance.configure_ha_resources(hacluster)
 
 
 @reactive.when('dnsaas.connected')
 def expose_endpoint(endpoint):
-    with provide_charm_instance() as instance:
+    with charm.provide_charm_instance() as instance:
         endpoint.expose_endpoint(instance.public_url)
 
 
@@ -226,7 +230,7 @@ def run_assess_status_on_every_hook():
     it does.  Thus, this handle gets called for EVERY hook invocation, which
     means that no other handlers need to call the assess_status function.
     """
-    with provide_charm_instance() as instance:
+    with charm.provide_charm_instance() as instance:
         instance.assess_status()
 
 

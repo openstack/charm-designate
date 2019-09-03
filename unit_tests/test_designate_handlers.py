@@ -76,7 +76,7 @@ class TestHandlers(test_utils.PatchHelper):
 
     def _patch_provide_charm_instance(self):
         the_charm = mock.MagicMock()
-        self.patch_object(handlers, 'provide_charm_instance',
+        self.patch_object(handlers.charm, 'provide_charm_instance',
                           name='provide_charm_instance',
                           new=mock.MagicMock())
         self.provide_charm_instance().__enter__.return_value = the_charm
