@@ -68,7 +68,8 @@ class DesignateBasicDeployment(amulet_deployment.OpenStackAmuletDeployment):
             self.get_percona_service_entry(),
             {'name': 'rabbitmq-server'},
             {'name': 'keystone'},
-            {'name': 'memcached', 'location': 'cs:memcached'},
+            {'name': 'memcached',
+             'location': 'cs:~memcached-team/memcached'},
             {'name': 'designate-bind'},
             {'name': 'neutron-api'}
         ]
