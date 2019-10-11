@@ -677,3 +677,10 @@ class DesignateCharmRocky(DesignateCharmQueens):
     ]
 
     python_version = 3
+
+    def pool_manager_cache_sync(self):
+        # NOTE(jamespage):
+        # As the pool manager is no longer in use don't actually
+        # sync it - just set the  done flag and move on.
+        if not self.pool_manager_cache_sync_done() and hookenv.is_leader():
+            hookenv.leader_set({'pool-manager-cache-sync-done': True})
