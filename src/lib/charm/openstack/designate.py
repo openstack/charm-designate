@@ -351,6 +351,7 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
             ('7', 'rocky'),
             ('8', 'stein'),
             ('9', 'train'),
+            ('10', 'ussuri'),
         ]),
     }
 
