@@ -1,7 +1,10 @@
-# This file is managed centrally.  If you find the need to modify this as a
-# one-off, please don't.  Intead, consult #openstack-charms and ask about
-# requirements management in charms via bot-control.  Thank you.
+# This file is managed centrally by release-tools and should not be modified
+# within individual charm repos.  See the 'global' dir contents for available
+# choices of *requirements.txt files for OpenStack Charms:
+#     https://github.com/openstack-charmers/release-tools
 #
 # Build requirements
 charm-tools>=2.4.4
+# importlib-resources 1.1.0 removed Python 3.5 support
+importlib-resources<1.1.0
 simplejson
