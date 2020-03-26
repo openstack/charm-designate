@@ -15,6 +15,7 @@ series:
   - xenial
   - bionic
   - eoan
+  - focal
   - trusty
 subordinate: false
 provides:
