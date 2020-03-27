@@ -27,6 +27,7 @@ from charms_openstack.charm.utils import is_data_changed
 
 charm.use_defaults(
     'certificates.available',
+    'cluster.available',
 )
 
 # If either dns-backend.available is set OR config('dns-slaves') is valid, then
@@ -159,15 +160,6 @@ def sync_pool_manager_cache(*args):
         instance.pool_manager_cache_sync()
         if instance.pool_manager_cache_sync_done():
             reactive.set_state('pool-manager-cache.synched')
-
-
-@reactive.when('cluster.available')
-def update_peers(cluster):
-    """Inform designate peers about this unit"""
-    with charm.provide_charm_instance() as instance:
-        # This function ONLY updates the peers if the data has changed.  Thus
-        # it's okay to call it on every hook invocation.
-        instance.update_peers(cluster)
 
 
 @reactive.when('db.synched')

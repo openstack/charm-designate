@@ -3,7 +3,7 @@
 # requirements management in charms via bot-control.  Thank you.
 #
 # Lint and unit test requirements
-flake8>=2.2.4,<=2.4.1
+flake8>=2.2.4
 stestr>=2.2.0
 requests>=2.18.4
 charms.reactive
