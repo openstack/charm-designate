@@ -24,7 +24,6 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'maybe_setup_endpoint': ('identity-service.connected', ),
                 'expose_rndc_address': ('cluster.connected', ),
                 'configure_ssl': ('identity-service.available', ),
-                'update_peers': ('cluster.available', ),
                 'config_changed': ('config.changed', ),
                 'cluster_connected': ('ha.connected', ),
                 'create_servers_and_domains': (
@@ -169,11 +168,6 @@ class TestHandlers(test_utils.PatchHelper):
         handlers.sync_pool_manager_cache('arg1', 'arg2')
         the_charm.pool_manager_cache_sync.assert_called_once_with()
         self.set_state.assert_called_once_with('pool-manager-cache.synched')
-
-    def test_update_peers(self):
-        the_charm = self._patch_provide_charm_instance()
-        handlers.update_peers('cluster')
-        the_charm.update_peers.assert_called_once_with('cluster')
 
     def test_configure_designate_full(self):
         the_charm = self._patch_provide_charm_instance()
