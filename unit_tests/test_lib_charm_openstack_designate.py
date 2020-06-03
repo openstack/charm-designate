@@ -362,3 +362,16 @@ class TestDesignateCharm(Helper):
         with designate.DesignateCharm.check_zone_ids('novadom', 'neutrondom'):
             pass
         self.assertFalse(self.leader_set.called)
+
+
+class TestDesignateQueensCharm(Helper):
+
+    def test_upgrade(self):
+        self.patch(designate.DesignateCharm, 'run_upgrade')
+        self.patch(designate.relations, 'endpoint_from_flag')
+        endpoint = mock.MagicMock()
+        self.endpoint_from_flag.return_value = endpoint
+        a = designate.DesignateCharmQueens(release='queens')
+        a.run_upgrade()
+        self.run_upgrade.assert_called_once_with(interfaces_list=None)
+        endpoint.request_restart.assert_called_once_with()
