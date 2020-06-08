@@ -28,11 +28,6 @@ oslo.utils<=3.41.0;python_version<'3.6'
 requests>=2.18.4
 charms.reactive
 
-# Newer mock seems to have some syntax which is newer than python3.5 (e.g.
-# f'{something}'
-mock>=1.2,<4.0.0; python_version < '3.6'
-mock>=1.2; python_version >= '3.6'
-
 nose>=1.3.7
 coverage>=3.6
 git+https://github.com/openstack/charms.openstack.git#egg=charms.openstack

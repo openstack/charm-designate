@@ -15,7 +15,7 @@
 import contextlib
 import unittest
 
-import mock
+from unittest import mock
 
 import charm.openstack.designate as designate
 
