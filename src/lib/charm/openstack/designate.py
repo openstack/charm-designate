@@ -643,6 +643,18 @@ class DesignateCharmQueens(DesignateCharm):
                                'config(dns-slaves) or both.')
         return None, None
 
+    def run_upgrade(self, interfaces_list=None):
+        """Upgrade OpenStack if an upgrade is available and action-managed
+           upgrades is not enabled.
+        :param interfaces_list: List of instances of interface classes
+        :returns: None
+        """
+        super(DesignateCharmQueens, self).run_upgrade(
+            interfaces_list=interfaces_list)
+        memcached = relations.endpoint_from_flag(
+            'coordinator-memcached.available')
+        memcached.request_restart()
+
 
 # Inheriting from DesignateCharmQueens allows to keep
 # enforcing nameservers' assignment while changing
