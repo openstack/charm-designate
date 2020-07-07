@@ -17,11 +17,12 @@ gate_bundles:
   - focal-ussuri
 
 dev_bundles:
-  - bionic-train
+  - focal-victoria
+  - groovy-victoria
 
 tests:
   - zaza.openstack.charm_tests.designate.tests.DesignateTests
 
 tests_options:
   force_deploy:
-    - focal-ussuri
+    - groovy-victoria
