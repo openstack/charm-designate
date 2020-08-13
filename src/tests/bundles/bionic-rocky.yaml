@@ -12,31 +12,31 @@ machines:
 
 applications:
   neutron-api:
-    charm: cs:~openstack-charmers-next/neutron-api
+    charm: cs:~openstack-charmers/neutron-api
     num_units: 1
     options:
       openstack-origin: cloud:bionic-rocky
     to:
     - '6'
   percona-cluster:
-    charm: cs:~openstack-charmers-next/percona-cluster
+    charm: cs:~openstack-charmers/percona-cluster
     num_units: 1
     to:
     - '0'
   keystone:
-    charm: cs:~openstack-charmers-next/keystone
+    charm: cs:~openstack-charmers/keystone
     num_units: 1
     options:
       openstack-origin: cloud:bionic-rocky
     to:
     - '1'
   rabbitmq-server:
-    charm: cs:~openstack-charmers-next/rabbitmq-server
+    charm: cs:~openstack-charmers/rabbitmq-server
     num_units: 1
     to:
     - '2'
   designate-bind:
-    charm: cs:~openstack-charmers-next/designate-bind
+    charm: cs:~openstack-charmers/designate-bind
     num_units: 1
     to:
     - '3'
