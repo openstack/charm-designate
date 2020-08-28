@@ -15,9 +15,9 @@ gate_bundles:
   - bionic-train
   - bionic-ussuri
   - focal-ussuri
+  - focal-victoria
 
 dev_bundles:
-  - focal-victoria
   - groovy-victoria
 
 tests:
