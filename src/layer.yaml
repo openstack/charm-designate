@@ -1,4 +1,4 @@
-includes: ['layer:openstack-api', 'layer:leadership', 'interface:bind-rndc', 'interface:hacluster', 'interface:openstack-ha', 'interface:memcache', 'interface:designate']
+includes: ['layer:openstack-api', 'layer:leadership', 'interface:bind-rndc', 'interface:hacluster', 'interface:openstack-ha', 'interface:memcache', 'interface:designate', 'interface:nrpe-external-master']
 options:
   basic:
     use_venv: True

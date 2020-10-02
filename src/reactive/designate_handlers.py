@@ -254,3 +254,15 @@ def reset_shared_db():
     """
     reactive.remove_state('shared-db.setup')
     reactive.remove_state('db.synched')
+
+
+@reactive.when_not('is-update-status-hook')
+@reactive.when('base-config.rendered')
+@reactive.when_any('config.changed.nagios_context',
+                   'config.changed.nagios_servicegroups',
+                   'endpoint.nrpe-external-master.changed',
+                   'nrpe-external-master.available')
+def configure_nrpe():
+    """Handle config-changed for NRPE options."""
+    with charm.provide_charm_instance() as charm_instance:
+        charm_instance.render_nrpe()

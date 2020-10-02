@@ -363,6 +363,18 @@ class TestDesignateCharm(Helper):
             pass
         self.assertFalse(self.leader_set.called)
 
+    def test_render_nrpe(self):
+        self.patch_object(designate.nrpe, 'add_init_service_checks')
+        charm_instance = designate.DesignateCharm(release='queens')
+        charm_instance.render_nrpe()
+        self.add_init_service_checks.assert_has_calls([
+            mock.call().add_init_service_checks(
+                mock.ANY,
+                charm_instance.services,
+                mock.ANY
+            ),
+        ])
+
 
 class TestDesignateQueensCharm(Helper):
 

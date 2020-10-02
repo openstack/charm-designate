@@ -53,6 +53,8 @@ applications:
       openstack-origin: cloud:xenial-ocata
     to:
     - '5'
+  nrpe:
+    charm: cs:nrpe
 
 relations:
 - - 'designate:shared-db'
@@ -75,3 +77,5 @@ relations:
   - 'percona-cluster:shared-db'
 - - 'neutron-api:amqp'
   - 'rabbitmq-server:amqp'
+- - 'designate:nrpe-external-master'
+  - 'nrpe:nrpe-external-master'

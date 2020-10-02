@@ -19,6 +19,7 @@ import subprocess
 import uuid
 
 import charmhelpers.contrib.openstack.utils as ch_utils
+import charmhelpers.contrib.charmsupport.nrpe as nrpe
 import charms_openstack.adapters as openstack_adapters
 import charms_openstack.charm as openstack_charm
 import charms_openstack.ip as os_ip
@@ -612,6 +613,15 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
             subprocess.check_call(sync_cmd.split(), timeout=60)
             hookenv.leader_set({'pool-manager-cache-sync-done': True})
             self.restart_all()
+
+    def render_nrpe(self):
+        """Configure Nagios NRPE checks."""
+        hostname = nrpe.get_nagios_hostname()
+        current_unit = nrpe.get_nagios_unit_name()
+        charm_nrpe = nrpe.NRPE(hostname=hostname)
+        nrpe.add_init_service_checks(
+            charm_nrpe, self.services, current_unit)
+        charm_nrpe.write()
 
 
 class DesignateCharmQueens(DesignateCharm):

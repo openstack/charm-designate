@@ -40,6 +40,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'remote_pools_updated': (
                     'leadership.changed.pool-yaml-hash', ),
                 'reset_shared_db': ('shared-db.setup', ),
+                'configure_nrpe': ('base-config.rendered', ),
             },
             'when_not': {
                 'setup_amqp_req': ('amqp.requested-access', ),
@@ -52,10 +53,17 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'run_assess_status_on_every_hook': (
                     'dont-set-assess-status', ),
                 'reset_shared_db': ('shared-db.connected', ),
+                'configure_nrpe': ('is-update-status-hook', ),
             },
             'when_any': {
                 'set_dns_config_available': (
                     'dns-slaves-config-valid', 'dns-backend.available', ),
+                'configure_nrpe': (
+                    'config.changed.nagios_context',
+                    'config.changed.nagios_servicegroups',
+                    'endpoint.nrpe-external-master.changed',
+                    'nrpe-external-master.available',
+                ),
             },
             'when_none': {
                 'clear_dns_config_available': (

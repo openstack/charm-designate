@@ -74,7 +74,7 @@ applications:
   memcached:
     charm: cs:~memcached-team/memcached
     num_units: 1
-    # holding charm at bionic as it isn't available for focal/groovy yet
+    # holding charm at bionic as it isn't available for focal+ yet
     series: bionic
     to:
     - '7'
@@ -87,6 +87,9 @@ applications:
       openstack-origin: *openstack-origin
     to:
     - '8'
+
+  nrpe:
+    charm: cs:nrpe
 
 relations:
   - - 'keystone:shared-db'
@@ -124,3 +127,6 @@ relations:
 
   - - 'neutron-api:amqp'
     - 'rabbitmq-server:amqp'
+
+  - - 'designate:nrpe-external-master'
+    - 'nrpe:nrpe-external-master'
