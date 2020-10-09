@@ -89,3 +89,9 @@ options:
       override YAML files in the service's policy.d directory.  The resource
       file should be a ZIP file containing at least one yaml file with a .yaml
       or .yml extension.  If False then remove the overrides.
+  zone-purge-time-threshold:
+    type: int
+    default: 3600
+    description: |
+      Default for how old deleted zones should be (deleted_at) to be
+      purged, in seconds.
