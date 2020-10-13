@@ -698,3 +698,14 @@ class DesignateCharmRocky(DesignateCharmQueens):
         # sync it - just set the  done flag and move on.
         if not self.pool_manager_cache_sync_done() and hookenv.is_leader():
             hookenv.leader_set({'pool-manager-cache-sync-done': True})
+
+
+class DesignateCharmVictoria(DesignateCharmRocky):
+
+    release = 'victoria'
+    packages = ['designate-agent', 'designate-api', 'designate-central',
+                'designate-common', 'designate-mdns',
+                'designate-worker', 'designate-sink',
+                'designate-producer', 'bind9utils',
+                'python3-designate',
+                'python3-apt']
