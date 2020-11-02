@@ -12,7 +12,7 @@ charms.reactive
 mock>=1.2
 nose>=1.3.7
 coverage>=3.6
-git+https://github.com/openstack/charms.openstack.git#egg=charms.openstack
+git+https://github.com/openstack/charms.openstack.git@stable/20.10#egg=charms.openstack
 #
 # Revisit for removal / mock improvement:
 netifaces        # vault
