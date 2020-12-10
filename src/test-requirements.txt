@@ -3,6 +3,13 @@
 # choices of *requirements.txt files for OpenStack Charms:
 #     https://github.com/openstack-charmers/release-tools
 #
+# pep8 requirements
+charm-tools>=2.4.4
+
+# Workaround until https://github.com/juju/charm-tools/pull/589 gets
+# published
+keyring<21
+
 # Functional Test Requirements (let Zaza's dependencies solve all dependencies here!)
 git+https://github.com/openstack-charmers/zaza.git#egg=zaza
 git+https://github.com/openstack-charmers/zaza-openstack-tests.git#egg=zaza.openstack

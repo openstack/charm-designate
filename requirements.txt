@@ -3,9 +3,24 @@
 # choices of *requirements.txt files for OpenStack Charms:
 #     https://github.com/openstack-charmers/release-tools
 #
+# NOTE(lourot): This might look like a duplication of test-requirements.txt but
+# some tox targets use only test-requirements.txt whereas charm-build uses only
+# requirements.txt
 setuptools<50.0.0  # https://github.com/pypa/setuptools/commit/04e3df22df840c6bb244e9b27bc56750c44b7c85
+
 # Build requirements
 charm-tools>=2.4.4
-# importlib-resources 1.1.0 removed Python 3.5 support
-importlib-resources<1.1.0
+
+# Workaround until https://github.com/juju/charm-tools/pull/589 gets
+# published
+keyring<21
+
 simplejson
+
+# Newer versions use keywords that didn't exist in python 3.5 yet (e.g.
+# "ModuleNotFoundError")
+# NOTE(lourot): This might look like a duplication of test-requirements.txt but
+# some tox targets use only test-requirements.txt whereas charm-build uses only
+# requirements.txt
+importlib-metadata<3.0.0; python_version < '3.6'
+importlib-resources<3.0.0; python_version < '3.6'
