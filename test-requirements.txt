@@ -35,7 +35,7 @@ mock>=1.2; python_version >= '3.6'
 
 nose>=1.3.7
 coverage>=3.6
-git+https://github.com/openstack/charms.openstack.git#egg=charms.openstack
+git+https://github.com/openstack/charms.openstack.git@stable/21.01#egg=charms.openstack
 #
 # Revisit for removal / mock improvement:
 netifaces        # vault
