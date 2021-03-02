@@ -15,8 +15,8 @@ series:
 - xenial
 - bionic
 - focal
-- trusty
 - groovy
+- hirsute
 subordinate: false
 provides:
   dnsaas:
