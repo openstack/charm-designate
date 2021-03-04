@@ -11,6 +11,7 @@ gate_bundles:
   - bionic-ussuri
   - focal-ussuri
   - focal-victoria
+  - focal-wallaby
   - groovy-victoria
 
 dev_bundles:
@@ -19,10 +20,11 @@ dev_bundles:
   - xenial-pike
   - xenial-queens
   - bionic-rocky
+  - hirsute-wallaby
 
 tests:
   - zaza.openstack.charm_tests.designate.tests.DesignateTests
 
 tests_options:
   force_deploy:
-    - groovy-victoria
+    - hirsute-wallaby
