@@ -17,6 +17,7 @@ series:
 - focal
 - groovy
 - hirsute
+- impish
 subordinate: false
 provides:
   dnsaas:
