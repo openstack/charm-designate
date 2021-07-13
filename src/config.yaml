@@ -78,9 +78,42 @@ options:
     type: int
     default: 86400
     description: |
-      Default SOA expire value in seconds to specify how long a
+      Default SOA expire value (in seconds) to specify how long a
       secondary will still treat its copy of the zone data as valid if
       it can't contact the primary.
+  default-soa-minimum:
+    type: int
+    default:
+    description: |
+      Default SOA minimum value (in seconds) how long should cache a negative
+      response.
+  default-soa-refresh-min:
+    type: int
+    default:
+    description: |
+      SOA refresh indicates the time (in seconds) when the slave will try to
+      refresh the zone from the master, Designate randomizes the refresh time
+      using `default-soa-refresh-min` and `default-soa-refresh-max` as lower
+      and upper boundaries respectively.
+  default-soa-refresh-max:
+    type: int
+    default:
+    description: |
+      SOA refresh indicates the time (in seconds) when the slave will try to
+      refresh the zone from the master, Designate randomizes the refresh time
+      using `default-soa-refresh-min` and `default-soa-refresh-max` as lower
+      and upper boundaries respectively.
+  default-soa-retry:
+    type: int
+    default:
+    description: |
+      Defines the time (in seconds) between retries for the SOA record if the
+      slave (secondary) fails to contact the master when refresh has expired.
+  default-ttl:
+    type: int
+    default:
+    description: |
+      Default TTL (in seconds) for newly created zones.
   use-policyd-override:
     type: boolean
     default: False
