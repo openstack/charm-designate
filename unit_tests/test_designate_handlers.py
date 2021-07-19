@@ -39,6 +39,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'expose_endpoint': ('dnsaas.connected', ),
                 'remote_pools_updated': (
                     'leadership.changed.pool-yaml-hash', ),
+                'reset_shared_db': ('shared-db.setup', ),
             },
             'when_not': {
                 'setup_amqp_req': ('amqp.requested-access', ),
@@ -50,6 +51,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'create_servers_and_domains': ('domains.created', ),
                 'run_assess_status_on_every_hook': (
                     'dont-set-assess-status', ),
+                'reset_shared_db': ('shared-db.connected', ),
             },
             'when_any': {
                 'set_dns_config_available': (

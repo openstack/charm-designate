@@ -242,3 +242,15 @@ def local_pools_updated():
         "Pools updated locally, restarting pool manager",
         level=hookenv.DEBUG)
     host.service_restart('designate-pool-manager')
+
+
+@reactive.when('shared-db.setup')
+@reactive.when_not('shared-db.connected')
+def reset_shared_db():
+    """Clear flags on shared-db departed.
+
+    When shared-db is rejoined the charm will reconfigure the DB IFF these
+    flags have been cleared. See LP Bug#1887265
+    """
+    reactive.remove_state('shared-db.setup')
+    reactive.remove_state('db.synched')
