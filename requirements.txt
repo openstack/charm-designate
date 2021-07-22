@@ -11,10 +11,6 @@ setuptools<50.0.0  # https://github.com/pypa/setuptools/commit/04e3df22df840c6bb
 # Build requirements
 charm-tools==2.8.3
 
-# Workaround until https://github.com/juju/charm-tools/pull/589 gets
-# published
-keyring<21
-
 simplejson
 
 # Newer versions use keywords that didn't exist in python 3.5 yet (e.g.

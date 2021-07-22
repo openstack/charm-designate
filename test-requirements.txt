@@ -4,8 +4,6 @@
 #     https://github.com/openstack-charmers/release-tools
 #
 setuptools<50.0.0  # https://github.com/pypa/setuptools/commit/04e3df22df840c6bb244e9b27bc56750c44b7c85
-# Lint and unit test requirements
-flake8>=2.2.4
 
 stestr>=2.2.0
 
@@ -38,10 +36,16 @@ coverage>=3.6
 git+https://github.com/openstack/charms.openstack.git#egg=charms.openstack
 #
 # Revisit for removal / mock improvement:
+#
+# NOTE(lourot): newer versions of cryptography require a Rust compiler to build,
+# see
+# * https://github.com/openstack-charmers/zaza/issues/421
+# * https://mail.python.org/pipermail/cryptography-dev/2021-January/001003.html
+#
 netifaces        # vault
 psycopg2-binary  # vault
 tenacity         # vault
-pbr              # vault
-cryptography     # vault, keystone-saml-mellon
+pbr==5.6.0       # vault
+cryptography<3.4 # vault, keystone-saml-mellon
 lxml             # keystone-saml-mellon
 hvac             # vault, barbican-vault
