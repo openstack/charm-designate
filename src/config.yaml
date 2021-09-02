@@ -109,6 +109,12 @@ options:
     description: |
       Defines the time (in seconds) between retries for the SOA record if the
       slave (secondary) fails to contact the master when refresh has expired.
+  managed-resource-email:
+    type: string
+    default: hostmaster@example.com
+    description: |
+      Define a email to use for managed resources like domains created by the
+      FloatingIP.
   default-ttl:
     type: int
     default:
