@@ -143,3 +143,8 @@ options:
     description: |
       A comma-separated list of nagios servicegroups. If left empty, the
       nagios_context will be used as the servicegroup.
+  managed-resource-tenant-id:
+    type: string
+    default:
+    description: |
+      Set the project ID to own all managed resources like auto-created records etc.
