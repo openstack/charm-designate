@@ -7,12 +7,10 @@ gate_bundles:
   - xenial-mitaka
   - bionic-queens
   - bionic-stein
-  - bionic-train
   - bionic-ussuri
   - focal-ussuri
-  - focal-victoria
   - focal-wallaby
-  - groovy-victoria
+  - focal-xena
 
 dev_bundles:
   - trusty-mitaka
@@ -20,7 +18,10 @@ dev_bundles:
   - xenial-pike
   - xenial-queens
   - bionic-rocky
+  - bionic-train
+  - focal-victoria
   - hirsute-wallaby
+  - impish-xena
 
 tests:
   - zaza.openstack.charm_tests.designate.tests.DesignateTests
@@ -34,5 +35,5 @@ tests_options:
   force_deploy:
     # NOTE(lourot): this is needed because the NRPE charm isn't available on
     # non-LTS Ubuntu series. See lp:1933643
-    - groovy-victoria
     - hirsute-wallaby
+    - impish-xena
