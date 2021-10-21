@@ -18,13 +18,11 @@ applications:
       openstack-origin: cloud:bionic-rocky
     to:
     - '6'
-    channel: candidate
   percona-cluster:
     charm: cs:~openstack-charmers/percona-cluster
     num_units: 1
     to:
     - '0'
-    channel: candidate
   keystone:
     charm: cs:~openstack-charmers/keystone
     num_units: 1
@@ -32,19 +30,16 @@ applications:
       openstack-origin: cloud:bionic-rocky
     to:
     - '1'
-    channel: candidate
   rabbitmq-server:
     charm: cs:~openstack-charmers/rabbitmq-server
     num_units: 1
     to:
     - '2'
-    channel: candidate
   designate-bind:
     charm: cs:~openstack-charmers/designate-bind
     num_units: 1
     to:
     - '3'
-    channel: candidate
   memcached:
     charm: cs:~memcached-team/memcached
     num_units: 1
