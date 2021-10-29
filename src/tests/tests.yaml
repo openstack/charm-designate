@@ -4,24 +4,26 @@ smoke_bundles:
   - bionic-train
 
 gate_bundles:
-  - xenial-mitaka
   - bionic-queens
   - bionic-stein
   - bionic-ussuri
   - focal-ussuri
+  - focal-victoria
   - focal-wallaby
   - focal-xena
+  - hirsute-wallaby
+  - impish-xena
 
 dev_bundles:
   - trusty-mitaka
+  - xenial-mitaka
   - xenial-ocata
   - xenial-pike
   - xenial-queens
   - bionic-rocky
   - bionic-train
-  - focal-victoria
-  - hirsute-wallaby
-  - impish-xena
+  - focal-yoga
+  - jammy-yoga
 
 tests:
   - zaza.openstack.charm_tests.designate.tests.DesignateTests
@@ -37,3 +39,4 @@ tests_options:
     # non-LTS Ubuntu series. See lp:1933643
     - hirsute-wallaby
     - impish-xena
+    - jammy-yoga

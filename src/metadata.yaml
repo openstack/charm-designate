@@ -18,6 +18,7 @@ series:
 - groovy
 - hirsute
 - impish
+- jammy
 subordinate: false
 provides:
   dnsaas:
