@@ -12,7 +12,6 @@ tags:
 - openstack
 - dns
 series:
-- xenial
 - bionic
 - focal
 - groovy
