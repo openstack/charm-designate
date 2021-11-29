@@ -543,7 +543,13 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
             with cls.check_zone_ids(nova_domain_name, neutron_domain_name):
                 if hookenv.config('nameservers'):
                     for ns in hookenv.config('nameservers').split():
-                        cls.create_server(ns)
+                        ns_ = ns
+                        if not ns.endswith('.'):
+                            ns_ = ns + '.'
+                            hookenv.log(("Missing dot (.) at the end of '%s', "
+                                         "adding it automatically." % ns),
+                                        level=hookenv.WARNING)
+                        cls.create_server(ns_)
                 else:
                     hookenv.log('No nameserver specified, skipping creation of'
                                 'nova and neutron domains',

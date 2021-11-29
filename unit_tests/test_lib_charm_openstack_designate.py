@@ -311,7 +311,7 @@ class TestDesignateCharm(Helper):
 
     def test_create_initial_servers_and_domains(self):
         test_config = {
-            'nameservers': 'dnsserverrec1',
+            'nameservers': 'dnsserverrec1. dnsserverrec2',
             'nova-domain': 'novadomain',
             'nova-domain-email': 'novaemail',
             'neutron-domain': 'neutrondomain',
@@ -333,7 +333,8 @@ class TestDesignateCharm(Helper):
         with mock.patch.object(designate.hookenv, 'config',
                                side_effect=FakeConfig(test_config)):
             designate.DesignateCharm.create_initial_servers_and_domains()
-            self.create_server.assert_called_once_with('dnsserverrec1')
+            self.create_server.assert_has_calls([mock.call('dnsserverrec1.'),
+                                                 mock.call('dnsserverrec2.')])
             calls = [
                 mock.call('novadomain', 'novaemail'),
                 mock.call('neutrondomain', 'neutronemail')]
