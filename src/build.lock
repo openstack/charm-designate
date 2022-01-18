@@ -131,10 +131,10 @@
     {
       "type": "layer",
       "item": "interface:nrpe-external-master",
-      "url": "https://github.com/cmars/nrpe-external-master-interface",
+      "url": "https://github.com/canonical/nrpe-external-master-interface",
       "vcs": null,
       "branch": "refs/heads/master",
-      "commit": "2e0e1fdea6d83b55078200aacb537d60013ec5bc"
+      "commit": "95d744d1dbc4d86fb0462283c9371619bf5bbc24"
     },
     {
       "type": "python_module",
