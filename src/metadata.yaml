@@ -12,10 +12,7 @@ tags:
 - openstack
 - dns
 series:
-- bionic
 - focal
-- groovy
-- hirsute
 - impish
 subordinate: false
 provides:

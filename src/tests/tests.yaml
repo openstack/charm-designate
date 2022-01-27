@@ -1,22 +1,13 @@
 charm_name: designate
 
 smoke_bundles:
-  - bionic-train
+  - focal-xena
 
 gate_bundles:
-  - bionic-queens
-  - bionic-stein
-  - bionic-ussuri
-  - focal-ussuri
-  - focal-victoria
-  - focal-wallaby
   - focal-xena
-  - hirsute-wallaby
   - impish-xena
 
 dev_bundles:
-  - bionic-rocky
-  - bionic-train
   - focal-yoga
   - jammy-yoga
 
@@ -32,6 +23,5 @@ tests_options:
   force_deploy:
     # NOTE(lourot): this is needed because the NRPE charm isn't available on
     # non-LTS Ubuntu series. See lp:1933643
-    - hirsute-wallaby
     - impish-xena
     - jammy-yoga

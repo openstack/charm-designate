@@ -1,0 +1,13 @@
+type: charm
+
+parts:
+  charm:
+    source: src/
+    plugin: reactive
+    build-snaps: [charm]
+
+bases:
+  - name: ubuntu
+    channel: "20.04"
+    architectures:
+      - amd64
