@@ -17,7 +17,7 @@ tests:
 target_deploy_status:
   nrpe:
     workload-status: blocked
-    workload-status-message: "Nagios server not configured or related"
+    workload-status-message-prefix: "Nagios server not configured or related"
 
 tests_options:
   force_deploy:

@@ -1,6 +1,8 @@
 variables:
   openstack-origin: &openstack-origin cloud:focal-yoga
 
+local_overlay_enabled: False
+
 series: focal
 
 machines:
@@ -88,7 +90,7 @@ applications:
     - '7'
 
   designate:
-    charm: ../../../designate
+    charm: ../../../designate.charm
     num_units: 1
     options:
       nameservers: 'ns1.amuletexample.com. ns2.amuletexample.com.'
