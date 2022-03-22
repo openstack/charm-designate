@@ -8,7 +8,6 @@ gate_bundles:
   - focal-xena
 
 dev_bundles:
-  - impish-xena
 
 tests:
   - zaza.openstack.charm_tests.designate.tests.DesignateTests
@@ -19,7 +18,4 @@ target_deploy_status:
     workload-status-message: "Nagios server not configured or related"
 
 tests_options:
-  force_deploy:
-    # NOTE(lourot): this is needed because the NRPE charm isn't available on
-    # non-LTS Ubuntu series. See lp:1933643
-    - impish-xena
+  force_deploy: []

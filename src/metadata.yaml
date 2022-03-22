@@ -13,7 +13,6 @@ tags:
 - dns
 series:
 - focal
-- impish
 subordinate: false
 provides:
   dnsaas:
