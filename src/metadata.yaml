@@ -18,8 +18,6 @@ subordinate: false
 provides:
   dnsaas:
     interface: designate
-  nova-designate:
-    interface: nova-designate
   nrpe-external-master:
     interface: nrpe-external-master
     scope: container
