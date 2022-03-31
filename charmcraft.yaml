@@ -6,6 +6,8 @@ parts:
       - tox
       - git
       - python3-dev
+      - libffi-dev
+      - libssl-dev
     override-build: |
       apt-get install ca-certificates -y
       tox -e build-reactive

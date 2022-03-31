@@ -11,6 +11,7 @@ setuptools<50.0.0  # https://github.com/pypa/setuptools/commit/04e3df22df840c6bb
 # Build requirements
 pyparsing<3.0.0  # cffi needs pyparsing < 3.0.0.
 cffi==1.14.6; python_version < '3.6'  # cffi 1.15.0 drops support for py35.
+cryptography<3.4  # Avoid pulling in rust dependencies
 charm-tools==2.8.3
 
 simplejson
