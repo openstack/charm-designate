@@ -629,6 +629,38 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
             charm_nrpe, self.services, current_unit)
         charm_nrpe.write()
 
+    def add_nrpe_nameserver_checks(self):
+        """Add NRPE service checks for upstream nameservers."""
+        config = hookenv.config()
+        hostname = nrpe.get_nagios_hostname()
+        charm_nrpe = nrpe.NRPE(hostname=hostname)
+        if 'nameservers' in config:
+            nameservers = config['nameservers'].split()
+            for nameserver in nameservers:
+                if nameserver[-1] == '.':
+                    nameserver = nameserver[:-1]
+                charm_nrpe.add_check(
+                    "nameserver-{}".format(nameserver),
+                    'Check the upstream DNS server.',
+                    "check_dns -H canonical.com -s {}".format(nameserver),
+                )
+        charm_nrpe.write()
+
+    def remove_nrpe_nameserver_checks(self):
+        """Remove NRPE service checks for previous nameservers."""
+        config = hookenv.config()
+        hostname = nrpe.get_nagios_hostname()
+        charm_nrpe = nrpe.NRPE(hostname=hostname)
+
+        if config.changed('nameservers'):
+            for nameserver in config.previous('nameservers').split():
+                if nameserver[-1] == '.':
+                    nameserver = nameserver[:-1]
+                charm_nrpe.remove_check(
+                    shortname="nameserver-{}".format(nameserver)
+                )
+        charm_nrpe.write()
+
 
 class DesignateCharmQueens(DesignateCharm):
 

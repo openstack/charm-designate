@@ -260,9 +260,13 @@ def reset_shared_db():
 @reactive.when('base-config.rendered')
 @reactive.when_any('config.changed.nagios_context',
                    'config.changed.nagios_servicegroups',
+                   'config.changed.nameservers',
                    'endpoint.nrpe-external-master.changed',
                    'nrpe-external-master.available')
 def configure_nrpe():
     """Handle config-changed for NRPE options."""
     with charm.provide_charm_instance() as charm_instance:
         charm_instance.render_nrpe()
+        # regenerate service checks for upstream nameservers
+        charm_instance.remove_nrpe_nameserver_checks()
+        charm_instance.add_nrpe_nameserver_checks()

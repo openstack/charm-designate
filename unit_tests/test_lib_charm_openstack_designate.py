@@ -373,6 +373,57 @@ class TestDesignateCharm(Helper):
             ),
         ])
 
+    def test_add_nrpe_nameserver_checks(self):
+        test_config = {
+            'nameservers': '8.8.8.8. 9.9.9.9. ns1-example.com.',
+        }
+        charm_instance = designate.DesignateCharm(release='queens')
+        self.patch_object(designate.hookenv, 'config')
+        self.config.return_value = test_config
+        self.patch_object(designate.nrpe, 'NRPE')
+        nrpe_mock = mock.MagicMock()
+        self.NRPE.return_value = nrpe_mock
+        charm_instance.add_nrpe_nameserver_checks()
+        nrpe_mock.add_check.assert_has_calls([
+            mock.call(
+                'nameserver-8.8.8.8',
+                'Check the upstream DNS server.',
+                'check_dns -H canonical.com -s 8.8.8.8',
+            ),
+            mock.call(
+                'nameserver-9.9.9.9',
+                'Check the upstream DNS server.',
+                'check_dns -H canonical.com -s 9.9.9.9',
+            ),
+            mock.call(
+                'nameserver-ns1-example.com',
+                'Check the upstream DNS server.',
+                'check_dns -H canonical.com -s ns1-example.com',
+            ),
+        ])
+        nrpe_mock.write.assert_called_once_with()
+
+    def test_remove_nrpe_nameserver_checks(self):
+        charm_instance = designate.DesignateCharm(release='queens')
+        self.patch_object(designate.hookenv, 'config')
+        config_mock = mock.MagicMock()
+        config_mock.changed.return_value = True
+        config_mock.previous.return_value = 'previous-ns-1. previous-ns-2.'
+        self.config.return_value = config_mock
+        self.patch_object(designate.nrpe, 'NRPE')
+        nrpe_mock = mock.MagicMock()
+        self.NRPE.return_value = nrpe_mock
+        charm_instance.remove_nrpe_nameserver_checks()
+        nrpe_mock.remove_check.assert_has_calls([
+            mock.call(
+                shortname='nameserver-previous-ns-1'
+            ),
+            mock.call(
+                shortname='nameserver-previous-ns-2'
+            ),
+        ])
+        nrpe_mock.write.assert_called_once_with()
+
 
 class TestDesignateQueensCharm(Helper):
 
