@@ -1,0 +1,270 @@
+{
+  "locks": [
+    {
+      "type": "layer",
+      "item": "layer:options",
+      "url": "https://github.com/juju-solutions/layer-options.git",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "fcdcea4e5de3e1556c24e6704607862d0ba00a56"
+    },
+    {
+      "type": "layer",
+      "item": "layer:basic",
+      "url": "https://github.com/juju-solutions/layer-basic.git",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "fb767dcf0786d1d5364199bb3b40bdc86518b45b"
+    },
+    {
+      "type": "layer",
+      "item": "layer:openstack",
+      "url": "https://github.com/openstack/charm-layer-openstack",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "e0f700eacb026235e1a04e7cbc28dfbe9d4e4520"
+    },
+    {
+      "type": "layer",
+      "item": "layer:openstack-principle",
+      "url": "https://github.com/openstack/charm-layer-openstack-principle",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "2541283a7f9c3fa923c0fccd7257e217e11dadcd"
+    },
+    {
+      "type": "layer",
+      "item": "layer:openstack-api",
+      "url": "https://github.com/openstack/charm-layer-openstack-api",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "34311a62e963d0ce903b7ddb9d70b8f071f71651"
+    },
+    {
+      "type": "layer",
+      "item": "layer:leadership",
+      "url": "https://git.launchpad.net/layer-leadership",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "cc5bd3f49b2fa5e6c3ab2336763c313ec8bf083f"
+    },
+    {
+      "type": "layer",
+      "item": "designate",
+      "url": null,
+      "vcs": null,
+      "branch": "refs/heads/stable/yoga\nrefs/heads/yoga-updates",
+      "commit": "refs/heads/stable/yoga\nrefs/heads/yoga-updates"
+    },
+    {
+      "type": "layer",
+      "item": "interface:tls-certificates",
+      "url": "https://github.com/juju-solutions/interface-tls-certificates",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "d9850016d930a6d507b9fd45e2598d327922b140"
+    },
+    {
+      "type": "layer",
+      "item": "interface:mysql-shared",
+      "url": "https://github.com/openstack/charm-interface-mysql-shared",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "f90f8c6edce21e4da3a872f0f9d6761730ce025d"
+    },
+    {
+      "type": "layer",
+      "item": "interface:rabbitmq",
+      "url": "https://github.com/openstack/charm-interface-rabbitmq",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "383121fc584d2d3bf9d233eba0d3708398a4c468"
+    },
+    {
+      "type": "layer",
+      "item": "interface:keystone",
+      "url": "https://github.com/openstack/charm-interface-keystone",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "501af18b3036f5af92990bc39e750e76e393e5eb"
+    },
+    {
+      "type": "layer",
+      "item": "interface:hacluster",
+      "url": "https://github.com/openstack/charm-interface-hacluster.git",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "2b714e90b1b8845ce7390bb1dad5a56a65437907"
+    },
+    {
+      "type": "layer",
+      "item": "interface:openstack-ha",
+      "url": "https://github.com/openstack/charm-interface-openstack-ha",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "a3b00e5b5fd857d130698c5cfe4b918877f0ab80"
+    },
+    {
+      "type": "layer",
+      "item": "interface:bind-rndc",
+      "url": "https://github.com/openstack/charm-interface-bind-rndc",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "4c69d8ceb1af495156ff5bd9e3111bd8d34a347e"
+    },
+    {
+      "type": "layer",
+      "item": "interface:memcache",
+      "url": "https://github.com/omnivector-solutions/interface-memcache.git",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "ab0958e171093f151427eaf62afdf9ae8c20ed0d"
+    },
+    {
+      "type": "layer",
+      "item": "interface:designate",
+      "url": "https://github.com/openstack/charm-interface-designate",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "f11ee38d265ce1675d75624409e26cb7f7377c75"
+    },
+    {
+      "type": "layer",
+      "item": "interface:nrpe-external-master",
+      "url": "https://github.com/canonical/nrpe-external-master-interface",
+      "vcs": null,
+      "branch": "refs/heads/master",
+      "commit": "95d744d1dbc4d86fb0462283c9371619bf5bbc24"
+    },
+    {
+      "type": "python_module",
+      "package": "PyYAML",
+      "vcs": null,
+      "version": "5.3.1"
+    },
+    {
+      "type": "python_module",
+      "package": "psutil",
+      "vcs": null,
+      "version": "5.9.0"
+    },
+    {
+      "type": "python_module",
+      "package": "charmhelpers",
+      "url": "git+https://github.com/juju/charm-helpers.git",
+      "branch": "refs/heads/stable/yoga",
+      "version": "971ac5117c96bd1cb4a6a520787e4509564da582",
+      "vcs": "git"
+    },
+    {
+      "type": "python_module",
+      "package": "Jinja2",
+      "vcs": null,
+      "version": "3.1.1"
+    },
+    {
+      "type": "python_module",
+      "package": "pyaml",
+      "vcs": null,
+      "version": "21.10.1"
+    },
+    {
+      "type": "python_module",
+      "package": "Tempita",
+      "vcs": null,
+      "version": "0.4"
+    },
+    {
+      "type": "python_module",
+      "package": "charms.openstack",
+      "url": "git+https://github.com/openstack/charms.openstack.git",
+      "branch": "refs/heads/stable/yoga",
+      "version": "13ef220ce3529fa7b8e11c6e4c5b352d05b6f148",
+      "vcs": "git"
+    },
+    {
+      "type": "python_module",
+      "package": "pip",
+      "vcs": null,
+      "version": "22.0.4"
+    },
+    {
+      "type": "python_module",
+      "package": "MarkupSafe",
+      "vcs": null,
+      "version": "2.1.1"
+    },
+    {
+      "type": "python_module",
+      "package": "pbr",
+      "vcs": null,
+      "version": "5.8.1"
+    },
+    {
+      "type": "python_module",
+      "package": "tomli",
+      "vcs": null,
+      "version": "2.0.1"
+    },
+    {
+      "type": "python_module",
+      "package": "setuptools",
+      "vcs": null,
+      "version": "62.1.0"
+    },
+    {
+      "type": "python_module",
+      "package": "flit_core",
+      "vcs": null,
+      "version": "3.7.1"
+    },
+    {
+      "type": "python_module",
+      "package": "netifaces",
+      "vcs": null,
+      "version": "0.11.0"
+    },
+    {
+      "type": "python_module",
+      "package": "setuptools_scm",
+      "vcs": null,
+      "version": "6.4.2"
+    },
+    {
+      "type": "python_module",
+      "package": "netaddr",
+      "vcs": null,
+      "version": "0.7.19"
+    },
+    {
+      "type": "python_module",
+      "package": "pyparsing",
+      "vcs": null,
+      "version": "3.0.8"
+    },
+    {
+      "type": "python_module",
+      "package": "charms.reactive",
+      "vcs": null,
+      "version": "1.5.0"
+    },
+    {
+      "type": "python_module",
+      "package": "wheel",
+      "vcs": null,
+      "version": "0.37.1"
+    },
+    {
+      "type": "python_module",
+      "package": "dnspython",
+      "vcs": null,
+      "version": "1.16.0"
+    },
+    {
+      "type": "python_module",
+      "package": "packaging",
+      "vcs": null,
+      "version": "21.3"
+    }
+  ]
+}
