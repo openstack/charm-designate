@@ -198,15 +198,9 @@
     },
     {
       "type": "python_module",
-      "package": "Tempita",
-      "vcs": null,
-      "version": "0.4"
-    },
-    {
-      "type": "python_module",
       "package": "charms.openstack",
       "url": "git+https://github.com/openstack/charms.openstack.git",
-      "branch": "refs/heads/stable/21.10",
+      "branch": "stable/victoria",
       "version": "10627ee5f991c268f174d6d100e218a0e1867af1",
       "vcs": "git"
     },
@@ -226,8 +220,8 @@
       "type": "python_module",
       "package": "charmhelpers",
       "url": "git+https://github.com/juju/charm-helpers.git",
-      "branch": "refs/heads/stable/21.10",
-      "version": "26efcd0da51d580f68ead2ca13c38f58766f8a14",
+      "branch": "stable/victoria",
+      "version": "df2e33ed634200de1d02d7e5f1baaf80f22a6315",
       "vcs": "git"
     },
     {

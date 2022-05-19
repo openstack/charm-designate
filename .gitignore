@@ -8,3 +8,4 @@ deps
 .stestr
 __pycache__
 *.pyc
+*.charm
