@@ -1,15 +1,15 @@
 charm_name: designate
 
 smoke_bundles:
-  - focal-xena
+  - jammy-yoga
 
 gate_bundles:
-  - focal-xena
-  - impish-xena
+  - jammy-yoga
 
 dev_bundles:
-  - focal-yoga
   - jammy-yoga
+  - jammy-zed
+  - kinetic-zed
 
 tests:
   - zaza.openstack.charm_tests.designate.tests.DesignateTests
@@ -21,7 +21,8 @@ target_deploy_status:
 
 tests_options:
   force_deploy:
-    # NOTE(lourot): this is needed because the NRPE charm isn't available on
-    # non-LTS Ubuntu series. See lp:1933643
-    - impish-xena
+    # nrpe charm doesn't support jammy+ and needs to be force installed
+    # https://bugs.launchpad.net/charm-nrpe/+bug/1968008
     - jammy-yoga
+    - jammy-zed
+    - kinetic-zed

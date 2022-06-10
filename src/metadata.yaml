@@ -12,8 +12,8 @@ tags:
 - openstack
 - dns
 series:
-- focal
 - jammy
+- kinetic
 subordinate: false
 provides:
   dnsaas:

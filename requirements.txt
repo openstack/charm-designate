@@ -15,16 +15,6 @@ setuptools<50.0.0  # https://github.com/pypa/setuptools/commit/04e3df22df840c6bb
 #
 cryptography<3.4
 
-# Build requirements
-cffi==1.14.6; python_version < '3.6'  # cffi 1.15.0 drops support for py35.
-git+https://github.com/juju/charm-tools#egg=charm-tools
+git+https://github.com/juju/charm-tools.git
 
 simplejson
-
-# Newer versions use keywords that didn't exist in python 3.5 yet (e.g.
-# "ModuleNotFoundError")
-# NOTE(lourot): This might look like a duplication of test-requirements.txt but
-# some tox targets use only test-requirements.txt whereas charm-build uses only
-# requirements.txt
-importlib-metadata<3.0.0; python_version < '3.6'
-importlib-resources<3.0.0; python_version < '3.6'
