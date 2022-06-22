@@ -1,3 +1,5 @@
+local_overlay_enabled: False
+
 series: bionic
 
 machines:
@@ -12,41 +14,46 @@ machines:
 
 applications:
   neutron-api:
-    charm: cs:~openstack-charmers/neutron-api
+    charm: ch:neutron-api
     num_units: 1
     options:
       openstack-origin: cloud:bionic-train
     to:
     - '6'
+    channel: train/edge
   percona-cluster:
-    charm: cs:~openstack-charmers/percona-cluster
+    charm: ch:percona-cluster
     num_units: 1
     to:
     - '0'
+    channel: 5.7/edge
   keystone:
-    charm: cs:~openstack-charmers/keystone
+    charm: ch:keystone
     num_units: 1
     options:
       openstack-origin: cloud:bionic-train
     to:
     - '1'
+    channel: train/edge
   rabbitmq-server:
-    charm: cs:~openstack-charmers/rabbitmq-server
+    charm: ch:rabbitmq-server
     num_units: 1
     to:
     - '2'
+    channel: 3.6/edge
   designate-bind:
-    charm: cs:~openstack-charmers/designate-bind
+    charm: ch:designate-bind
     num_units: 1
     to:
     - '3'
+    channel: train/edge
   memcached:
-    charm: cs:~memcached-team/memcached
+    charm: ch:memcached
     num_units: 1
     to:
     - '4'
   designate:
-    charm: ../../../designate
+    charm: ../../../designate.charm
     num_units: 1
     options:
       nameservers: 'ns1.amuletexample.com. ns2.amuletexample.com.'

@@ -4,24 +4,12 @@ smoke_bundles:
   - bionic-train
 
 gate_bundles:
-  - xenial-mitaka
   - bionic-queens
-  - bionic-stein
-  - bionic-ussuri
-  - focal-ussuri
-  - focal-wallaby
-  - focal-xena
-
-dev_bundles:
-  - trusty-mitaka
-  - xenial-ocata
-  - xenial-pike
-  - xenial-queens
   - bionic-rocky
+  - bionic-stein
   - bionic-train
-  - focal-victoria
-  - hirsute-wallaby
-  - impish-xena
+
+dev_bundles: []
 
 tests:
   - zaza.openstack.charm_tests.designate.tests.DesignateTests
@@ -32,8 +20,4 @@ target_deploy_status:
     workload-status-message: "Nagios server not configured or related"
 
 tests_options:
-  force_deploy:
-    # NOTE(lourot): this is needed because the NRPE charm isn't available on
-    # non-LTS Ubuntu series. See lp:1933643
-    - hirsute-wallaby
-    - impish-xena
+  force_deploy: []

@@ -5,5 +5,9 @@
 #
 
 # Functional Test Requirements (let Zaza's dependencies solve all dependencies here!)
-git+https://github.com/openstack-charmers/zaza.git@stable/21.10#egg=zaza
-git+https://github.com/openstack-charmers/zaza-openstack-tests.git@stable/21.10#egg=zaza.openstack
+git+https://github.com/openstack-charmers/zaza.git@stable/train#egg=zaza
+git+https://github.com/openstack-charmers/zaza-openstack-tests.git@stable/train#egg=zaza.openstack
+
+# Need tox to be available from tox... inception yes, but its a workaround for now
+tox
+
