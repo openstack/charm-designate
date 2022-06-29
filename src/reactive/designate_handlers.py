@@ -90,6 +90,32 @@ def setup_amqp_req(amqp):
                         vhost='openstack')
 
 
+@reactive.when('base-config.rendered')
+@reactive.when_not('config.rendered')
+def config_rendered():
+    """Set the config.rendered state when ready for operation.
+
+    The config.rendered flag is used by the default handlers in
+    charms.openstack to enable/disable services based on the
+    readiness of the deployment. This functionality ensure
+    that the Designate services start up only after the
+    database has been synced.
+    LP#1925233
+    """
+    reactive.set_state('config.rendered')
+
+
+@reactive.when('config.rendered', 'base-config.rendered')
+def start_designate_services():
+    """Enable services when database is synchronized"""
+    with charm.provide_charm_instance() as instance:
+        if instance.db_sync_done():
+            instance.enable_services()
+        else:
+            hookenv.log("Services not enabled, waiting for db sync",
+                        level=hookenv.WARNING)
+
+
 @reactive.when('shared-db.connected')
 @reactive.when_not('shared-db.setup')
 def setup_database(database):
@@ -128,7 +154,7 @@ def expose_rndc_address(cluster):
 @reactive.when_not('base-config.rendered')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
 def configure_designate_basic(*args):
-    """Configure the minimum to boostrap designate"""
+    """Configure the minimum to bootstrap designate"""
     # If cluster relation is available it needs to passed in
     cluster = relations.endpoint_from_flag('cluster.available')
     if cluster is not None:
@@ -138,6 +164,7 @@ def configure_designate_basic(*args):
         args = args + (dns_backend, )
     with charm.provide_charm_instance() as instance:
         instance.render_base_config(args)
+        instance.disable_services()
     reactive.set_state('base-config.rendered')
 
 
