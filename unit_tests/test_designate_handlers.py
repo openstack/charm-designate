@@ -22,7 +22,10 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'setup_amqp_req': ('amqp.connected', ),
                 'setup_database': ('shared-db.connected', ),
                 'maybe_setup_endpoint': ('identity-service.connected', ),
+                'start_designate_services': ('config.rendered',
+                                             'base-config.rendered', ),
                 'expose_rndc_address': ('cluster.connected', ),
+                'config_rendered': ('base-config.rendered', ),
                 'configure_ssl': ('identity-service.available', ),
                 'config_changed': ('config.changed', ),
                 'cluster_connected': ('ha.connected', ),
@@ -45,6 +48,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
             'when_not': {
                 'setup_amqp_req': ('amqp.requested-access', ),
                 'setup_database': ('shared-db.setup', ),
+                'config_rendered': ('config.rendered', ),
                 'install_packages': ('installed', ),
                 'run_db_migration': ('db.synched', ),
                 'sync_pool_manager_cache': ('pool-manager-cache.synched', ),
