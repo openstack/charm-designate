@@ -105,6 +105,7 @@ def config_rendered():
     reactive.set_state('config.rendered')
 
 
+@reactive.when_none('charm.paused')
 @reactive.when('config.rendered', 'base-config.rendered')
 def start_designate_services():
     """Enable services when database is synchronized"""
