@@ -72,6 +72,8 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
             'when_none': {
                 'clear_dns_config_available': (
                     'dns-slaves-config-valid', 'dns-backend.available', ),
+                'start_designate_services': (
+                    'charm.paused', ),
             },
             'when_file_changed': {
                 'local_pools_updated': ('/etc/designate/pools.yaml', ),
