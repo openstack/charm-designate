@@ -5,7 +5,7 @@
       "item": "layer:options",
       "url": "https://github.com/juju-solutions/layer-options.git",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "fcdcea4e5de3e1556c24e6704607862d0ba00a56",
       "commit": "fcdcea4e5de3e1556c24e6704607862d0ba00a56"
     },
     {
@@ -13,7 +13,7 @@
       "item": "layer:basic",
       "url": "https://github.com/juju-solutions/layer-basic.git",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "a3ff62c32c993d80417f6e093e3ef95e42f62083",
       "commit": "a3ff62c32c993d80417f6e093e3ef95e42f62083"
     },
     {
@@ -21,7 +21,7 @@
       "item": "layer:openstack",
       "url": "https://github.com/openstack/charm-layer-openstack",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "207bac8bec837edc6a4d6003f51d5b59d2d75adb",
       "commit": "207bac8bec837edc6a4d6003f51d5b59d2d75adb"
     },
     {
@@ -29,7 +29,7 @@
       "item": "layer:openstack-principle",
       "url": "https://github.com/openstack/charm-layer-openstack-principle",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "8100de4b24ab361423363c75599124708169d871",
       "commit": "8100de4b24ab361423363c75599124708169d871"
     },
     {
@@ -37,7 +37,7 @@
       "item": "layer:openstack-api",
       "url": "https://github.com/openstack/charm-layer-openstack-api",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "34311a62e963d0ce903b7ddb9d70b8f071f71651",
       "commit": "34311a62e963d0ce903b7ddb9d70b8f071f71651"
     },
     {
@@ -45,7 +45,7 @@
       "item": "layer:leadership",
       "url": "https://git.launchpad.net/layer-leadership",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "cc5bd3f49b2fa5e6c3ab2336763c313ec8bf083f",
       "commit": "cc5bd3f49b2fa5e6c3ab2336763c313ec8bf083f"
     },
     {
@@ -61,7 +61,7 @@
       "item": "interface:tls-certificates",
       "url": "https://github.com/juju-solutions/interface-tls-certificates",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "d9850016d930a6d507b9fd45e2598d327922b140",
       "commit": "d9850016d930a6d507b9fd45e2598d327922b140"
     },
     {
@@ -69,7 +69,7 @@
       "item": "interface:mysql-shared",
       "url": "https://github.com/openstack/charm-interface-mysql-shared",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "06675c43c9f48ffa98b2abf2ddca137f8d18f31c",
       "commit": "06675c43c9f48ffa98b2abf2ddca137f8d18f31c"
     },
     {
@@ -77,7 +77,7 @@
       "item": "interface:rabbitmq",
       "url": "https://github.com/openstack/charm-interface-rabbitmq",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "383121fc584d2d3bf9d233eba0d3708398a4c468",
       "commit": "383121fc584d2d3bf9d233eba0d3708398a4c468"
     },
     {
@@ -85,7 +85,7 @@
       "item": "interface:keystone",
       "url": "https://github.com/openstack/charm-interface-keystone",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "a48a1e826ac0a74ab05a16c441cda4e4b34b1241",
       "commit": "a48a1e826ac0a74ab05a16c441cda4e4b34b1241"
     },
     {
@@ -93,7 +93,7 @@
       "item": "interface:hacluster",
       "url": "https://github.com/openstack/charm-interface-hacluster.git",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "8125a7baecccf9b0869e515b92300dde3a86f31b",
       "commit": "8125a7baecccf9b0869e515b92300dde3a86f31b"
     },
     {
@@ -101,7 +101,7 @@
       "item": "interface:openstack-ha",
       "url": "https://github.com/openstack/charm-interface-openstack-ha",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "a3b00e5b5fd857d130698c5cfe4b918877f0ab80",
       "commit": "a3b00e5b5fd857d130698c5cfe4b918877f0ab80"
     },
     {
@@ -109,7 +109,7 @@
       "item": "interface:bind-rndc",
       "url": "https://github.com/openstack/charm-interface-bind-rndc",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "4c69d8ceb1af495156ff5bd9e3111bd8d34a347e",
       "commit": "4c69d8ceb1af495156ff5bd9e3111bd8d34a347e"
     },
     {
@@ -117,7 +117,7 @@
       "item": "interface:memcache",
       "url": "https://github.com/omnivector-solutions/interface-memcache.git",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "ab0958e171093f151427eaf62afdf9ae8c20ed0d",
       "commit": "ab0958e171093f151427eaf62afdf9ae8c20ed0d"
     },
     {
@@ -125,7 +125,7 @@
       "item": "interface:designate",
       "url": "https://github.com/openstack/charm-interface-designate",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "f11ee38d265ce1675d75624409e26cb7f7377c75",
       "commit": "f11ee38d265ce1675d75624409e26cb7f7377c75"
     },
     {
@@ -133,7 +133,7 @@
       "item": "interface:nrpe-external-master",
       "url": "https://github.com/canonical/nrpe-external-master-interface",
       "vcs": null,
-      "branch": "refs/heads/master",
+      "branch": "95d744d1dbc4d86fb0462283c9371619bf5bbc24",
       "commit": "95d744d1dbc4d86fb0462283c9371619bf5bbc24"
     },
     {
