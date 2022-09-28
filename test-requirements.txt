@@ -15,6 +15,8 @@ cliff<3.0.0
 
 # Dependencies of stestr. Newer versions use keywords that didn't exist in
 # python 3.5 yet (e.g. "ModuleNotFoundError")
+importlib-metadata<5.0.0; python_version < '3.8' and python_version >= '3.6'
+importlib-resources<5.0.0; python_version < '3.8' and python_version >= '3.6'
 importlib-metadata<3.0.0; python_version < '3.6'
 importlib-resources<3.0.0; python_version < '3.6'
 

@@ -20,5 +20,7 @@ simplejson
 # NOTE(lourot): This might look like a duplication of test-requirements.txt but
 # some tox targets use only test-requirements.txt whereas charm-build uses only
 # requirements.txt
+importlib-metadata<5.0.0; python_version < '3.8' and python_version >= '3.6'
+importlib-resources<5.0.0; python_version < '3.8' and python_version >= '3.6'
 importlib-metadata<3.0.0; python_version < '3.6'
 importlib-resources<3.0.0; python_version < '3.6'
