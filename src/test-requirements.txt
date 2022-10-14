@@ -8,5 +8,5 @@
 tox
 
 # Functional Test Requirements (let Zaza's dependencies solve all dependencies here!)
-git+https://github.com/openstack-charmers/zaza.git#egg=zaza
-git+https://github.com/openstack-charmers/zaza-openstack-tests.git#egg=zaza.openstack
+git+https://github.com/openstack-charmers/zaza.git@stable/zed#egg=zaza
+git+https://github.com/openstack-charmers/zaza-openstack-tests.git@stable/zed#egg=zaza.openstack

@@ -15,6 +15,6 @@ setuptools<50.0.0  # https://github.com/pypa/setuptools/commit/04e3df22df840c6bb
 #
 cryptography<3.4
 
-git+https://github.com/juju/charm-tools.git
+charm-tools<3.1
 
 simplejson
