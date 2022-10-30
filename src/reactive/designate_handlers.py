@@ -242,7 +242,10 @@ def cluster_connected(hacluster):
 @reactive.when('dnsaas.connected')
 def expose_endpoint(endpoint):
     with charm.provide_charm_instance() as instance:
-        endpoint.expose_endpoint(instance.public_url)
+        if hookenv.config('use-internal-endpoints'):
+            endpoint.expose_endpoint(instance.internal_url)
+        else:
+            endpoint.expose_endpoint(instance.public_url)
 
 
 @reactive.when_not('dont-set-assess-status')
