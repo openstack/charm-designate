@@ -117,13 +117,15 @@ class TestHandlers(test_utils.PatchHelper):
             mock.call(
                 'designate',
                 'designate',
-                prefix='designate'),
+                prefix='designate',
+                hostname=mock.ANY),
             mock.call(
                 'dpm',
                 'dpm',
-                prefix='dpm'),
+                prefix='dpm',
+                hostname=mock.ANY),
         ]
-        database.configure.has_calls(calls)
+        database.configure.assert_has_calls(calls)
 
     def test_setup_endpoint(self):
         the_charm = self._patch_provide_charm_instance()
@@ -140,7 +142,6 @@ class TestHandlers(test_utils.PatchHelper):
         self.is_data_changed().__exit__.return_value = None
         keystone = mock.MagicMock()
         handlers.maybe_setup_endpoint(keystone)
-        self.is_data_changed.called_once_with(mock.ANY, args)
         keystone.register_endpoints.assert_called_once_with(*args)
 
     def test_configure_designate_basic(self):
