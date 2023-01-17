@@ -2,6 +2,9 @@ type: charm
 
 parts:
   charm:
+    plugin: reactive
+    reactive-charm-build-arguments:
+      - --binary-wheels-from-source
     build-packages:
       - tox
       - git
@@ -10,26 +13,12 @@ parts:
       - libssl-dev
       - rustc
       - cargo
+    source: src/
+    build-snaps:
+      - charm/latest/edge
     build-environment:
-      - CHARM_INTERFACES_DIR: /root/project/interfaces/
-      - CHARM_LAYERS_DIR: /root/project/layers/
-      - MAKEFLAGS: -j$(nproc)
-    override-build: |
-      apt-get install ca-certificates -y
-      tox -e build-reactive
-    override-stage: |
-      echo "Copying charm to staging area: $CRAFT_STAGE"
-      NAME=$(ls $CRAFT_PART_BUILD/build/builds)
-      cp -r $CRAFT_PART_BUILD/build/builds/$NAME/* $CRAFT_STAGE/
-    override-prime: |
-      # For some reason, the normal priming chokes on the fact that there's a
-      # hooks directory.
-      cp -r $CRAFT_STAGE/* .
-      # Charmcraft looks for this specific entry point.
-      mkdir -p src
-      touch src/charm.py
-      chmod +x src/charm.py
-
+      - CHARM_INTERFACES_DIR: $CRAFT_PROJECT_DIR/interfaces/
+      - CHARM_LAYERS_DIR: $CRAFT_PROJECT_DIR/layers/
 bases:
   - build-on:
       - name: ubuntu
