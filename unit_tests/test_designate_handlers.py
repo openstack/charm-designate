@@ -143,6 +143,13 @@ class TestHandlers(test_utils.PatchHelper):
         keystone = mock.MagicMock()
         handlers.maybe_setup_endpoint(keystone)
         keystone.register_endpoints.assert_called_once_with(*args)
+        endpoint = mock.MagicMock()
+        handlers.expose_endpoint(endpoint)
+        endpoint.expose_endpoint.assert_called_once_with('i1')
+        endpoint = mock.MagicMock()
+        self.patch_object(handlers.hookenv, 'config', return_value=False)
+        handlers.expose_endpoint(endpoint)
+        endpoint.expose_endpoint.assert_called_once_with('p1')
 
     def test_configure_designate_basic(self):
         the_charm = self._patch_provide_charm_instance()
