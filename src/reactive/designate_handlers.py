@@ -59,6 +59,7 @@ def check_dns_slaves():
     reactive.remove_state('dns-slaves-config-valid')
 
 
+@reactive.when_not('is-update-status-hook')
 @reactive.when_any('dns-slaves-config-valid',
                    'dns-backend.available')
 def set_dns_config_available(*args):
@@ -83,6 +84,7 @@ def install_packages():
     reactive.remove_state('pool-manager-cache.synched')
 
 
+@reactive.when_not('is-update-status-hook')
 @reactive.when('amqp.connected')
 def setup_amqp_req(amqp):
     """Send request for rabbit access and vhost"""
@@ -105,6 +107,7 @@ def config_rendered():
     reactive.set_state('config.rendered')
 
 
+@reactive.when_not('is-update-status-hook')
 @reactive.when_none('charm.paused')
 @reactive.when('config.rendered', 'base-config.rendered')
 def start_designate_services():
@@ -132,6 +135,7 @@ def setup_database(database):
         reactive.set_state('shared-db.setup')
 
 
+@reactive.when_not('is-update-status-hook')
 @reactive.when('identity-service.connected')
 def maybe_setup_endpoint(keystone):
     """When the keystone interface connects, register this unit in the keystone
@@ -146,6 +150,7 @@ def maybe_setup_endpoint(keystone):
                 keystone.register_endpoints(*args)
 
 
+@reactive.when_not('is-update-status-hook')
 @reactive.when('cluster.connected')
 def expose_rndc_address(cluster):
     rndc_address = ip.get_relation_ip('dns-backend')
@@ -190,6 +195,7 @@ def sync_pool_manager_cache(*args):
             reactive.set_state('pool-manager-cache.synched')
 
 
+@reactive.when_not('is-update-status-hook')
 @reactive.when('db.synched')
 @reactive.when('pool-manager-cache.synched')
 @reactive.when(*COMPLETE_INTERFACE_STATES)
@@ -232,6 +238,7 @@ def _render_sink_configs(instance, interfaces_list):
     instance.render_with_interfaces(interfaces_list, configs=configs)
 
 
+@reactive.when_not('is-update-status-hook')
 @reactive.when('ha.connected')
 def cluster_connected(hacluster):
     """Configure HA resources in corosync"""
@@ -239,6 +246,7 @@ def cluster_connected(hacluster):
         instance.configure_ha_resources(hacluster)
 
 
+@reactive.when_not('is-update-status-hook')
 @reactive.when('dnsaas.connected')
 def expose_endpoint(endpoint):
     with charm.provide_charm_instance() as instance:

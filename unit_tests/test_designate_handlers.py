@@ -46,7 +46,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'configure_nrpe': ('base-config.rendered', ),
             },
             'when_not': {
-                'setup_amqp_req': ('amqp.requested-access', ),
+                'setup_amqp_req': ('is-update-status-hook', ),
                 'setup_database': ('shared-db.setup', ),
                 'config_rendered': ('config.rendered', ),
                 'install_packages': ('installed', ),
@@ -58,6 +58,13 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                     'dont-set-assess-status', ),
                 'reset_shared_db': ('shared-db.connected', ),
                 'configure_nrpe': ('is-update-status-hook', ),
+                'set_dns_config_available': ('is-update-status-hook', ),
+                'start_designate_services': ('is-update-status-hook', ),
+                'maybe_setup_endpoint': ('is-update-status-hook', ),
+                'expose_endpoint': ('is-update-status-hook', ),
+                'configure_designate_full': ('is-update-status-hook', ),
+                'expose_rndc_address': ('is-update-status-hook', ),
+                'cluster_connected': ('is-update-status-hook', ),
             },
             'when_any': {
                 'set_dns_config_available': (
