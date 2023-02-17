@@ -321,6 +321,11 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
         }
     }
 
+    healthcheck = {
+        'option': 'httpchk GET /healthcheck',
+        'http-check': 'expect status 200',
+    }
+
     required_relations = ['shared-db', 'amqp', 'identity-service',
                           'coordinator-memcached']
 
