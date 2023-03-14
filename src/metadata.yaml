@@ -14,6 +14,7 @@ tags:
 series:
 - jammy
 - kinetic
+- lunar
 subordinate: false
 provides:
   dnsaas:
