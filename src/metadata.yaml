@@ -8,6 +8,7 @@ description: |
   * Integrated with Keystone for authentication
   * Framework in place to integrate with Nova and Neutron notifications
   * Support for PowerDNS and Bind9 out of the box
+docs: https://discourse.charmhub.io/t/designate-docs-index/11220
 tags:
 - openstack
 - dns
