@@ -1,14 +1,15 @@
 charm_name: designate
 
 smoke_bundles:
-  - jammy-zed
+  - jammy-antelope
 
 gate_bundles:
-  - jammy-zed
+  - jammy-antelope
 
 dev_bundles:
-  - jammy-antelope
+  - jammy-bobcat
   - lunar-antelope
+  - mantic-bobcat
 
 tests:
   - zaza.openstack.charm_tests.designate.tests.DesignateTests
@@ -22,6 +23,7 @@ tests_options:
   force_deploy:
     # nrpe charm doesn't support jammy+ and needs to be force installed
     # https://bugs.launchpad.net/charm-nrpe/+bug/1968008
-    - jammy-zed
     - jammy-antelope
+    - jammy-bobcat
     - lunar-antelope
+    - mantic-bobcat
