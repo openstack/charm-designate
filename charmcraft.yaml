@@ -4,6 +4,8 @@ parts:
   charm:
     plugin: reactive
     reactive-charm-build-arguments:
+      - --use-lock-file-branches
+      - --verbose
       - --binary-wheels-from-source
     build-packages:
       - tox

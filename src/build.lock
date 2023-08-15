@@ -182,7 +182,7 @@
       "type": "python_module",
       "package": "PyYAML",
       "vcs": null,
-      "version": "6.0"
+      "version": "6.0.1"
     },
     {
       "type": "python_module",
@@ -214,7 +214,7 @@
       "type": "python_module",
       "package": "Cython",
       "vcs": null,
-      "version": "0.29.34"
+      "version": "0.29.36"
     },
     {
       "type": "python_module",
