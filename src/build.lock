@@ -21,8 +21,8 @@
       "item": "layer:openstack",
       "url": "https://github.com/openstack/charm-layer-openstack",
       "vcs": null,
-      "branch": "207bac8bec837edc6a4d6003f51d5b59d2d75adb",
-      "commit": "207bac8bec837edc6a4d6003f51d5b59d2d75adb"
+      "branch": "e0f700eacb026235e1a04e7cbc28dfbe9d4e4520",
+      "commit": "e0f700eacb026235e1a04e7cbc28dfbe9d4e4520"
     },
     {
       "type": "layer",
@@ -85,8 +85,8 @@
       "item": "interface:keystone",
       "url": "https://github.com/openstack/charm-interface-keystone",
       "vcs": null,
-      "branch": "a48a1e826ac0a74ab05a16c441cda4e4b34b1241",
-      "commit": "a48a1e826ac0a74ab05a16c441cda4e4b34b1241"
+      "branch": "501af18b3036f5af92990bc39e750e76e393e5eb",
+      "commit": "501af18b3036f5af92990bc39e750e76e393e5eb"
     },
     {
       "type": "layer",
