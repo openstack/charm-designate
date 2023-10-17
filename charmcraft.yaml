@@ -5,6 +5,7 @@ parts:
     plugin: reactive
     reactive-charm-build-arguments:
       - --binary-wheels-from-source
+      - --use-lock-file-branches
     build-packages:
       - tox
       - git
@@ -51,38 +52,6 @@ bases:
     run-on:
       - name: ubuntu
         channel: "22.04"
-        architectures: [arm64]
-  - build-on:
-      - name: ubuntu
-        channel: "23.04"
-        architectures: [amd64]
-    run-on:
-      - name: ubuntu
-        channel: "23.04"
-        architectures: [amd64]
-  - build-on:
-      - name: ubuntu
-        channel: "23.04"
-        architectures: [s390x]
-    run-on:
-      - name: ubuntu
-        channel: "23.04"
-        architectures: [s390x]
-  - build-on:
-      - name: ubuntu
-        channel: "23.04"
-        architectures: [ppc64el]
-    run-on:
-      - name: ubuntu
-        channel: "23.04"
-        architectures: [ppc64el]
-  - build-on:
-      - name: ubuntu
-        channel: "23.04"
-        architectures: [arm64]
-    run-on:
-      - name: ubuntu
-        channel: "23.04"
         architectures: [arm64]
   - build-on:
       - name: ubuntu

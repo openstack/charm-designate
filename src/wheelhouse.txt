@@ -1,4 +1,4 @@
 
-git+https://github.com/openstack/charms.openstack.git#egg=charms.openstack
+git+https://github.com/openstack/charms.openstack.git@stable/bobcat#egg=charms.openstack
 
-git+https://github.com/juju/charm-helpers.git#egg=charmhelpers
+git+https://github.com/juju/charm-helpers.git@stable/bobcat#egg=charmhelpers
