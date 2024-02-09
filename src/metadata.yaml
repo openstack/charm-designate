@@ -10,12 +10,10 @@ description: |
   * Support for PowerDNS and Bind9 out of the box
 docs: https://discourse.charmhub.io/t/designate-docs-index/11220
 tags:
-- openstack
-- dns
+  - openstack
+  - dns
 series:
-- jammy
-- lunar
-- mantic
+  - jammy
 subordinate: false
 provides:
   dnsaas:

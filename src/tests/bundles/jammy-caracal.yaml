@@ -1,9 +1,9 @@
 variables:
-  openstack-origin: &openstack-origin distro
+  openstack-origin: &openstack-origin cloud:jammy-caracal
 
 local_overlay_enabled: False
 
-series: mantic
+series: jammy
 
 machines:
   '0':
@@ -55,7 +55,7 @@ applications:
       openstack-origin: *openstack-origin
     to:
     - '4'
-    channel: latest/edge
+    channel: 2024.1/edge
 
   neutron-api:
     charm: ch:neutron-api
@@ -65,7 +65,7 @@ applications:
       openstack-origin: *openstack-origin
     to:
     - '5'
-    channel: latest/edge
+    channel: 2024.1/edge
 
   designate-bind:
     charm: ch:designate-bind
@@ -75,18 +75,18 @@ applications:
       #openstack-origin: *openstack-origin
     to:
     - '6'
-    channel: latest/edge
+    channel: 2024.1/edge
 
   memcached:
     charm: ch:memcached
     num_units: 1
-    # Note that holding memcached at focal as it's not available at mantic yet.
+    # Note that holding memcached at focal as it's not available at jammy yet.
     series: focal
     to:
     - '7'
 
   designate:
-    charm: ../../../designate_ubuntu-23.10-amd64.charm
+    charm: ../../../designate_ubuntu-22.04-amd64.charm
     num_units: 1
     options:
       nameservers: 'ns1.amuletexample.com. ns2.amuletexample.com.'
