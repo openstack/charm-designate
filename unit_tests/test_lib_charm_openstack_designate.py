@@ -101,15 +101,17 @@ class TestBindRNDCRelationAdapter(Helper):
                                'slave_ips', new=_slave_ips):
             a = designate.BindRNDCRelationAdapter(relation)
             expect = [{'address': 'addr1',
-                       'nameserver': 'nameserver_unit_1',
-                       'pool_target': 'nameserver_unit_1'},
+                       'nameserver': 'nameserver_unit',
+                       'pool_target': 'nameserver_unit',
+                       'rndc_key_file': '/etc/designate/rndc_unit.key'},
                       {'address': 'addr2',
-                       'nameserver': 'nameserver_unit_2',
-                       'pool_target': 'nameserver_unit_2'}]
+                       'nameserver': 'nameserver_unit',
+                       'pool_target': 'nameserver_unit',
+                       'rndc_key_file': '/etc/designate/rndc_unit.key'}]
             self.assertEqual(a.pool_config, expect)
             self.assertEqual(
                 a.pool_targets,
-                'nameserver_unit_1, nameserver_unit_2')
+                'nameserver_unit, nameserver_unit')
             self.assertEqual(a.slave_addresses, 'addr1:53, addr2:53')
 
     def test_rndc_info(self):
@@ -268,6 +270,53 @@ class TestDesignateCharm(Helper):
                 mock.call('192_168_23_4', 'key2'),
             ]
             self.write_key_file.assert_has_calls(calls)
+
+    def test_rndc_keys(self):
+
+        def fake_conversations():
+            conversations = []
+            Conversation = mock.Mock()
+            Conversation.key = 'reactive.conversations.dns-backend:65.'
+            'designate-bind-t1/1'
+            Conversation.namespace = 'dns-backend:65'
+            self.patch(Conversation, 'relation_ids',
+                       return_value='dns-backend:65')
+            Conversation.relation_name = 'dns-backend'
+            Conversation.scope = 'designate-bind-t1/1'
+            self.patch(Conversation, 'get_remote', return_value='rndckey1')
+            conversations.append(Conversation)
+            Conversation = mock.Mock()
+            Conversation.key = 'reactive.conversations.dns-backend:66.'
+            'designate-bind-t0/1'
+            Conversation.namespace = 'dns-backend:66'
+            self.patch(Conversation, 'relation_ids',
+                       return_value='dns-backend:66')
+            Conversation.relation_name = 'dns-backend'
+            Conversation.scope = 'designate-bind-t0/1'
+            self.patch(Conversation, 'get_remote', return_value='rndckey2')
+            conversations.append(Conversation)
+            return conversations
+
+        mock_endpoint_from_flag = mock.MagicMock()
+        mock_endpoint_from_flag.conversations.side_effect = fake_conversations
+
+        def fake_endpoint_from_flag(*args, **kwargs):
+            return mock_endpoint_from_flag
+
+        relation = mock.MagicMock()
+        self.patch(designate.DesignateCharm, 'write_key_file')
+        self.patch(designate.relations, 'endpoint_from_flag',
+                   side_effect=fake_endpoint_from_flag)
+
+        designate.DesignateConfigurationAdapter(relation)
+        d = designate.DesignateCharm()
+        d.render_relation_rndc_keys()
+        calls = [
+            mock.call('designate_bind_t1', 'rndckey1'),
+            mock.call('designate_bind_t0', 'rndckey2'),
+        ]
+
+        self.write_key_file.assert_has_calls(calls)
 
     def test_get_domain_id(self):
         self.patch(designate.DesignateCharm, 'ensure_api_responding')

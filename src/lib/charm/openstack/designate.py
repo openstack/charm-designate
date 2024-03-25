@@ -87,11 +87,13 @@ class BindRNDCRelationAdapter(openstack_adapters.OpenStackRelationAdapter):
         """
         pconfig = []
         for slave in self.slave_ips:
-            unit_name = slave['unit'].replace('/', '_').replace('-', '_')
+            application_name = slave['unit'].split('/')[0].replace('-', '_')
             pconfig.append({
-                'nameserver': 'nameserver_{}'.format(unit_name),
-                'pool_target': 'nameserver_{}'.format(unit_name),
+                'nameserver': 'nameserver_{}'.format(application_name),
+                'pool_target': 'nameserver_{}'.format(application_name),
                 'address': slave['address'],
+                'rndc_key_file': '/etc/designate/rndc_{}.key'.format(
+                    application_name),
             })
         return pconfig
 
@@ -436,6 +438,28 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
                 self.write_key_file(unit_name, key)
         except ValueError as e:
             hookenv.log("Problem with 'dns-slaves' config: {}"
+                        .format(str(e)), level=hookenv.ERROR)
+
+    def render_relation_rndc_keys(self):
+        """Render the rndc keys for each application in the dns-backend
+        relation
+
+        @returns None
+        """
+        try:
+            applications = []
+            dns_backend = relations.endpoint_from_flag(
+                'dns-backend.available').conversations()
+            for conversation in dns_backend:
+                application_name = conversation.scope.split(
+                    '/')[0].replace('-', '_')
+                if application_name not in applications:
+                    applications.append(application_name)
+                    rndckey = conversation.get_remote('rndckey')
+                    self.write_key_file(application_name, rndckey)
+
+        except ValueError as e:
+            hookenv.log("problem writing relation_rndc_keys: {}"
                         .format(str(e)), level=hookenv.ERROR)
 
     def configure_sink(self):
