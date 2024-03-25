@@ -225,6 +225,19 @@ def configure_designate_full(*args):
                         level=hookenv.ERROR)
 
 
+@reactive.when_not('is-update-status-hook')
+@reactive.when('dns-backend.available')
+@reactive.when('db.synched')
+@reactive.when(*COMPLETE_INTERFACE_STATES)
+def configure_dns_backend_rndc_keys(*args):
+    """Write the dns-backend relation configuration files and restart
+    designate-worker to apply the new config.
+    """
+    with charm.provide_charm_instance() as instance:
+        instance.render_relation_rndc_keys()
+    host.service_restart('designate-worker')
+
+
 def _render_sink_configs(instance, interfaces_list):
     """Helper: use the singleton from the DesignateCharm to render sink configs
 

@@ -44,6 +44,8 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                     'leadership.changed.pool-yaml-hash', ),
                 'reset_shared_db': ('shared-db.setup', ),
                 'configure_nrpe': ('base-config.rendered', ),
+                'configure_dns_backend_rndc_keys': (
+                    all_interfaces + ('dns-backend.available', 'db.synched')),
             },
             'when_not': {
                 'setup_amqp_req': ('is-update-status-hook', ),
@@ -65,6 +67,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                 'configure_designate_full': ('is-update-status-hook', ),
                 'expose_rndc_address': ('is-update-status-hook', ),
                 'cluster_connected': ('is-update-status-hook', ),
+                'configure_dns_backend_rndc_keys': ('is-update-status-hook', ),
             },
             'when_any': {
                 'set_dns_config_available': (

@@ -36,7 +36,7 @@
       options:
         host: {{ slave.address }}
         rndc_host: {{ slave.address }}
-        rndc_key_file: /etc/designate/rndc.key
+        rndc_key_file: {{ slave.rndc_key_file }}
 {% endfor %}
 {% endif %}
 {% if options.pool_config %}
