@@ -1,0 +1,318 @@
+{
+  "locks": [
+    {
+      "type": "layer",
+      "item": "layer:options",
+      "url": "https://github.com/juju-solutions/layer-options.git",
+      "vcs": null,
+      "branch": "fcdcea4e5de3e1556c24e6704607862d0ba00a56",
+      "commit": "fcdcea4e5de3e1556c24e6704607862d0ba00a56"
+    },
+    {
+      "type": "layer",
+      "item": "layer:basic",
+      "url": "https://github.com/juju-solutions/layer-basic.git",
+      "vcs": null,
+      "branch": "33526bd6aaa01ffe717a5c66ed62bc4790344ef2",
+      "commit": "33526bd6aaa01ffe717a5c66ed62bc4790344ef2"
+    },
+    {
+      "type": "layer",
+      "item": "layer:openstack",
+      "url": "https://github.com/openstack/charm-layer-openstack",
+      "vcs": null,
+      "branch": "7c671b0696977f455616565d956895b2f890464b",
+      "commit": "7c671b0696977f455616565d956895b2f890464b"
+    },
+    {
+      "type": "layer",
+      "item": "layer:openstack-principle",
+      "url": "https://github.com/openstack/charm-layer-openstack-principle",
+      "vcs": null,
+      "branch": "2541283a7f9c3fa923c0fccd7257e217e11dadcd",
+      "commit": "2541283a7f9c3fa923c0fccd7257e217e11dadcd"
+    },
+    {
+      "type": "layer",
+      "item": "layer:openstack-api",
+      "url": "https://github.com/openstack/charm-layer-openstack-api",
+      "vcs": null,
+      "branch": "34311a62e963d0ce903b7ddb9d70b8f071f71651",
+      "commit": "34311a62e963d0ce903b7ddb9d70b8f071f71651"
+    },
+    {
+      "type": "layer",
+      "item": "layer:leadership",
+      "url": "https://git.launchpad.net/layer-leadership",
+      "vcs": null,
+      "branch": "cc5bd3f49b2fa5e6c3ab2336763c313ec8bf083f",
+      "commit": "cc5bd3f49b2fa5e6c3ab2336763c313ec8bf083f"
+    },
+    {
+      "type": "layer",
+      "item": "designate",
+      "url": null,
+      "vcs": null,
+      "branch": null,
+      "commit": ""
+    },
+    {
+      "type": "layer",
+      "item": "interface:tls-certificates",
+      "url": "https://github.com/juju-solutions/interface-tls-certificates",
+      "vcs": null,
+      "branch": "da891c403864482688ec767a964218e5857f0e49",
+      "commit": "da891c403864482688ec767a964218e5857f0e49"
+    },
+    {
+      "type": "layer",
+      "item": "interface:mysql-shared",
+      "url": "https://github.com/openstack/charm-interface-mysql-shared",
+      "vcs": null,
+      "branch": "f90f8c6edce21e4da3a872f0f9d6761730ce025d",
+      "commit": "f90f8c6edce21e4da3a872f0f9d6761730ce025d"
+    },
+    {
+      "type": "layer",
+      "item": "interface:rabbitmq",
+      "url": "https://github.com/openstack/charm-interface-rabbitmq",
+      "vcs": null,
+      "branch": "383121fc584d2d3bf9d233eba0d3708398a4c468",
+      "commit": "383121fc584d2d3bf9d233eba0d3708398a4c468"
+    },
+    {
+      "type": "layer",
+      "item": "interface:keystone",
+      "url": "https://github.com/openstack/charm-interface-keystone",
+      "vcs": null,
+      "branch": "36ea7b385a569ebabca7184ed4ce8420bb8fa61a",
+      "commit": "36ea7b385a569ebabca7184ed4ce8420bb8fa61a"
+    },
+    {
+      "type": "layer",
+      "item": "interface:hacluster",
+      "url": "https://github.com/openstack/charm-interface-hacluster.git",
+      "vcs": null,
+      "branch": "d91e83a1fa59a13f4160febfe536c68dc762e436",
+      "commit": "d91e83a1fa59a13f4160febfe536c68dc762e436"
+    },
+    {
+      "type": "layer",
+      "item": "interface:openstack-ha",
+      "url": "https://github.com/openstack/charm-interface-openstack-ha",
+      "vcs": null,
+      "branch": "a3b00e5b5fd857d130698c5cfe4b918877f0ab80",
+      "commit": "a3b00e5b5fd857d130698c5cfe4b918877f0ab80"
+    },
+    {
+      "type": "layer",
+      "item": "interface:bind-rndc",
+      "url": "https://github.com/openstack/charm-interface-bind-rndc",
+      "vcs": null,
+      "branch": "4c69d8ceb1af495156ff5bd9e3111bd8d34a347e",
+      "commit": "4c69d8ceb1af495156ff5bd9e3111bd8d34a347e"
+    },
+    {
+      "type": "layer",
+      "item": "interface:memcache",
+      "url": "https://github.com/canonical/interface-memcache.git",
+      "vcs": null,
+      "branch": "ab0958e171093f151427eaf62afdf9ae8c20ed0d",
+      "commit": "ab0958e171093f151427eaf62afdf9ae8c20ed0d"
+    },
+    {
+      "type": "layer",
+      "item": "interface:designate",
+      "url": "https://github.com/openstack/charm-interface-designate",
+      "vcs": null,
+      "branch": "f11ee38d265ce1675d75624409e26cb7f7377c75",
+      "commit": "f11ee38d265ce1675d75624409e26cb7f7377c75"
+    },
+    {
+      "type": "layer",
+      "item": "interface:nrpe-external-master",
+      "url": "https://github.com/canonical/nrpe-external-master-interface",
+      "vcs": null,
+      "branch": "c58fe7b01a151d933681b5bf67e47ad3de65eeaa",
+      "commit": "c58fe7b01a151d933681b5bf67e47ad3de65eeaa"
+    },
+    {
+      "type": "python_module",
+      "package": "pluggy",
+      "vcs": null,
+      "version": "1.5.0"
+    },
+    {
+      "type": "python_module",
+      "package": "netifaces",
+      "vcs": null,
+      "version": "0.11.0"
+    },
+    {
+      "type": "python_module",
+      "package": "Cython",
+      "vcs": null,
+      "version": "0.29.37"
+    },
+    {
+      "type": "python_module",
+      "package": "trove-classifiers",
+      "vcs": null,
+      "version": "2024.4.10"
+    },
+    {
+      "type": "python_module",
+      "package": "pathspec",
+      "vcs": null,
+      "version": "0.12.1"
+    },
+    {
+      "type": "python_module",
+      "package": "flit_scm",
+      "vcs": null,
+      "version": "1.7.0"
+    },
+    {
+      "type": "python_module",
+      "package": "pip",
+      "vcs": null,
+      "version": "22.0.4"
+    },
+    {
+      "type": "python_module",
+      "package": "charms.reactive",
+      "vcs": null,
+      "version": "1.5.2"
+    },
+    {
+      "type": "python_module",
+      "package": "psutil",
+      "vcs": null,
+      "version": "5.9.8"
+    },
+    {
+      "type": "python_module",
+      "package": "flit_core",
+      "vcs": null,
+      "version": "3.9.0"
+    },
+    {
+      "type": "python_module",
+      "package": "wheel",
+      "vcs": null,
+      "version": "0.43.0"
+    },
+    {
+      "type": "python_module",
+      "package": "setuptools",
+      "vcs": null,
+      "version": "62.1.0"
+    },
+    {
+      "type": "python_module",
+      "package": "sniffio",
+      "vcs": null,
+      "version": "1.3.0"
+    },
+    {
+      "type": "python_module",
+      "package": "calver",
+      "vcs": null,
+      "version": "2022.6.26"
+    },
+    {
+      "type": "python_module",
+      "package": "PyYAML",
+      "vcs": null,
+      "version": "6.0.1"
+    },
+    {
+      "type": "python_module",
+      "package": "hatchling",
+      "vcs": null,
+      "version": "1.24.2"
+    },
+    {
+      "type": "python_module",
+      "package": "dnspython",
+      "vcs": null,
+      "version": "2.6.1"
+    },
+    {
+      "type": "python_module",
+      "package": "packaging",
+      "vcs": null,
+      "version": "24.0"
+    },
+    {
+      "type": "python_module",
+      "package": "netaddr",
+      "vcs": null,
+      "version": "0.7.19"
+    },
+    {
+      "type": "python_module",
+      "package": "charms.openstack",
+      "url": "git+https://github.com/openstack/charms.openstack.git",
+      "branch": "stable/caracal",
+      "version": "8cd6e5382e56fe73562d563687eb07d0c07fe99b",
+      "vcs": "git"
+    },
+    {
+      "type": "python_module",
+      "package": "MarkupSafe",
+      "vcs": null,
+      "version": "2.1.5"
+    },
+    {
+      "type": "python_module",
+      "package": "pbr",
+      "vcs": null,
+      "version": "6.0.0"
+    },
+    {
+      "type": "python_module",
+      "package": "anyio",
+      "vcs": null,
+      "version": "3.6.2"
+    },
+    {
+      "type": "python_module",
+      "package": "tomli",
+      "vcs": null,
+      "version": "2.0.1"
+    },
+    {
+      "type": "python_module",
+      "package": "Jinja2",
+      "vcs": null,
+      "version": "3.1.3"
+    },
+    {
+      "type": "python_module",
+      "package": "charmhelpers",
+      "url": "git+https://github.com/juju/charm-helpers.git",
+      "branch": "stable/caracal",
+      "version": "807f705d1d132bedb62b2eb743403e1d5867360f",
+      "vcs": "git"
+    },
+    {
+      "type": "python_module",
+      "package": "idna",
+      "vcs": null,
+      "version": "3.7"
+    },
+    {
+      "type": "python_module",
+      "package": "setuptools_scm",
+      "vcs": null,
+      "version": "6.4.2"
+    },
+    {
+      "type": "python_module",
+      "package": "pyaml",
+      "vcs": null,
+      "version": "21.10.1"
+    }
+  ]
+}

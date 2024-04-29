@@ -5,6 +5,7 @@ parts:
     plugin: reactive
     reactive-charm-build-arguments:
       - --binary-wheels-from-source
+      - --use-lock-file-branches
     build-packages:
       - tox
       - git
