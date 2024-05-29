@@ -787,3 +787,20 @@ class DesignateCharmVictoria(DesignateCharmRocky):
                 'designate-producer', 'bind9utils',
                 'python3-designate',
                 'python3-apt']
+
+
+class DesignateCharmCaracal(DesignateCharmRocky):
+
+    release = 'caracal'
+
+    packages = ['designate-api', 'designate-central',
+                'designate-common', 'designate-mdns',
+                'designate-worker', 'designate-sink',
+                'designate-producer', 'bind9utils',
+                'python3-designate',
+                'python3-apt']
+
+    services = ['designate-mdns', 'designate-producer',
+                'designate-worker',
+                'designate-central', 'designate-sink',
+                'designate-api']
