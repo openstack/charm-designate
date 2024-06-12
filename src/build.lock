@@ -201,7 +201,7 @@
       "package": "charms.openstack",
       "url": "git+https://github.com/openstack/charms.openstack.git",
       "branch": "stable/antelope",
-      "version": "7a589883545284e0a6303c7977402afb38e99d46",
+      "version": "29476320cde1db6755dd0e57dce5d6b9f3e75308",
       "vcs": "git"
     },
     {
