@@ -197,7 +197,7 @@
       "package": "charms.openstack",
       "url": "git+https://github.com/openstack/charms.openstack.git",
       "branch": "stable/zed",
-      "version": "bf2e867e9e18c28b0e1ba813440ec771b520b2aa",
+      "version": "1d9b755567f59909dc61df10cce88a67f27571b3",
       "vcs": "git"
     },
     {
