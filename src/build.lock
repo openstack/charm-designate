@@ -179,7 +179,7 @@
       "package": "charms.openstack",
       "url": "git+https://github.com/openstack/charms.openstack.git",
       "branch": "refs/heads/stable/yoga",
-      "version": "13ef220ce3529fa7b8e11c6e4c5b352d05b6f148",
+      "version": "7be9e5e61ca9c504aa6cc09ec8956fa92b68a237",
       "vcs": "git"
     },
     {
