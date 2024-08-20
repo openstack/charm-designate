@@ -134,13 +134,15 @@ class TestHandlers(test_utils.PatchHelper):
             mock.call(
                 'designate',
                 'designate',
-                prefix='designate'),
+                prefix='designate',
+                hostname=mock.ANY),
             mock.call(
                 'dpm',
                 'dpm',
-                prefix='dpm'),
+                prefix='dpm',
+                hostname=mock.ANY),
         ]
-        database.configure.has_calls(calls)
+        database.configure.assert_has_calls(calls)
 
     def test_setup_endpoint(self):
         the_charm = self._patch_provide_charm_instance()

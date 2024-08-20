@@ -6,7 +6,6 @@
 # NOTE(lourot): This might look like a duplication of test-requirements.txt but
 # some tox targets use only test-requirements.txt whereas charm-build uses only
 # requirements.txt
-setuptools<50.0.0  # https://github.com/pypa/setuptools/commit/04e3df22df840c6bb244e9b27bc56750c44b7c85
 
 # NOTE: newer versions of cryptography require a Rust compiler to build,
 # see
