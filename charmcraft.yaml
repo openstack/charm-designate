@@ -19,36 +19,18 @@ parts:
     build-environment:
       - CHARM_INTERFACES_DIR: $CRAFT_PROJECT_DIR/interfaces/
       - CHARM_LAYERS_DIR: $CRAFT_PROJECT_DIR/layers/
-bases:
-  - build-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [amd64]
-    run-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [amd64]
-  - build-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [s390x]
-    run-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [s390x]
-  - build-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [ppc64el]
-    run-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [ppc64el]
-  - build-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [arm64]
-    run-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [arm64]
+
+base: ubuntu@24.04
+platforms:
+ amd64:
+   build-on: amd64
+   build-for: amd64
+ arm64:
+   build-on: arm64
+   build-for: arm64
+ ppc64el:
+   build-on: ppc64el
+   build-for: ppc64el
+ s390x:
+   build-on: s390x
+   build-for: s390x

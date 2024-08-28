@@ -155,4 +155,4 @@ options:
     description: |
       Set the project ID to own all managed resources like auto-created records etc.
   openstack-origin:
-    default: bobcat
+    default: caracal
