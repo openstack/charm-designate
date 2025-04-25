@@ -149,6 +149,13 @@ options:
     description: |
       A comma-separated list of nagios servicegroups. If left empty, the
       nagios_context will be used as the servicegroup.
+  api-page-limit:
+    type: string
+    default: "20"
+    description: |
+      Limit of per-page result retrieved by the V2 API used by the
+      dashboard. Default is 20. An empty string value means no limit
+      and all results shall be retrieved.
   managed-resource-tenant-id:
     type: string
     default:
