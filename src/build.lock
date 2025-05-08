@@ -140,19 +140,19 @@
       "type": "python_module",
       "package": "setuptools",
       "vcs": null,
-      "version": "62.1.0"
+      "version": "59.6.0"
     },
     {
       "type": "python_module",
       "package": "MarkupSafe",
       "vcs": null,
-      "version": "2.1.1"
+      "version": "2.0.1"
     },
     {
       "type": "python_module",
       "package": "pip",
       "vcs": null,
-      "version": "22.0.4"
+      "version": "21.3.1"
     },
     {
       "type": "python_module",
@@ -246,13 +246,13 @@
       "type": "python_module",
       "package": "tomli",
       "vcs": null,
-      "version": "2.0.1"
+      "version": "1.2.3"
     },
     {
       "type": "python_module",
       "package": "Jinja2",
       "vcs": null,
-      "version": "3.1.2"
+      "version": "3.0.3"
     },
     {
       "type": "python_module",
