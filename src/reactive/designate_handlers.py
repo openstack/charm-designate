@@ -313,6 +313,7 @@ def reset_shared_db():
 @reactive.when_any('config.changed.nagios_context',
                    'config.changed.nagios_servicegroups',
                    'config.changed.nameservers',
+                   'config.changed.nrpe-nameserver-check-host',
                    'endpoint.nrpe-external-master.changed',
                    'nrpe-external-master.available')
 def configure_nrpe():
