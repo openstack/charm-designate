@@ -76,6 +76,7 @@ class TestRegisteredHooks(test_utils.TestRegisteredHooks):
                     'config.changed.nagios_context',
                     'config.changed.nagios_servicegroups',
                     'config.changed.nameservers',
+                    'config.changed.nrpe-nameserver-check-host',
                     'endpoint.nrpe-external-master.changed',
                     'nrpe-external-master.available',
                 ),
