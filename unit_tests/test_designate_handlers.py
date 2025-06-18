@@ -221,6 +221,7 @@ class TestHandlers(test_utils.PatchHelper):
         the_charm.update_pools.assert_called_once_with()
         the_charm.upgrade_if_available.assert_called_once_with(
             ('arg1', 'arg2', ))
+        the_charm.remove_obsolete_packages.assert_called_once_with()
 
     def test_cluster_connected(self):
         the_charm = self._patch_provide_charm_instance()

@@ -315,6 +315,8 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
                 'designate-central', 'designate-sink',
                 'designate-api']
 
+    deprecated_services = []
+
     api_ports = {
         'designate-api': {
             os_ip.PUBLIC: 9001,
@@ -369,15 +371,6 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
 
     # policyd override constants
     policyd_service_name = 'designate'
-
-    def __init__(self, release=None, **kwargs):
-        """Custom initialiser for class
-        If no release is passed, then the charm determines the release from the
-        ch_utils.os_release() function.
-        """
-        if release is None:
-            release = ch_utils.os_release('python-keystonemiddleware')
-        super(DesignateCharm, self).__init__(release=release, **kwargs)
 
     def install(self):
         """Customise the installation, configure the source and then call the
@@ -657,6 +650,8 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
         nrpe.add_init_service_checks(
             charm_nrpe, self.services, current_unit)
         charm_nrpe.write()
+        # Remove service checks for which services are no longer needed
+        nrpe.remove_deprecated_check(charm_nrpe, self.deprecated_services)
 
     def add_nrpe_nameserver_checks(self):
         """Add NRPE service checks for upstream nameservers."""
@@ -804,7 +799,17 @@ class DesignateCharmCaracal(DesignateCharmRocky):
                 'python3-designate',
                 'python3-apt']
 
+    purge_packages = [
+        'python-designate',
+        'python-memcache',
+        'designate-agent',
+        'designate-zone-manager',
+        'designate-pool-manager',
+    ]
+
     services = ['designate-mdns', 'designate-producer',
                 'designate-worker',
                 'designate-central', 'designate-sink',
                 'designate-api']
+
+    deprecated_services = ["designate-agent"]
