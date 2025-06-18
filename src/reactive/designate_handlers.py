@@ -210,6 +210,19 @@ def configure_designate_full(*args):
         args = args + (dns_backend, )
     with charm.provide_charm_instance() as instance:
         instance.upgrade_if_available(args)
+        # Workaround to purge packages in case of upgrades from one release to
+        # another
+        # Eventhough upgrade_if_available() purges the unnecessary packages,
+        # reactive/layer_openstack.py::default_upgrade_charm again tries to
+        # install due to singleton class pointing to older release charm
+        # instance i.e., it installs all the packages mentioned in older
+        # release. After that even though configure_designate_full() is
+        # triggered, upgrade_if_available does nothing as the installed
+        # packages are already of same release as expected and it
+        # did not care about purge packages.
+        # Example scenario that triggered this change is removal of
+        # designate-agent from caracal release
+        instance.remove_obsolete_packages()
         instance.configure_ssl()
         instance.render_full_config(args)
         try:
