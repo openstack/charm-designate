@@ -74,6 +74,14 @@ options:
     type: boolean
     default: false
     description: Enables experimental admin API for Designate.
+  nrpe-nameserver-check-host:
+    type: string
+    default: canonical.com
+    description: |
+      The host to use for the NRPE nameserver checks. This is useful if you
+      are deploying in a constrained environment where some domain are not resolvable,
+      allowing you to use a known resolvable domain. To disable the check set this
+      configuration option to an empty string.
   default-soa-expire:
     type: int
     default: 86400

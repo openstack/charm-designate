@@ -658,7 +658,8 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
         config = hookenv.config()
         hostname = nrpe.get_nagios_hostname()
         charm_nrpe = nrpe.NRPE(hostname=hostname)
-        if 'nameservers' in config:
+        if (config['nrpe-nameserver-check-host'] and
+                'nameservers' in config):
             nameservers = config['nameservers'].split()
             for nameserver in nameservers:
                 if nameserver[-1] == '.':
@@ -666,7 +667,9 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
                 charm_nrpe.add_check(
                     "nameserver-{}".format(nameserver),
                     'Check the upstream DNS server.',
-                    "check_dns -H canonical.com -s {}".format(nameserver),
+                    "check_dns -H {0} -s {1}".format(
+                        config['nrpe-nameserver-check-host'],
+                        nameserver),
                 )
         charm_nrpe.write()
 
@@ -676,7 +679,8 @@ class DesignateCharm(ch_plugins.PolicydOverridePlugin,
         hostname = nrpe.get_nagios_hostname()
         charm_nrpe = nrpe.NRPE(hostname=hostname)
 
-        if config.changed('nameservers'):
+        if (config.changed('nameservers') or
+                config.changed('nrpe-nameserver-check-host')):
             for nameserver in config.previous('nameservers').split():
                 if nameserver[-1] == '.':
                     nameserver = nameserver[:-1]
