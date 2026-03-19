@@ -183,7 +183,6 @@ types-setuptools==69.5.0.20240423
     # via requirements-parser
 urllib3==2.2.1
     # via requests
-vergit==1.0.2
     # via charm-tools
 virtualenv==20.26.1
     # via charm-tools
