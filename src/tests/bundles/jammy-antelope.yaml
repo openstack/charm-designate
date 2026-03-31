@@ -17,7 +17,7 @@ machines:
   '5':
   '6':
   '7':
-    series: focal
+    series: jammy
   '8':
 
 applications:
@@ -80,8 +80,8 @@ applications:
   memcached:
     charm: ch:memcached
     num_units: 1
-    # Note that holding memcached at focal as it's not available at jammy yet.
-    series: focal
+    # Note that holding memcached at jammy as it's not available at jammy yet.
+    series: jammy
     to:
     - '7'
 
