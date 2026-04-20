@@ -206,7 +206,7 @@
       "type": "python_module",
       "package": "setuptools",
       "vcs": null,
-      "version": "62.1.0"
+      "version": "68.2.2"
     },
     {
       "type": "python_module",
@@ -268,7 +268,7 @@
       "type": "python_module",
       "package": "pbr",
       "vcs": null,
-      "version": "6.0.0"
+      "version": "7.0.3"
     },
     {
       "type": "python_module",

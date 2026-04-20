@@ -16,80 +16,16 @@ parts:
       - cargo
     source: src/
     build-snaps:
-      - charm/latest/edge
+      - charm/3.x/stable
     build-environment:
       - CHARM_INTERFACES_DIR: $CRAFT_PROJECT_DIR/interfaces/
       - CHARM_LAYERS_DIR: $CRAFT_PROJECT_DIR/layers/
-bases:
-  - build-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [amd64]
-    run-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [amd64]
-  - build-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [s390x]
-    run-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [s390x]
-  - build-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [ppc64el]
-    run-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [ppc64el]
-  - build-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [arm64]
-    run-on:
-      - name: ubuntu
-        channel: "22.04"
-        architectures: [arm64]
-  - build-on:
-      - name: ubuntu
-        channel: '24.04'
-        architectures:
-          - amd64
-    run-on:
-      - name: ubuntu
-        channel: '24.04'
-        architectures:
-          - amd64
-  - build-on:
-      - name: ubuntu
-        channel: '24.04'
-        architectures:
-          - s390x
-    run-on:
-      - name: ubuntu
-        channel: '24.04'
-        architectures:
-          - s390x
-  - build-on:
-      - name: ubuntu
-        channel: '24.04'
-        architectures:
-          - ppc64el
-    run-on:
-      - name: ubuntu
-        channel: '24.04'
-        architectures:
-          - ppc64el
-  - build-on:
-      - name: ubuntu
-        channel: '24.04'
-        architectures:
-          - arm64
-    run-on:
-      - name: ubuntu
-        channel: '24.04'
-        architectures:
-          - arm64
+platforms:
+  ubuntu@22.04:amd64:
+  ubuntu@22.04:arm64:
+  ubuntu@22.04:ppc64el:
+  ubuntu@22.04:s390x:
+  ubuntu@24.04:amd64:
+  ubuntu@24.04:arm64:
+  ubuntu@24.04:ppc64el:
+  ubuntu@24.04:s390x:

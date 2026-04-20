@@ -12,7 +12,7 @@ charmhelpers==1.2.1
     # via charms-reactive
 charms-openstack @ git+https://github.com/openstack/charms.openstack.git@stable/caracal
     # via -r test-requirements.in
-charms-reactive==1.5.2
+charms-reactive @ git+https://github.com/canonical/charms.reactive.git
     # via -r test-requirements.in
 charset-normalizer==3.3.2
     # via requests
