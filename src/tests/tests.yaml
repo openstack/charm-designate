@@ -5,7 +5,6 @@ smoke_bundles:
 
 gate_bundles:
   - focal-xena
-  - impish-xena
 
 dev_bundles:
   - focal-yoga
@@ -23,5 +22,4 @@ tests_options:
   force_deploy:
     # NOTE(lourot): this is needed because the NRPE charm isn't available on
     # non-LTS Ubuntu series. See lp:1933643
-    - impish-xena
     - jammy-yoga

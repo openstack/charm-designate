@@ -24,13 +24,13 @@ applications:
 
   keystone-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   designate-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
   neutron-api-mysql-router:
     charm: ch:mysql-router
-    channel: latest/edge
+    channel: 8.0/edge
 
   mysql-innodb-cluster:
     charm: ch:mysql-innodb-cluster
@@ -41,7 +41,7 @@ applications:
       - '0'
       - '1'
       - '2'
-    channel: latest/edge
+    channel: 8.0/edge
 
   rabbitmq-server:
     charm: ch:rabbitmq-server
@@ -50,7 +50,7 @@ applications:
       source: *openstack-origin
     to:
     - '3'
-    channel: latest/edge
+    channel: 3.9/edge
 
   keystone:
     charm: ch:keystone
@@ -59,7 +59,7 @@ applications:
       openstack-origin: *openstack-origin
     to:
     - '4'
-    channel: latest/edge
+    channel: yoga/edge
 
   neutron-api:
     charm: ch:neutron-api
@@ -69,7 +69,7 @@ applications:
       openstack-origin: *openstack-origin
     to:
     - '5'
-    channel: latest/edge
+    channel: yoga/edge
 
   designate-bind:
     charm: ch:designate-bind
@@ -79,7 +79,7 @@ applications:
       #openstack-origin: *openstack-origin
     to:
     - '6'
-    channel: latest/edge
+    channel: yoga/edge
 
   memcached:
     charm: ch:memcached
@@ -90,7 +90,7 @@ applications:
     - '7'
 
   designate:
-    charm: ../../../designate.charm
+    charm: ../../../designate_ubuntu@22.04-amd64.charm
     num_units: 1
     options:
       nameservers: 'ns1.amuletexample.com. ns2.amuletexample.com.'
@@ -99,7 +99,10 @@ applications:
     - '8'
 
   nrpe:
-    charm: cs:nrpe
+    # charmstore deprecated; pin rev 94 (last revision supporting focal/jammy)
+    charm: ch:nrpe
+    channel: latest/beta
+    revision: 94
 
 relations:
   - - 'keystone:shared-db'

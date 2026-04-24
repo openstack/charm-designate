@@ -2,9 +2,37 @@
     templates:
       - charm-unit-jobs-py38
       - charm-unit-jobs-py310
-      - charm-xena-functional-jobs
-      - charm-yoga-functional-jobs
+    check:
+      jobs:
+      - focal-xena
+      - focal-yoga
+      - jammy-yoga
     vars:
       needs_charm_build: true
       charm_build_name: designate
       build_type: charmcraft
+      charmcraft_channel: 3.x/stable
+
+- job:
+    name: focal-xena
+    parent: func-target
+    dependencies:
+      - osci-lint
+      - tox-py38
+      - charm-build
+    vars:
+      tox_extra_args: focal-xena
+- job:
+    name: focal-yoga
+    parent: func-target
+    dependencies:
+      - focal-xena
+    vars:
+      tox_extra_args: focal-yoga
+- job:
+    name: jammy-yoga
+    parent: func-target
+    dependencies:
+      - focal-xena
+    vars:
+      tox_extra_args: jammy-yoga
