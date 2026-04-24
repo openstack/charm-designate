@@ -86,7 +86,7 @@ applications:
     - '7'
 
   designate:
-    charm: ../../../designate_ubuntu-22.04-amd64_ubuntu-22.10-amd64.charm
+    charm: ../../../designate_ubuntu@22.04-amd64.charm
     num_units: 1
     options:
       nameservers: 'ns1.amuletexample.com. ns2.amuletexample.com.'
@@ -95,8 +95,11 @@ applications:
     - '8'
 
   nrpe:
+    # pin rev 94 (last revision supporting focal/jammy); latest/edge
+    # advances to noble-only revisions
     charm: ch:nrpe
-    channel: latest/edge
+    channel: latest/beta
+    revision: 94
 
 relations:
   - - 'keystone:shared-db'

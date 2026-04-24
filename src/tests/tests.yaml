@@ -9,7 +9,6 @@ gate_bundles:
 dev_bundles:
   - jammy-yoga
   - jammy-zed
-  - kinetic-zed
 
 tests:
   - zaza.openstack.charm_tests.designate.tests.DesignateTests
@@ -25,4 +24,3 @@ tests_options:
     # https://bugs.launchpad.net/charm-nrpe/+bug/1968008
     - jammy-yoga
     - jammy-zed
-    - kinetic-zed
