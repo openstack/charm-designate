@@ -1,9 +1,30 @@
 - project:
     templates:
       - charm-unit-jobs-py310
-      - charm-functional-jobs
+    check:
+      jobs:
+      - jammy-antelope
+      - jammy-bobcat
     vars:
       needs_charm_build: true
       charm_build_name: designate
       build_type: charmcraft
-      charmcraft_channel: 2.x/stable
+      charmcraft_channel: 3.x/stable
+
+- job:
+    name: jammy-antelope
+    parent: func-target
+    dependencies:
+      - osci-lint
+      - name: tox-py310
+        soft: true
+      - charm-build
+    vars:
+      tox_extra_args: jammy-antelope
+- job:
+    name: jammy-bobcat
+    parent: func-target
+    dependencies:
+      - jammy-antelope
+    vars:
+      tox_extra_args: jammy-bobcat

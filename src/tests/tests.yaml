@@ -7,8 +7,8 @@ gate_bundles:
   - jammy-antelope
 
 dev_bundles:
+  - jammy-antelope
   - jammy-bobcat
-  - mantic-bobcat
 
 tests:
   - zaza.openstack.charm_tests.designate.tests.DesignateTests
@@ -24,4 +24,3 @@ tests_options:
     # https://bugs.launchpad.net/charm-nrpe/+bug/1968008
     - jammy-antelope
     - jammy-bobcat
-    - mantic-bobcat
