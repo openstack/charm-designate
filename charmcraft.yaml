@@ -11,26 +11,18 @@ parts:
       - python3-dev
       - libffi-dev
       - libssl-dev
-      - rustc
-      - cargo
     source: src/
     build-snaps:
-      - charm/latest/edge
+      - charm/3.x/stable
     build-environment:
       - CHARM_INTERFACES_DIR: $CRAFT_PROJECT_DIR/interfaces/
       - CHARM_LAYERS_DIR: $CRAFT_PROJECT_DIR/layers/
-
-base: ubuntu@24.04
 platforms:
- amd64:
-   build-on: amd64
-   build-for: amd64
- arm64:
-   build-on: arm64
-   build-for: arm64
- ppc64el:
-   build-on: ppc64el
-   build-for: ppc64el
- s390x:
-   build-on: s390x
-   build-for: s390x
+  ubuntu@22.04:amd64:
+  ubuntu@22.04:arm64:
+  ubuntu@22.04:ppc64el:
+  ubuntu@22.04:s390x:
+  ubuntu@24.04:amd64:
+  ubuntu@24.04:arm64:
+  ubuntu@24.04:ppc64el:
+  ubuntu@24.04:s390x:
