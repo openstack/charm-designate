@@ -7,8 +7,8 @@ gate_bundles:
   - jammy-zed
 
 dev_bundles:
+  - jammy-zed
   - jammy-antelope
-  - lunar-antelope
 
 tests:
   - zaza.openstack.charm_tests.designate.tests.DesignateTests
@@ -24,4 +24,3 @@ tests_options:
     # https://bugs.launchpad.net/charm-nrpe/+bug/1968008
     - jammy-zed
     - jammy-antelope
-    - lunar-antelope

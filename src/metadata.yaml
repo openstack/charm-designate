@@ -13,8 +13,6 @@ tags:
 - dns
 series:
 - jammy
-- kinetic
-- lunar
 subordinate: false
 provides:
   dnsaas:
