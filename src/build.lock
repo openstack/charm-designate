@@ -182,7 +182,7 @@
       "type": "python_module",
       "package": "charms.reactive",
       "vcs": null,
-      "version": "1.5.2"
+      "version": "1.5.3"
     },
     {
       "type": "python_module",
