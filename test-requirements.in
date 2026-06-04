@@ -30,3 +30,4 @@ cryptography<3.4 # vault, keystone-saml-mellon
 lxml             # keystone-saml-mellon
 hvac             # vault, barbican-vault
 psutil           # cinder-lvm
+flake8==7.1.1
