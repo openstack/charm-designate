@@ -31,3 +31,4 @@ lxml             # keystone-saml-mellon
 hvac             # vault, barbican-vault
 psutil           # cinder-lvm
 pyopenssl<=22.0.0
+flake8==7.1.1
