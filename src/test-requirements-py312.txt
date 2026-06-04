@@ -6,7 +6,7 @@
 #
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.13.5
+aiohttp==3.14.0
     # via
     #   python-libmaas
     #   zaza
@@ -609,6 +609,7 @@ trustme==1.2.1
     # via zaza-openstack
 typing-extensions==4.15.0
     # via
+    #   aiohttp
     #   aiosignal
     #   juju
     #   keystoneauth1
@@ -640,7 +641,7 @@ wrapt==2.1.2
     #   python-glanceclient
 yarl==1.23.0
     # via aiohttp
-zaza @ git+https://github.com/openstack-charmers/zaza.git
+zaza==2024.1.1
     # via
     #   -r test-requirements.in
     #   zaza-openstack
