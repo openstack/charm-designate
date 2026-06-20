@@ -238,7 +238,7 @@ mdurl==0.1.2
     # via markdown-it-py
 more-itertools==11.1.0
     # via jaraco-classes
-msgpack==1.1.2
+msgpack==1.2.1
     # via oslo-serialization
 multidict==6.7.1
     # via
