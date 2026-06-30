@@ -13,8 +13,8 @@
       "item": "layer:basic",
       "url": "https://github.com/juju-solutions/layer-basic.git",
       "vcs": null,
-      "branch": "23e978fe2872c30511f34ad30a284e34f800e20f",
-      "commit": "23e978fe2872c30511f34ad30a284e34f800e20f"
+      "branch": "refs/heads/master",
+      "commit": "33526bd6aaa01ffe717a5c66ed62bc4790344ef2"
     },
     {
       "type": "layer",
