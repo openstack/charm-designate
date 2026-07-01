@@ -95,11 +95,8 @@ applications:
     - '8'
 
   nrpe:
-    # pin rev 94 (last revision supporting focal/jammy); latest/edge
-    # advances to noble-only revisions
     charm: ch:nrpe
-    channel: latest/beta
-    revision: 94
+    channel: latest/edge
 
 relations:
   - - 'keystone:shared-db'
