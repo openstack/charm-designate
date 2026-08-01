@@ -444,7 +444,7 @@ psutil==7.2.2
     # via
     #   openstacksdk
     #   oslo-utils
-pyasn1==0.6.3
+pyasn1==0.6.4
     # via
     #   juju
     #   pyasn1-modules
